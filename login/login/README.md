@@ -1,7 +1,6 @@
-# ImForcedToDoThis
-I'm forced to do this
+# login program
 
-This is an open source Free program/script C:
+This is an open source Free program/script 
 
 Project name: **Ada Super Computer**
 
@@ -27,7 +26,4 @@ To install the required module, write one at a time!.
 2. Use command: pip install -r requirements.txt
 To install all the requirements at the same time.
 
-Just click on the .exe file and enjoy! C:
-
-Any question, email me at:
-<mauro.strandberg@gmail.com>
+Just click on the .exe file and enjoy! 

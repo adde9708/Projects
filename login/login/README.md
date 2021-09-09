@@ -1,4 +1,4 @@
-# login program
+# login project that i've made togher with a friend
 
 This is an open source Free program/script 
 

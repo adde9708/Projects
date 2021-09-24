@@ -1,7 +1,7 @@
 import time
 
-a = ["Martin, Adam, Jacob"]
-b = ["Maria, Alma, Per"]
+a = ["Michael, William, Harper"]
+b = ["John, Evelyn, Ryan"]
 
 
 def test_zip():

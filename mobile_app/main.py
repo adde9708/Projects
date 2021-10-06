@@ -2,10 +2,15 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+import random
 
 
 class MainApp(App):
     def build(self):
+        red = [1, 0, 0, 0.5]
+        green = [0, 1, 0, 0.5]
+        blue = [0, 0, 1, 0.5]
+        colors = [red, green, blue]
         self.operators = ["/", "*", "+", "-"]
         self.last_was_operator = None
         self.last_button = None
@@ -26,13 +31,18 @@ class MainApp(App):
                 button = Button(
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
+                    background_normal='',
+                    background_color=random.choice(colors)
                 )
                 button.bind(on_press=self.on_button_press)
                 h_layout.add_widget(button)
             main_layout.add_widget(h_layout)
 
         equals_button = Button(
-            text="=", pos_hint={"center_x": 0.5, "center_y": 0.5}
+            text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
+            background_normal='',
+            background_color=random.choice(colors)
+
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)

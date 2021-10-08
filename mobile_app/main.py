@@ -7,9 +7,9 @@ import random
 
 class MainApp(App):
     def build(self):
-        red = [1, 0, 0, 0.5]
-        green = [0, 1, 0, 0.5]
-        blue = [0, 0, 1, 0.5]
+        red = [1, 0, 0, 1]
+        green = [0, 1, 0, 1]
+        blue = [0, 0, 1, 1]
         colors = [red, green, blue]
         self.operators = ["/", "*", "+", "-"]
         self.last_was_operator = None
@@ -31,8 +31,8 @@ class MainApp(App):
                 button = Button(
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    background_normal='',
                     background_color=random.choice(colors)
+
                 )
                 button.bind(on_press=self.on_button_press)
                 h_layout.add_widget(button)
@@ -40,7 +40,6 @@ class MainApp(App):
 
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
-            background_normal='',
             background_color=random.choice(colors)
 
         )

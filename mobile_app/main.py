@@ -52,15 +52,12 @@ class MainApp(App):
         button_text = instance.text
 
         if button_text == "C":
-
             self.solution.text = ""
         else:
             if current and (
                     self.last_was_operator and button_text in self.operators):
-
                 return
             elif current == "" and button_text in self.operators:
-
                 return
             else:
                 new_text = current + button_text

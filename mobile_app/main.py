@@ -14,7 +14,8 @@ class MainApp(App):
         self.operators = ["/", "*", "+", "-"]
         self.last_was_operator = None
         self.last_button = None
-        main_layout = BoxLayout(orientation="vertical")
+        main_layout = BoxLayout(
+            orientation="vertical", spacing=10)
         self.solution = TextInput(
             multiline=False, readonly=True, halign="right", font_size=55
         )
@@ -40,7 +41,6 @@ class MainApp(App):
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
             background_color=random.choice(colors)
-
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)
@@ -52,15 +52,15 @@ class MainApp(App):
         button_text = instance.text
 
         if button_text == "C":
-            # Clear the solution widget
+
             self.solution.text = ""
         else:
             if current and (
                     self.last_was_operator and button_text in self.operators):
-                # Don't add two operators right after each other
+
                 return
             elif current == "" and button_text in self.operators:
-                # First character cannot be an operator
+
                 return
             else:
                 new_text = current + button_text

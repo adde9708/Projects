@@ -10,14 +10,15 @@ class MainApp(App):
         red = [1, 0, 0, 1]
         green = [0, 1, 0, 1]
         blue = [0, 0, 1, 1]
-        colors = [red, green, blue]
+        white = [1, 1, 1, 1]
+        colors = [red, green, blue, white]
         self.operators = ["/", "*", "+", "-"]
         self.last_was_operator = None
         self.last_button = None
         main_layout = BoxLayout(
             orientation="vertical", spacing=10)
         self.solution = TextInput(
-            multiline=False, readonly=True, halign="right", font_size=55
+            multiline=False, readonly=True, halign="right", font_size=65
         )
         main_layout.add_widget(self.solution)
         buttons = [
@@ -32,7 +33,8 @@ class MainApp(App):
                 button = Button(
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    background_color=random.choice(colors)
+                    background_color=random.choice(colors),
+                    background_normal="C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg"
                 )
                 button.bind(on_press=self.on_button_press)
                 h_layout.add_widget(button)
@@ -40,7 +42,10 @@ class MainApp(App):
 
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
-            background_color=random.choice(colors)
+            background_color=random.choice(colors),
+            background_normal=(
+                "C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg")
+
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)

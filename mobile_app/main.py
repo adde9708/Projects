@@ -43,9 +43,7 @@ class MainApp(App):
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
             background_color=random.choice(colors),
-            background_normal=(
-                "C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg")
-
+            background_normal="C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg"
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)

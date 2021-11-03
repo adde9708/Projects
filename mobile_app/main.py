@@ -13,7 +13,9 @@ class MainApp(App):
         blue = [0, 0, 1, 1]
         white = [1, 1, 1, 1]
         colors = [red, green, blue, white]
+
         self.operators = ["/", "*", "+", "-"]
+
         relative = Path(
             "Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg")
         absolute = relative.absolute()

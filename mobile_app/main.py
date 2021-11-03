@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 import random
+from pathlib import Path
 
 
 class MainApp(App):
@@ -13,6 +14,9 @@ class MainApp(App):
         white = [1, 1, 1, 1]
         colors = [red, green, blue, white]
         self.operators = ["/", "*", "+", "-"]
+        relative = Path(
+            "Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg")
+        absolute = relative.absolute()
         self.last_was_operator = None
         self.last_button = None
         main_layout = BoxLayout(
@@ -34,7 +38,7 @@ class MainApp(App):
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
                     background_color=random.choice(colors),
-                    background_normal="C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg"
+                    background_normal=str(absolute)
                 )
                 button.bind(on_press=self.on_button_press)
                 h_layout.add_widget(button)
@@ -43,7 +47,7 @@ class MainApp(App):
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
             background_color=random.choice(colors),
-            background_normal="C:\\Users\\Misa-IT\\Desktop\\Python\\Misa Course\\projects\\test\\Projects\\mobile_app\\Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg"
+            background_normal=str(absolute)
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)

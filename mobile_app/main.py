@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.graphics import BorderImage
 import random
 from pathlib import Path
 
@@ -42,6 +43,7 @@ class MainApp(App):
                     background_color=random.choice(colors),
                     background_normal=str(absolute)
                 )
+
                 button.bind(on_press=self.on_button_press)
                 h_layout.add_widget(button)
             main_layout.add_widget(h_layout)
@@ -50,6 +52,7 @@ class MainApp(App):
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
             background_color=random.choice(colors),
             background_normal=str(absolute)
+
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)

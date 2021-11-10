@@ -55,7 +55,6 @@ class MainApp(App):
 
         )
         equals_button.bind(on_press=self.on_solution)
-
         main_layout.add_widget(equals_button)
 
         return main_layout

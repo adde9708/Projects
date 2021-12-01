@@ -5,11 +5,11 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import BorderImage
 import random
 from pathlib import Path
-from time import sleep
+
 
 class MainApp(App):
     def build(self):
-    
+
         red = [1, 0, 0, 1]
         green = [0, 1, 0, 1]
         blue = [0, 0, 1, 1]

@@ -19,4 +19,4 @@ def if_statement():
 
 if_statement()
 dis.dis(if_statement)
-sleep(22)
+

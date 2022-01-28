@@ -10,6 +10,4 @@ def test_zip():
 
 test_zip()
 
-print(a, b)
-
 print(time.process_time())

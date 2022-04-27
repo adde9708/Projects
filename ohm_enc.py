@@ -1,7 +1,6 @@
 import secrets
 import math
 import hashlib
-import gc
 
 
 def ohm_enc():

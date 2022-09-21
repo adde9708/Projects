@@ -9,7 +9,7 @@ def while_loop():
     print("while loop")
     x = 0
     while x < 100:
-        x = x + 1
+        x+=1
         print(x)
 
 for_loop()

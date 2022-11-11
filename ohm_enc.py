@@ -4,8 +4,8 @@ import hashlib
 
 
 def ohm_enc():
-    E = 277
-    i = secrets.randbelow(935104938709281475457689481226)
+    E = (-39081)
+    i = secrets.randbelow(2**448 - 2**224 - 1)
     p = i * E
     real_p = p / E
     keys = []

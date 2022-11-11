@@ -18,6 +18,14 @@ def ohm_enc():
     x = tuple(keys)
     for list_of_equations in x:
         key = secrets.choice(keys)
+        key = str(key).replace('(', "").replace(')', "").replace(' ', "").replace(
+            'e', "").replace('-', "").replace('.', "").replace(',', "")
+        key = float(key)
+        key = math.ceil(key)
+        key = hex(key).rstrip("0")
+        key = hashlib.shake_256(bytes(key, encoding='utf-8'))
+        print(key.hexdigest(256))
+        print()
 
         key2 = secrets.choice(keys)
         key2 = str(key2).replace('(', "").replace(')', "").replace(' ', "").replace(
@@ -28,6 +36,7 @@ def ohm_enc():
         key2 = hashlib.shake_256(bytes(key2, encoding='utf-8'))
         print(key2.hexdigest(256))
         print()
+
         key3 = secrets.choice(keys)
         key3 = str(key3).replace('(', "").replace(')', "").replace(' ', "").replace(
             'e', "").replace('-', "").replace('.', "").replace(',', "")
@@ -36,14 +45,6 @@ def ohm_enc():
         key3 = hex(key3).rstrip("0")
         key3 = hashlib.shake_256(bytes(key3, encoding='utf-8'))
         print(key3.hexdigest(256))
-        print()
-        key = str(key).replace('(', "").replace(')', "").replace(' ', "").replace(
-            'e', "").replace('-', "").replace('.', "").replace(',', "")
-        key = float(key)
-        key = math.ceil(key)
-        key = hex(key).rstrip("0")
-        key = hashlib.shake_256(bytes(key, encoding='utf-8'))
-        print(key.hexdigest(256))
 
 
 ohm_enc()

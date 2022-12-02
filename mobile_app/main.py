@@ -3,7 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.graphics import BorderImage
-import random
+import secrets
 from pathlib import Path
 
 
@@ -41,7 +41,7 @@ class MainApp(App):
                 button = Button(
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    background_color=random.choice(colors),
+                    background_color=secrets.choice(colors),
                     background_normal=str(absolute)
                 )
 

@@ -11,8 +11,11 @@ def ohm_enc():
     key = real_p / i**2
     key2 = E**2 / real_p
     key3 = E / i
-    list_of_equations = (key, key2, key3)
-    key = secrets.choice(list_of_equations)
+    key4 = E * i
+
+    list_of_equations = (key, key2, key3, key4)
+
+    key = secrets.choice(list_of_equations[0:5])
     key = str(key).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key = float(key)
@@ -23,7 +26,7 @@ def ohm_enc():
     print(key.hexdigest(256))
     print()
 
-    key2 = secrets.choice(list_of_equations)
+    key2 = secrets.choice(list_of_equations[0:5])
     key2 = str(key2).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key2 = float(key2)
@@ -34,7 +37,7 @@ def ohm_enc():
     print(key2.hexdigest(256))
     print()
 
-    key3 = secrets.choice(list_of_equations)
+    key3 = secrets.choice(list_of_equations[0:5])
     key3 = str(key3).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key3 = float(key3)
@@ -43,6 +46,16 @@ def ohm_enc():
     key3 = hashlib.shake_256(bytes(key3, encoding='utf-8'))
 
     print(key3.hexdigest(256))
+    print()
+
+    key4 = secrets.choice(list_of_equations[0:5])
+    key4 = str(key4).replace('(', "").replace(')', "").replace(' ', "").replace(
+        'e', "").replace('-', "").replace('.', "").replace(',', "")
+    key4 = float(key4)
+    key4 = math.ceil(key4)
+    key4 = hex(key4).rstrip("0")
+    key4 = hashlib.shake_256(bytes(key4, encoding='utf-8'))
+    print(key4.hexdigest(256))
     print()
 
 

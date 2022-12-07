@@ -11,7 +11,7 @@ def ohm_enc():
     key = real_p / i**2
     key2 = E**2 / real_p
     key3 = E / i
-    key4 = E * i
+    key4 = E - i
 
     list_of_equations = (key, key2, key3, key4)
 

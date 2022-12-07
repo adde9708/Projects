@@ -15,7 +15,7 @@ def ohm_enc():
 
     list_of_equations = (key, key2, key3, key4)
 
-    key = secrets.choice(list_of_equations[0:5])
+    key = secrets.choice(list_of_equations[0:1])
     key = str(key).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key = float(key)
@@ -26,7 +26,7 @@ def ohm_enc():
     print(key.hexdigest(256))
     print()
 
-    key2 = secrets.choice(list_of_equations[0:5])
+    key2 = secrets.choice(list_of_equations[3:4])
     key2 = str(key2).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key2 = float(key2)
@@ -37,7 +37,7 @@ def ohm_enc():
     print(key2.hexdigest(256))
     print()
 
-    key3 = secrets.choice(list_of_equations[0:5])
+    key3 = secrets.choice(list_of_equations[1:2])
     key3 = str(key3).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key3 = float(key3)
@@ -48,7 +48,7 @@ def ohm_enc():
     print(key3.hexdigest(256))
     print()
 
-    key4 = secrets.choice(list_of_equations[0:5])
+    key4 = secrets.choice(list_of_equations[2:3])
     key4 = str(key4).replace('(', "").replace(')', "").replace(' ', "").replace(
         'e', "").replace('-', "").replace('.', "").replace(',', "")
     key4 = float(key4)
@@ -60,3 +60,4 @@ def ohm_enc():
 
 
 ohm_enc()
+

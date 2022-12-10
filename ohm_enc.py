@@ -73,4 +73,3 @@ def ohm_enc():
 
 
 ohm_enc()
-

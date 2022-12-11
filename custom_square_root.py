@@ -6,3 +6,6 @@ def custom_square_root(x) -> float:
     x = float(i)
     x = x * (1.5 - xhalf*x*x)
     return print(x)
+
+
+custom_square_root(3000000)

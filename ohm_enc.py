@@ -8,7 +8,7 @@ def ohm_enc():
     E = (-39081)
 
     # prime base(check ed448)
-    i = secrets.randbelow(2**448 - 2**224 - 1)
+    i = secrets.randbelow(2**448 - 2**224 - 1 * 1)
     # equations from ohms law
     p = i * E
     real_p = p / E

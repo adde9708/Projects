@@ -51,7 +51,7 @@ class MainApp(App):
 
         equals_button = Button(
             text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
-            background_color=random.choice(colors),
+            background_color=secrets.choice(colors),
             background_normal=str(absolute)
 
         )

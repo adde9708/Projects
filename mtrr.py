@@ -1,4 +1,4 @@
-def mtrr_get(n):
+def mtrr_get(n) -> int:
     phys_mask: int = 0x201 + (n * 2)
     phys_base: int = 0x200 + (n * 2)
     mask_base: int = phys_mask + phys_base

@@ -1,6 +1,6 @@
 def mtrr_get(n):
-    phys_mask: int = 0x200 + (n*2)
-    phys_base: int = 0x201 + (n*2)
+    phys_mask: int = 0x201 + (n * 2)
+    phys_base: int = 0x200 + (n * 2)
     mask_base: int = phys_mask + phys_base
     addr = hex(0x80000000)
     target_addr = addr + str(mask_base)

@@ -10,8 +10,8 @@ def mtrr_get(n) -> int:
     target_addr = target_addr.rstrip("0").rstrip(".").strip()
     mask_base = mask_target = mask_base + int(target_addr)
     if mask_base == mask_target:
-        print(target_addr)
         target_addr = int(target_addr)
+        print(target_addr)
         return target_addr in range(mask_base, mask_target)
     else:
         target_addr = int(target_addr)

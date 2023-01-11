@@ -7,9 +7,8 @@ def ohm_enc():
     # smallest constant(nothing up my sleeve number, check ed448)
     E = (-39081)
 
-    # prime base(it's the prime that ed448 uses but i added a * 1,
-    # in order to get a speed up because of power of two)
-    i = secrets.randbelow(2**448 - 2**224 - 1 * 1)
+    # prime base(it's the prime that ed448 uses)
+    i = secrets.randbelow(2**448 - 2**224 - 1)
     # equations from ohms law
     p = i * E
     real_p = p / E

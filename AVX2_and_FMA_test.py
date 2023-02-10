@@ -25,3 +25,4 @@ def avx2_and_fma():
 
 
 avx2_and_fma()
+

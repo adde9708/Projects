@@ -2,7 +2,7 @@ from operator import mul
 from typing import TypeVar
 
 
-T = TypeVar('T', float)
+T = TypeVar('T', float, float)
 
 
 def vmult(arr: tuple[T, T, T, T, T, T, T, T],

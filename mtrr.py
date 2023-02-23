@@ -1,4 +1,4 @@
-def mtrr_get(n) -> int:
+def mtrr_get(n: int) -> int:
     phys_mask: int = 0x201 + (n * 2)
     phys_base: int = 0x200 + (n * 2)
     mask_base: int = phys_mask + phys_base
@@ -8,7 +8,9 @@ def mtrr_get(n) -> int:
     target_addr = float(target_addr)
     target_addr = str(target_addr)
     target_addr = target_addr.rstrip("0").rstrip(".").strip()
-    mask_base = mask_target = mask_base + int(target_addr)
+    mask_target: int = mask_base + int(target_addr)
+    mask_base = mask_target
+
     if mask_base == mask_target:
         target_addr = int(target_addr)
         print(target_addr)

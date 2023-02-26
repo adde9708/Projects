@@ -1,11 +1,11 @@
+from math import sqrt
+
 
 def fib(n):
     print('Fibonacci series')
-    a, b = 0, 1
-    while a < n:
-        print(a, end=' ')
-        a, b = b, a+b
-    print()
+    phi = (1 + sqrt(5)) / 2
+    Fn = round((phi ** n) / sqrt(5))
+    print(Fn)
 
 
 fib(100)

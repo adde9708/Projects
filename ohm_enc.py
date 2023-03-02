@@ -1,74 +1,61 @@
-from secrets import choice,randbelow
+from secrets import SystemRandom, choice
 from math import sqrt, ceil
 from hashlib import shake_256
+from hmac import compare_digest
 
-def ohm_enc():
-    # smallest constant(nothing up my sleeve number, check ed448)
-    E = (-39081)
 
-    # prime base(it's the prime that ed448 uses)
-    i = randbelow(2**448 - 2**224 - 1)
-    # equations from ohms law
+def ohm_enc(message):
+    sys_random = SystemRandom()
+    E = sys_random.randint(-600000000000, -39081)
+    i = sys_random.randint(-2000000000000, 2 ** 448 - 1 + 2 ** 224 - 1)
     p = i * E
     real_p = p / E
-    key = real_p / i**2
-    key2 = E**2 / real_p
-    key3 = E / i
-    key4 = sqrt(i) * E
-    # put all equations inside a tuple
-    list_of_equations = (key, key2, key3, key4)
-    # pick random key from the tuple as key1 (index 1 to index2)
-    key = choice(list_of_equations[1:2])
-    # convert number to string
-    key = str(key).replace('(', "").replace(')', "").replace(' ', "").replace(
-        'e', "").replace('-', "").replace('.', "").replace(',', "").replace("+", "")
-    # convert str to float so that math.ceil works
-    key = float(key)
-    # always round up
-    key = ceil(key)
-    # convert to hex for some extra obfuscation and strip away trailing zeros
-    key = hex(key).rstrip("0")
-    # hash the hex value with SHAKE256(check ed448)
-    key = shake_256(bytes(key, encoding='utf-8'))
-    # print out the hash (512 bits which is the number of bits for SHAKE256)
-    print(key.hexdigest(512))
+    equations = {real_p / i ** 2, E ** 2 / real_p, E / i, sqrt(i) * E}
+
+    # choose random equation
+    key = choice(tuple(equations))
+
+    # Extract digits from the key
+    key = hex(ceil(key))
+    key = ''.join(filter(str.isdigit, key))
+    key = int(key)
+
+    # Generate a random key for xoring the hash string
+    random_key = sys_random.randint(int(2*256), int(2*512))
+
+    # Hash the message using SHAKE256
+    message_hash = shake_256(message.encode("utf-8")).digest(512)
+
+    # Append a fixed-length padding to the hash
+    padding = b'\x00' * 1024
+    message_hash += padding
+
+    # XOR the hash with the random key and the encryption key
+    res = int.from_bytes(message_hash, byteorder='big') ^ random_key ^ key
+    print(res)
     print()
-
-    # pick random key from the tuple (index 3 to index 5)
-    key2 = choice(list_of_equations[3:5])
-    # the rest is exactly the same as key 1
-    key2 = str(key2).replace('(', "").replace(')', "").replace(' ', "").replace(
-        'e', "").replace('-', "").replace('.', "").replace(',', "").replace('+', "")
-    key2 = float(key2)
-    key2 = ceil(key2)
-    key2 = hex(key2).rstrip("0")
-    key2 = shake_256(bytes(key2, encoding='utf-8'))
-
-    print(key2.hexdigest(512))
-    print()
-    # pick random key from the tuple(index 0 to index1)
-    key3 = choice(list_of_equations[0:1])
-    # the rest is exactly the same as key 1
-    key3 = str(key3).replace('(', "").replace(')', "").replace(' ', "").replace(
-        'e', "").replace('-', "").replace('.', "").replace(',', "").replace("+", "")
-    key3 = float(key3)
-    key3 = ceil(key3)
-    key3 = hex(key3).rstrip("0")
-    key3 = shake_256(bytes(key3, encoding='utf-8'))
-
-    print(key3.hexdigest(512))
-    print()
-    # pick random key from the tuple(index 2 to index 3)
-    key4 = choice(list_of_equations[2:3])
-    # the rest is exactly the same as key 1
-    key4 = str(key4).replace('(', "").replace(')', "").replace(' ', "").replace(
-        'e', "").replace('-', "").replace('.', "").replace(',', "").replace("+", "")
-    key4 = float(key4)
-    key4 = ceil(key4)
-    key4 = hex(key4).rstrip("0")
-    key4 = shake_256(bytes(key4, encoding='utf-8'))
-    print(key4.hexdigest(512))
-    print()
+    return key, random_key
 
 
-ohm_enc()
+ohm_enc("test")
+
+
+def ohm_dec(key, random_key, encrypted):
+    # Convert the encryption key to string
+    key_str = hex(key)[2:]
+    # Add leading zeros if necessary
+    key_str = '0' * (len(key_str) % 2) + key_str
+    # Convert the key string to bytes
+    key_bytes = bytes.fromhex(key_str)
+    # Reverse the XOR operation
+    message_hash = (encrypted ^ random_key ^
+                    int.from_bytes(key_bytes, byteorder='big'))
+    # Remove the padding
+    message_hash = message_hash[:-1024]
+    # Compute the SHAKE256 hash of the original message
+    original_hash = shake_256(encrypted.encode("utf-8")).digest(512)
+    # Compare the message hash with the original hash
+    if compare_digest(message_hash, int.from_bytes(original_hash, byteorder='big')):
+        return encrypted
+    else:
+        return None

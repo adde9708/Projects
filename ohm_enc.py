@@ -32,13 +32,12 @@ def ohm_enc(message):
 
     # XOR the hash with the random key and the encryption key
     res = int.from_bytes(message_hash, byteorder='big') ^ random_key ^ key
-    print(res)
-    print()
-    return key, random_key
+
+    return key, random_key,res
 
 
-ohm_enc("test")
-
+res = ohm_enc("test")
+print(res)
 
 def ohm_dec(key, random_key, encrypted):
     # Convert the encryption key to string

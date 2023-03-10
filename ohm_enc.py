@@ -14,12 +14,13 @@ def ohm_enc(message):
 
     # choose random equation
     key = choice(tuple(equations))
-
     # Extract digits from the key
+    key = int(key)
     key = hex(ceil(key))
     key = ''.join(filter(str.isdigit, key))
-    key = int(key)
-
+    key = float(key)
+    key = ceil(key)
+   
     # Generate a random key for xoring the hash string
     random_key = sys_random.randint(int(2*256), int(2*512))
 

@@ -16,11 +16,12 @@ def ohm_enc(message):
 
     # choose random equation
     key = choice(tuple(equations))
-
     # Extract digits from the key
-    key = hex(ceil(key))
-    key = "".join(filter(str.isdigit, key))
     key = int(key)
+    key = hex(ceil(key))
+    key = ''.join(filter(str.isdigit, key))
+    key = float(key)
+    key = ceil(key)
 
     # Generate a random key for xoring the hash string
     random_key = sys_random.randint(int(2 * 256), int(2 * 512))
@@ -50,7 +51,8 @@ def ohm_dec(key, random_key, encrypted):
     # Convert the key string to bytes
     key_bytes = bytes.fromhex(key_str)
     # Reverse the XOR operation
-    message_hash = encrypted ^ random_key ^ int.from_bytes(key_bytes, byteorder="big")
+    message_hash = encrypted ^ random_key ^ int.from_bytes(
+        key_bytes, byteorder="big")
     # Remove the padding
     message_hash = message_hash[:-1024]
     # Compute the SHAKE256 hash of the original message

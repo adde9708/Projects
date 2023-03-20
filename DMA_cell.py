@@ -1,9 +1,7 @@
-from typing import List, Tuple, Union
+from typing import Union, Tuple, List
 
 
-def dma_list(
-    dst: int, ea_low: int, nbytes: int
-) -> Union[Tuple[None], Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
+def dma_list(dst: int, ea_low: int, nbytes: int) -> Union[Tuple[None], Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
     result: List[Tuple[int, int, int, int, int, int]] = []
     tag_id: int = 0
     dma_list_elem: List[int] = [0, 31, 1, ea_low]
@@ -12,6 +10,7 @@ def dma_list(
     stall: int = dma_list_elem[2]
     list_size: int = nbytes * size
     aligned_ea_low = (ea_low >> 2) * 4
+    dma_list_elem[0] = size + all_32
 
     if nbytes == 0:
         return None
@@ -22,7 +21,6 @@ def dma_list(
         nbytes -= sz
         ea_low += sz
         all_32 = 32
-        dma_list_elem[0] = size + all_32
         dma_list_elem[3] = aligned_ea_low
         sz += size
         bits: int = sz >> 3

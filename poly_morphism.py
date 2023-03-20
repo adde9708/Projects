@@ -4,8 +4,8 @@ class A:
             return print("Test")
 
         return show(self)
-   
-       
+
+
 class B:
     def poly_morphism(self):
         def show(self):

@@ -1,5 +1,5 @@
 class Klass:
-    other = ''
+    other = ""
 
     def a_method(self, thing):
         print(thing)
@@ -12,9 +12,9 @@ class Klass:
 k = Klass()
 k2 = Klass()
 
-Klass.other = 'a class variable.'
+Klass.other = "a class variable."
 
-k.a_method('an instance variable')
+k.a_method("an instance variable")
 k2.a_method(34)
 
 k.last_thing()

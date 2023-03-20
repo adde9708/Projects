@@ -1,18 +1,18 @@
-
 def foo():
-    
     global b
     global a
-    a = 'hello'
+    a = "hello"
+
 
 foo()
 
-b = 'cat'
+b = "cat"
+
 
 def bar():
-
-    b = 'dog'
+    b = "dog"
     print(a)
     print(b)
+
 
 bar()

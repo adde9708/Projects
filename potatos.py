@@ -1,5 +1,4 @@
 def potatos():
-
     bowl = []
     potato = "potato"
     full = False
@@ -13,4 +12,3 @@ def potatos():
 
 
 potatos()
-

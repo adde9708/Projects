@@ -3,7 +3,6 @@ from time import sleep
 
 
 def avx2_and_fma():
-
     for j in range(3):
         i = j * 64
         dest = i + 63 * i + 63 * i + 63 - i + 63 + 2
@@ -25,4 +24,3 @@ def avx2_and_fma():
 
 
 avx2_and_fma()
-

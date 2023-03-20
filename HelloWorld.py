@@ -1,16 +1,16 @@
 # Prints a bunch of stuff
 print("Hello World")
-a = 'what'
+a = "what"
 print(a)
 
 
 def plus(x, y):
     # This function adds numbers together
-    print('plus')
+    print("plus")
     return x + y
 
 
-print('begin')
+print("begin")
 b = plus(54, 46)
 
 print(b)

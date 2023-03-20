@@ -7,7 +7,7 @@ def foo(msg):
     print(msg)
     print("foo end")
     print("end import message1.py")
-    msg = lambda lst: sum((lst))
+    msg = lambda lst: sum(lst)
     print(msg(lst))
 
 

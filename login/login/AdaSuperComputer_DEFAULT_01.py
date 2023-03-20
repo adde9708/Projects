@@ -1,11 +1,12 @@
-from time import sleep
-import pyinputplus as pip
 import os
-import sys
 import random
+import sys
+from time import sleep
+
 import names
-from tqdm import tqdm
+import pyinputplus as pip
 from gtts import gTTS
+from tqdm import tqdm
 
 print("")
 print("Do You want to enter a DEV command?")
@@ -28,7 +29,6 @@ if answ == "y":
     dev_cmnd = pip.inputStr(prompt="Enter DEV Command: ")
 
 elif answ == "help":
-
     print("")
     dev_cmnd = "r00t_get-info Nm && Pssw get-r00t"
     print(dev_cmnd + " is to get access info!")
@@ -36,18 +36,21 @@ elif answ == "help":
     dev_cmnd = pip.inputStr(prompt="Enter DEV Command: ")
 
     if dev_cmnd == "r00t_get-info Nm && Pssw get-r00t":
-        print("Log in info: You have " + nm + " as ID Name. " + pssw + " as ID Password")
+        print(
+            "Log in info: You have " + nm + " as ID Name. " + pssw + " as ID Password"
+        )
 
 elif answ == "n":
-
     print("")
-    print("ATTENTION! BE AWARE OF HIGH VOLUME! LOWER VOLUME AT FIRST AND THEN RAISE AS PLEASED!")
+    print(
+        "ATTENTION! BE AWARE OF HIGH VOLUME! LOWER VOLUME AT FIRST AND THEN RAISE AS PLEASED!"
+    )
     sleep(5)
     print("")
 
-    with open("SystemName01.txt", "r") as fh:
+    with open("SystemName01.txt") as fh:
         prcnt_txt = fh.read().replace("\n", " ")
-        language = 'en'
+        language = "en"
         output = gTTS(text=prcnt_txt, lang=language, slow=False)
         output.save("SystemName01.mp3")
 
@@ -64,7 +67,9 @@ def system_intro():
     print("")
     print("")
     sleep(1.2)
-    print("This is a super secret system where Your safety and annonymity is two important factors in out business.")
+    print(
+        "This is a super secret system where Your safety and annonymity is two important factors in out business."
+    )
     print("")
     print("Your work is to track pople we give to You and execute direct orfers.")
     print("")
@@ -72,15 +77,23 @@ def system_intro():
     print("")
     print("You can't and will never be able to leave Your workplace.")
     print("")
-    print("We have Your Bitcoin with Your bloodprint on it, that's Your signature of Your faith. Don't ever forget that. You owe us!")
+    print(
+        "We have Your Bitcoin with Your bloodprint on it, that's Your signature of Your faith. Don't ever forget that. You owe us!"
+    )
     print("")
-    print("LogIn info has come to You on a letter that is only per to per and destroys itself after reavealing itself to You.")
+    print(
+        "LogIn info has come to You on a letter that is only per to per and destroys itself after reavealing itself to You."
+    )
     print("")
-    print("If You fail one single time, You had written Your death sentence on that moment.")
+    print(
+        "If You fail one single time, You had written Your death sentence on that moment."
+    )
     print("")
     print("We will contact You later for You to execute our orders.")
     print("")
-    print("If You choose to break or go against our orders, the execution as traitor will fall on Your family and lastly You.")
+    print(
+        "If You choose to break or go against our orders, the execution as traitor will fall on Your family and lastly You."
+    )
     print("")
     print("Welcome to Your new family!")
     print("")
@@ -96,7 +109,9 @@ system_intro()
 
 def log_in_info():
     sleep(1.5)
-    print("The next coming inputs is Your ID information to be able to log in the system.")
+    print(
+        "The next coming inputs is Your ID information to be able to log in the system."
+    )
     print("")
     print("You shall not forget Your ID or Your system will crash!")
     print("")
@@ -150,7 +165,6 @@ if rsp_nm == "0":
     ext()
 
 elif rsp_nm != nm or rsp_pssw != pssw:
-
     sleep(3.5)
     print("Identification failed!")
     print("")
@@ -203,13 +217,14 @@ else:
 
     loop = tqdm(total=100000, position=0, leave=False)
     for k in range(100000):
-        loop.set_description("Showing avaliable IDs".format(k))
+        loop.set_description(f"Showing avaliable IDs")
         loop.update(1)
     loop.close()
     print("")
     sleep(1)
 
-    for List in [[a * b for b in range(-101, 101)] for a in range(-101, 101)]: print(List)
+    for List in [[a * b for b in range(-101, 101)] for a in range(-101, 101)]:
+        print(List)
     sleep(2)
     print("")
     print("The code has succesfully opened!")
@@ -226,14 +241,20 @@ print("")
 num_lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 while True:
-
-    if (len(prompt) < 1 or len(prompt) > 5 and not num_lst[0]
-            and not num_lst[1] and not num_lst[2]
-            and not num_lst[3] and not num_lst[4]
-            and not num_lst[5] and not num_lst[6]
-            and not num_lst[7] and not num_lst[8]
-            and not num_lst[9]):
-
+    if (
+        len(prompt) < 1
+        or len(prompt) > 5
+        and not num_lst[0]
+        and not num_lst[1]
+        and not num_lst[2]
+        and not num_lst[3]
+        and not num_lst[4]
+        and not num_lst[5]
+        and not num_lst[6]
+        and not num_lst[7]
+        and not num_lst[8]
+        and not num_lst[9]
+    ):
         print("ID not Found!")
         print("")
         print("Try with another ID!")
@@ -257,15 +278,15 @@ while True:
 
 def answ_chk1():
     if rsp_answer1 == "n":
-        rndm_kll = (str(random.uniform(0.0, 100.0)))
+        rndm_kll = str(random.uniform(0.0, 100.0))
         print("")
         sleep(1)
         print("The chosen ID has a " + rndm_kll + "% of killing sucess!")
         print("")
 
     elif rsp_answer1 == "y":
-        rndm_age = (str(random.randint(20, 70)))
-        rndm_kll = (str(random.uniform(0.0, 100.0)))
+        rndm_age = str(random.randint(20, 70))
+        rndm_kll = str(random.uniform(0.0, 100.0))
         print("")
         sleep(1)
         print("The chosen ID has " + rndm_fnm + " as name.")
@@ -278,7 +299,15 @@ def answ_chk1():
         sleep(1)
         print("")
         sleep(1)
-        print("The chosen ID drank water at " + str(rndm_drnk_wtr_h) + ":" + str(rndm_drnk_wtr_m) + ":" + str(rndm_drnk_wtr_s) + " last time.")
+        print(
+            "The chosen ID drank water at "
+            + str(rndm_drnk_wtr_h)
+            + ":"
+            + str(rndm_drnk_wtr_m)
+            + ":"
+            + str(rndm_drnk_wtr_s)
+            + " last time."
+        )
         print("")
         sleep(1)
         print("The chosen ID has a " + rndm_kll + "% of killing sucess!")
@@ -325,9 +354,9 @@ def answ_chk2():
         print("Thrusts ignited at:")
         sleep(1)
 
-        with open("Percentage01.txt", "r") as fh:
+        with open("Percentage01.txt") as fh:
             prcnt_txt = fh.read().replace("\n", " ")
-            language = 'en'
+            language = "en"
             output = gTTS(text=prcnt_txt, lang=language, slow=False)
             output.save("PercentageT2S-01.mp3")
         os.system("start PercentageT2S-01.mp3")
@@ -341,53 +370,53 @@ def answ_chk2():
         print("")
 
         for i, _ in enumerate(list(range(1000001))):
-            print(i, end='\r')
+            print(i, end="\r")
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Backtracking to last working system trail...".format(k))
+            loop.set_description(f"Backtracking to last working system trail...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Preparing to fix...".format(k))
+            loop.set_description(f"Preparing to fix...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Fixing startup...".format(k))
+            loop.set_description(f"Fixing startup...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Stabilazing startup...".format(k))
+            loop.set_description(f"Stabilazing startup...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Stabilazing...".format(k))
+            loop.set_description(f"Stabilazing...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Thrusts Ignite Process startup...".format(k))
+            loop.set_description(f"Thrusts Ignite Process startup...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Igniting thrusts...".format(k))
+            loop.set_description(f"Igniting thrusts...")
             loop.update(1)
         loop.close()
 
         loop = tqdm(total=100000, position=0, leave=False)
         for k in range(100000):
-            loop.set_description("Continuation of launch proceure...".format(k))
+            loop.set_description(f"Continuation of launch proceure...")
             loop.update(1)
         loop.close()
 
@@ -403,7 +432,9 @@ def answ_chk2():
 
 def reprt_pr_mnstr():
     print("")
-    print("A message will be compiled before sending it to the Primary Minister of Tolyavgrad Vyboska!")
+    print(
+        "A message will be compiled before sending it to the Primary Minister of Tolyavgrad Vyboska!"
+    )
     print("")
     print("Compiling message...")
     sleep(5)
@@ -419,7 +450,7 @@ print("")
 sleep(4)
 loop = tqdm(total=100000, position=0, leave=False)
 for k in range(100000):
-    loop.set_description("Sending...".format(k))
+    loop.set_description(f"Sending...")
     loop.update(1)
 loop.close()
 

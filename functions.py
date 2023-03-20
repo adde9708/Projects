@@ -5,9 +5,7 @@ lst.append(empty)
 
 def function_a():
     for empty in lst:
-        
         if empty in lst:
-            
             print(lst)
             function_b()
             function_b()
@@ -15,12 +13,9 @@ def function_a():
 
 
 def function_b():
-    
     for empty in lst:
-      
-      if empty in lst:
-        
-        print(lst)
+        if empty in lst:
+            print(lst)
 
 
 function_b()

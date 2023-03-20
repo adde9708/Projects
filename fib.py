@@ -4,9 +4,9 @@ from math import sqrt
 
 
 def fib(n):
-    print('Fibonacci series')
+    print("Fibonacci series")
     phi = (1 + sqrt(5)) / 2
-    Fn = round((phi ** n) / sqrt(5))
+    Fn = round((phi**n) / sqrt(5))
     print(Fn)
 
 
@@ -15,11 +15,11 @@ fib(10)
 
 # O(n)
 def fib(n):
-    print('Fibonacci series')
+    print("Fibonacci series")
     phi = (1 + sqrt(5)) / 2
     for i in range(n):
-        Fn = round((phi ** i) / sqrt(5))
-        print(Fn, end=' ')
+        Fn = round((phi**i) / sqrt(5))
+        print(Fn, end=" ")
     print()
 
 

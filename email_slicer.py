@@ -2,13 +2,13 @@
 email = input("What is your email address:").strip()
 
 # Slice username
-username = email[:email.index("@")]
+username = email[: email.index("@")]
 
 # Slice domain name
-domain = email[email.index("@") + 1:]
+domain = email[email.index("@") + 1 :]
 
 # Format message
-message = "Your username is '{}' and your domain name is '{}'".format(username, domain)
+message = f"Your username is '{username}' and your domain name is '{domain}'"
 
 # Print message
 print(message)

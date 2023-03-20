@@ -1,14 +1,14 @@
-from kivy.app import App
-from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.textinput import TextInput
 import secrets
 from pathlib import Path
+
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.textinput import TextInput
 
 
 class MainApp(App):
     def build(self):
-
         red = [1, 0, 0, 1]
         green = [0, 1, 0, 1]
         blue = [0, 0, 1, 1]
@@ -18,12 +18,12 @@ class MainApp(App):
         self.operators = ["/", "*", "+", "-"]
 
         relative = Path(
-            "Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg")
+            "Textures\\mortar_wall_aged_gray_white_black_crack_texture-1018196.jpg"
+        )
         absolute = relative.absolute()
         self.last_was_operator = None
         self.last_button = None
-        main_layout = BoxLayout(
-            orientation="vertical", spacing=10)
+        main_layout = BoxLayout(orientation="vertical", spacing=10)
         self.solution = TextInput(
             multiline=False, readonly=True, halign="right", font_size=65
         )
@@ -41,7 +41,7 @@ class MainApp(App):
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
                     background_color=secrets.choice(colors),
-                    background_normal=str(absolute)
+                    background_normal=str(absolute),
                 )
 
                 button.bind(on_press=self.on_button_press)
@@ -49,10 +49,10 @@ class MainApp(App):
             main_layout.add_widget(h_layout)
 
         equals_button = Button(
-            text="=", pos_hint={"center_x": 0.5, "center_y": 0.5},
+            text="=",
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
             background_color=secrets.choice(colors),
-            background_normal=str(absolute)
-
+            background_normal=str(absolute),
         )
         equals_button.bind(on_press=self.on_solution)
         main_layout.add_widget(equals_button)
@@ -66,8 +66,7 @@ class MainApp(App):
         if button_text == "C":
             self.solution.text = ""
         else:
-            if current and (
-                    self.last_was_operator and button_text in self.operators):
+            if current and (self.last_was_operator and button_text in self.operators):
                 return
             elif current == "" and button_text in self.operators:
                 return

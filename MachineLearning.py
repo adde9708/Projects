@@ -1,12 +1,7 @@
-import numpy as np
-
-import torch
-
-from math import *
-
-from scipy import stats
-
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from scipy import stats
 
 speed = [100, 80, 130, 111, 96, 110, 90, 94, 86, 150, 120, 144, 146]
 

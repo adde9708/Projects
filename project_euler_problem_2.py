@@ -15,5 +15,5 @@ def sum_of_even_numbers_fibonacci(num: int):
     
     print(total)
 
-    
+
 sum_of_even_numbers_fibonacci(4000900)

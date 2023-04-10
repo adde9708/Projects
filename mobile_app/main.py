@@ -1,4 +1,4 @@
-import secrets
+from secrets import choice
 from pathlib import Path
 
 from kivy.app import App
@@ -40,7 +40,7 @@ class MainApp(App):
                 button = Button(
                     text=label,
                     pos_hint={"center_x": 0.5, "center_y": 0.5},
-                    background_color=secrets.choice(colors),
+                    background_color=choice(colors),
                     background_normal=str(absolute),
                 )
 
@@ -51,7 +51,7 @@ class MainApp(App):
         equals_button = Button(
             text="=",
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            background_color=secrets.choice(colors),
+            background_color=choice(colors),
             background_normal=str(absolute),
         )
         equals_button.bind(on_press=self.on_solution)

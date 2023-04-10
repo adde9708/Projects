@@ -1,5 +1,3 @@
-import time
-
 a = ["Michael, William, Harper"]
 b = ["John, Evelyn, Ryan"]
 
@@ -9,5 +7,3 @@ def trying_zip():
 
 
 trying_zip()
-
-print(time.process_time())

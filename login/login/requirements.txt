@@ -1,8 +1,6 @@
-pip == 20.2.2
+pip == 22.1
 
 pyInputPlus == 0.2.10
-
-faker == 5.6.5
 
 names == 0.3.0
 

@@ -3,46 +3,52 @@ import numpy as np
 import torch
 from scipy import stats
 
-speed = [100, 80, 130, 111, 96, 110, 90, 94, 86, 150, 120, 144, 146]
 
-rotation = [180, 90, 260, 360, 720, 144, 146, 80, 94, 86, 120, 1080, 333]
+def machine_learning_libs_test():
 
-weights = torch.randn(53, 43, 6, 4)
+    speed = [100, 80, 130, 111, 96, 110, 90, 94, 86, 150, 120, 144, 146]
 
-inputs = torch.randn(16, 43, 23, 33)
+    rotation = [180, 90, 260, 360, 720, 144, 146, 80, 94, 86, 120, 1080, 333]
 
-tr = torch.nn.functional.conv2d(inputs, weights)
+    weights = torch.randn(53, 43, 6, 4)
 
-x = np.mean(speed)
+    inputs = torch.randn(16, 43, 23, 33)
 
-y = stats.mode(speed)
+    tr = torch.nn.functional.conv2d(inputs, weights, rotation)
 
-z = np.median(speed)
+    x = np.mean(speed)
 
-s = np.std(speed)
+    y = stats.mode(speed)
 
-p = np.percentile(speed, 90)
+    z = np.median(speed)
 
-v = np.var(speed)
+    s = np.std(speed)
 
-r = np.random.uniform(23, 35, 10000)
+    p = np.percentile(speed, 90)
 
-print(r)
+    v = np.var(speed)
 
-print(y)
+    r = np.random.uniform(23, 35, 10000)
 
-print(x)
+    print(r)
 
-print(z)
+    print(y)
 
-print(s)
+    print(x)
 
-print(v)
+    print(z)
 
-print(p)
+    print(s)
 
-print(tr)
+    print(v)
 
-plt.hist(r)
+    print(p)
 
-plt.show()
+    print(tr)
+
+    plt.hist(r)
+
+    plt.show()
+
+
+machine_learning_libs_test()

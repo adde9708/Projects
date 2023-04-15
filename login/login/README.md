@@ -1,6 +1,6 @@
-# Ada Super Computer
+# Login project
 
-This is an open source Free program/script C:
+This is an open source Free program/script that i did with a friend
 
 Project name: **Ada Super Computer**
 
@@ -32,7 +32,7 @@ This project contains:
 2. Use command: pip install -r requirements.txt
    To install all the requirements at the same time.
 
-Just click on the .exe file and enjoy! C:
+Just click on the .exe file and enjoy!
 
 A friend of mine tried to download it and his antivirus Norton flagged the file as "wisdom of the crowds"!
 
@@ -48,4 +48,3 @@ since people have been using this "easy" way of programming, to program viruses/
 
 This is the proof that my program is virus-free:
 https://www.virustotal.com/gui/file/8ee0f075914560e7fb4d048791f431c379118967dcb79af834a0c87bf5a0cd00/detection
-

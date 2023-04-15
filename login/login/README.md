@@ -47,4 +47,4 @@ It's nothing to worry about! Python (.py) programming has sadly been flagged as 
 since people have been using this "easy" way of programming, to program viruses/malware/badware.
 
 This is the proof that the program is virus-free:
-[VirusTotal](https://www.virustotal.com/gui/file/ 8ee0f075914560e7fb4d048791f431c379118967dcb79af834a0c87bf5a0cd00/detection)
+[VirusTotal](https://www.virustotal.com/gui/file/8ee0f075914560e7fb4d048791f431c379118967dcb79af834a0c87bf5a0cd00/detection)

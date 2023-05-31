@@ -1,4 +1,4 @@
-def email_slicer():
+def email_slicer() -> None:
     # Get user email address
     email = input("What is your email address:").strip()
 

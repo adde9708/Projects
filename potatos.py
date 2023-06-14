@@ -1,4 +1,4 @@
-def potatos():
+def potatoes():
     bowl = []
     potato = "potato"
     full = False
@@ -11,4 +11,4 @@ def potatos():
     return full
 
 
-potatos()
+potatoes()

@@ -1,8 +1,8 @@
-def mtrr_get(n: int) -> bool:
+def mtrr_get(n: int) -> int:
     phys_mask: int = 0x201 + (n * 2)  # physical mask address
     phys_base: int = 0x200 + (n * 2)  # physical base address
     mask_base: int = phys_base & phys_mask  # mask for base address
-    addr = 0x80000000
+    addr: int = 0x80000000
     target_addr: int = addr & mask_base
 
     if mask_base == target_addr:

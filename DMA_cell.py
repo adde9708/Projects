@@ -1,7 +1,9 @@
 from typing import Union, Tuple, List
+from timeit import default_timer as timer
 
 
 def dma_list(dst: int, ea_low: int, nbytes: int) -> Union[Tuple[None], Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
+    t1 = timer()
     result: List[Tuple[int, int, int, int, int, int]] = []
     tag_id: int = 0
     dma_list_elem: List[int] = [0, 31, 1, ea_low]
@@ -27,7 +29,8 @@ def dma_list(dst: int, ea_low: int, nbytes: int) -> Union[Tuple[None], Tuple[int
 
         result.append((dma_list_elem[0], tag_id, dst, bits, all_32, stall))
         i += 1
-
+    t2 = timer()
+    print(t2 - t1)
     return list_size, result
 
 

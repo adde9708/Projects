@@ -186,10 +186,10 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
 # model and not just the custom head
 def setup_model():
 
-    # Use the pretrained resnet18 as the neural network,
+    # Use the pretrained model resnet18
     model_fe = models.resnet18(pretrained=True, progress=True, quantize=False)
 
-    # Numbers of features to use from the neural network
+    # Numbers of features to use from the model
     num_ftrs = model_fe.fc.in_features
 
     # Train the model

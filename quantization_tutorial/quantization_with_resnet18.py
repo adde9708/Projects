@@ -218,11 +218,11 @@ def main():
     imshow(out, title=[class_names[x] for x in classes], ax=ax)
 
     model = create_combined_model(MODEL_FE)
-    #model[0].qconfig = torch.quantization.default_qat_qconfig
-    #model = torch.quantization.prepare_qat(model, inplace=True)
+    # model[0].qconfig = torch.quantization.default_qat_qconfig
+    # model = torch.quantization.prepare_qat(model, inplace=True)
 
     # for param in model.parameters():
-    #param.requires_grad = True
+    # param.requires_grad = True
 
     model = model.to(device)
 

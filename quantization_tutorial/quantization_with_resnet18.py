@@ -11,6 +11,21 @@ from torch import nn
 from torch.quantization import convert
 
 
+# Followed a tutorial on quantization on pytorch's home page.
+# https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
+# Made a few modifications by adding a few functions for example the,
+# load_data function. The original tutorial had all of the variables,
+# that's inside that function as global variables,
+# same goes for the setup_model function i also added a main function.
+
+# For some reason my training of the model is faster then the tutorial,
+# says it should be. They say it should take between 15-25 min to train it,
+# mine only takes around 8 mins. The original train function even uses,
+# more threads/num_workers then mine does and mine is still faster
+
+
+# Create a function that loads data transforms using dataloaders and
+# the built in datasets and also adds some classes so you can classify the data
 def load_data(data_dir):
     data_transforms = {
         'train': transforms.Compose([
@@ -31,7 +46,7 @@ def load_data(data_dir):
     image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                               data_transforms[x])
                       for x in ['train', 'val']}
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=16,
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x],                                                              batch_size=16,
                                                   shuffle=True, num_workers=4)
 
                    for x in ['train', 'val']}
@@ -43,6 +58,9 @@ def load_data(data_dir):
     return dataloaders, dataset_sizes, class_names
 
 
+# Create a helper function for the subplot,
+# which uses numpy to set the input for the making of a grid that,
+# the subplot will use to display the predictions made by the AI model
 def imshow(inp, title=None, ax=None, figsize=(5, 5)):
 
     inp = inp.numpy().transpose((1, 2, 0))
@@ -62,8 +80,10 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
         ax.set_title(title)
 
 
+# This is the function that actually trains the AI model
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 device='cpu'):
+
     data_dir = 'data/hymenoptera_data'
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
@@ -122,11 +142,14 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                     time_elapsed // 60, time_elapsed % 60))
                 print('Best val Acc: {:4f}'.format(best_acc))
 
-                model.load_state_dict(best_model_wts)
+    model.load_state_dict(best_model_wts)
 
-                return model
+    return model
 
 
+# This is the function that will load the images and creation of the,
+# subplot so you can actually see the result and how accurate the predictions,
+# that the AI model made is.
 def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
 
     was_training = model.training
@@ -159,12 +182,20 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
     model.train(mode=was_training)
 
 
+# Setup the pretrained model resnet18 that we will use to further train our
+# model and not just the custom head
 def setup_model():
 
+    # Use the pretrained resnet18 as the neural network,
     model_fe = models.resnet18(pretrained=True, progress=True, quantize=False)
+
+    # Numbers of features to use from the neural network
     num_ftrs = model_fe.fc.in_features
 
+    # Train the model
     model_fe.train()
+
+    # Fuse the model with a custom head
     model_fe.fuse_model()
 
     return model_fe, num_ftrs
@@ -173,6 +204,7 @@ def setup_model():
 MODEL_FE, NUM_FTRS = setup_model()
 
 
+# Create a model with a custom head
 def create_combined_model(MODEL_FE):
     model_fe = MODEL_FE
     num_ftrs = NUM_FTRS
@@ -205,24 +237,24 @@ def create_combined_model(MODEL_FE):
     return model
 
 
+# Just a main function that calls all the functions above it
 def main():
 
     data_dir = 'data/hymenoptera_data'
+
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
+
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     inputs, classes = next(iter(dataloaders['train']))
+
     out = torchvision.utils.make_grid(inputs, nrow=4)
 
-    ax = plt.subplots(1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, figsize=(10, 10))
+
     imshow(out, title=[class_names[x] for x in classes], ax=ax)
 
     model = create_combined_model(MODEL_FE)
-    # model[0].qconfig = torch.quantization.default_qat_qconfig
-    # model = torch.quantization.prepare_qat(model, inplace=True)
-
-    # for param in model.parameters():
-    # param.requires_grad = True
 
     model = model.to(device)
 
@@ -231,7 +263,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=7, gamma=0.1)
+        optimizer, step_size=7,                                                         gamma=0.1)
 
     trained_model = train_model(model, criterion, optimizer, scheduler,
                                 num_epochs=25, device=device)

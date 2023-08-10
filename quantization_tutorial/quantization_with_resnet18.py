@@ -46,7 +46,7 @@ def load_data(data_dir):
     image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                               data_transforms[x])
                       for x in ['train', 'val']}
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x],                                                              batch_size=16,
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=16,
                                                   shuffle=True, num_workers=4)
 
                    for x in ['train', 'val']}
@@ -263,7 +263,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=7,                                                         gamma=0.1)
+        optimizer, step_size=7, gamma=0.1)
 
     trained_model = train_model(model, criterion, optimizer, scheduler,
                                 num_epochs=25, device=device)

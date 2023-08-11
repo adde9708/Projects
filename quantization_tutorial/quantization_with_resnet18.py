@@ -23,6 +23,8 @@ from torch.quantization import convert
 # mine only takes around 8 mins. The original train function even uses,
 # more threads/num_workers then mine does and mine is still faster
 
+# I've only tested this on Ubuntu so there might be some,
+# cross-platform issues
 
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data

@@ -26,9 +26,6 @@ from pathlib import PurePath
 # I've only tested this on Ubuntu without cuda so there might be some,
 # cross-platform issues
 
-# This is where you can pull the data from
-DATA_DIR = PurePath("quantization_tutorial/data/hymenoptera_data")
-
 
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data
@@ -84,6 +81,10 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
 
     if title is not None:
         ax.set_title(title)
+
+
+# This is where you set the path to get the data from
+DATA_DIR = PurePath("quantization_tutorial/data/hymenoptera_data")
 
 
 # This is the function that actually trains the AI model
@@ -243,8 +244,8 @@ def create_combined_model(MODEL_FE):
     return model
 
 
-# Just a main function that calls all the functions above it
-def main():
+# Just a function that calls all the functions above it to keep main small
+def start():
 
     data_dir = DATA_DIR
 
@@ -285,6 +286,12 @@ def main():
     plt.tight_layout()
 
     plt.show()
+
+
+# The main function
+def main():
+
+    start()
 
 
 if __name__ == "__main__":

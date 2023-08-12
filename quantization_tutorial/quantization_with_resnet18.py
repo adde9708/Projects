@@ -9,7 +9,7 @@ import torchvision.models.quantization as models
 from torchvision import transforms, datasets
 from torch import nn
 from torch.quantization import convert
-
+from pathlib import PurePath
 
 # Followed a tutorial on quantization on pytorch's home page.
 # https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
@@ -25,6 +25,10 @@ from torch.quantization import convert
 
 # I've only tested this on Ubuntu without cuda so there might be some,
 # cross-platform issues
+
+# This is where you can pull the data from
+DATA_DIR = PurePath("quantization_tutorial/data/hymenoptera_data")
+
 
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data
@@ -86,7 +90,7 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 device='cpu'):
 
-    data_dir = 'data/hymenoptera_data'
+    data_dir = DATA_DIR
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
 
@@ -181,7 +185,7 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
                 if current_row >= rows:
                     model.train(mode=was_training)
                     return
-    model.train(mode=was_training)
+        model.train(mode=was_training)
 
 
 # Setup the pretrained model resnet18 that we will use to further train our
@@ -242,7 +246,7 @@ def create_combined_model(MODEL_FE):
 # Just a main function that calls all the functions above it
 def main():
 
-    data_dir = 'data/hymenoptera_data'
+    data_dir = DATA_DIR
 
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
 
@@ -269,6 +273,7 @@ def main():
 
     trained_model = train_model(model, criterion, optimizer, scheduler,
                                 num_epochs=25, device=device)
+
     trained_model.cpu()
 
     model_quantized_and_trained = convert(trained_model, inplace=False)

@@ -23,16 +23,14 @@ from pathlib import PurePath
 # mine only takes around 8 mins. The original train function even uses,
 # more threads/num_workers then mine does and mine is still faster
 
-# I've only tested this on Ubuntu without cuda so there might be some,
-# cross-platform issues
 
 # I've now tested it on Windows with cuda as well and I have to,
 # do some debugging on it because with cuda on Windows this is,
 # extremely slow and i have no idea why, it might be because of,
 # Windows itself or Windows might not be writing to VRAM,
 # and writes to RAM instead.
-# It takes about 40 minutes to train on Windows with cuda but only 8 min,
-# on Ubuntu purely on the cpu, with 4 threads
+# It takes about 40 minutes to train on Windows with cuda but only,
+# around 8 min on Ubuntu purely on the cpu, with 4 threads
 
 
 # Create a function that loads data transforms using dataloaders and

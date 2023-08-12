@@ -268,8 +268,8 @@ def main():
 
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
-    scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=7, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7,
+                                                gamma=0.1)
 
     trained_model = train_model(model, criterion, optimizer, scheduler,
                                 num_epochs=25, device=device)

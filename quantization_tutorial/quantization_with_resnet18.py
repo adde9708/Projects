@@ -83,15 +83,11 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
         ax.set_title(title)
 
 
-# This is where you set the path to get the data from
-DATA_DIR = PurePath("quantization_tutorial/data/hymenoptera_data")
-
-
 # This is the function that actually trains the AI model
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 device='cpu'):
 
-    data_dir = DATA_DIR
+    data_dir = PurePath("quantization_tutorial/data/hymenoptera_data")
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
 
@@ -247,7 +243,7 @@ def create_combined_model(MODEL_FE):
 # Just a function that calls all the functions above it to keep main small
 def start():
 
-    data_dir = DATA_DIR
+    data_dir = PurePath("quantization_tutorial/data/hymenoptera_data")
 
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
 
@@ -261,7 +257,9 @@ def start():
 
     imshow(out, title=[class_names[x] for x in classes], ax=ax)
 
-    model = create_combined_model(MODEL_FE)
+    model_fe = MODEL_FE
+
+    model = create_combined_model(model_fe)
 
     model = model.to(device)
 

@@ -97,6 +97,7 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
 
 # Just a function that returns the directory where the data is stored
 def return_data_dir():
+
     data_dir = PurePath("data/hymenoptera_data")
 
     return data_dir
@@ -105,6 +106,7 @@ def return_data_dir():
 # This is the function that actually trains the AI model
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 device='cpu'):
+
     data_dir = return_data_dir()
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
@@ -227,6 +229,7 @@ MODEL_FE, NUM_FTRS = setup_model()
 
 # Create a model with a custom head
 def create_combined_model(MODEL_FE):
+
     model_fe = MODEL_FE
     num_ftrs = NUM_FTRS
 

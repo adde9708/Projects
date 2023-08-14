@@ -41,6 +41,8 @@ from pathlib import PurePath
 
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data
+
+
 def load_data(data_dir):
     data_transforms = {
         'train': transforms.Compose([
@@ -99,7 +101,7 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
 # Just a function that returns the directory where the data is stored
 def return_data_dir():
 
-    data_dir = PurePath("data/hymenoptera_data")
+    data_dir = PurePath("quantization_tutorial/data/hymenoptera_data")
 
     return data_dir
 

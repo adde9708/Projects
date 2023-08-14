@@ -11,6 +11,7 @@ from torch import nn
 from torch.quantization import convert
 from pathlib import PurePath
 
+
 # Followed a tutorial on quantization on pytorch's home page.
 # https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
 # Made a few modifications by adding a few functions for example the,
@@ -23,7 +24,6 @@ from pathlib import PurePath
 # mine only takes around 8 mins. The original train function even uses,
 # more threads/num_workers then mine does and mine is still faster
 
-
 # I've now tested it on Windows with cuda as well and I have to,
 # do some debugging on it because with cuda on Windows this is,
 # extremely slow and i have no idea why, it might be because of,
@@ -32,6 +32,12 @@ from pathlib import PurePath
 # It takes about 40 minutes to train on Windows with cuda but only,
 # around 8 min on Ubuntu purely on the cpu, with 4 threads
 
+# I saw that i had missed one thing in the tutorial so that the model,
+# would get quantized so i added that via the new function
+# quantized_model but for me personally it's a lot slower to train,
+# the quantized model then the non quantized model.
+# From around 8 mins on Ubuntu to around 12-13 mins on Ubuntu,
+# if i quantize the model.
 
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data
@@ -64,7 +70,7 @@ def load_data(data_dir):
                      for x in ['train', 'val']}
     class_names = image_datasets['train'].classes
 
-    return dataloaders, dataset_sizes, tuple(class_names)
+    return dataloaders, dataset_sizes, class_names
 
 
 # Create a helper function for the subplot,
@@ -89,11 +95,17 @@ def imshow(inp, title=None, ax=None, figsize=(5, 5)):
         ax.set_title(title)
 
 
+# Just a function that returns the directory where the data is stored
+def return_data_dir():
+    data_dir = PurePath("data/hymenoptera_data")
+
+    return data_dir
+
+
 # This is the function that actually trains the AI model
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 device='cpu'):
-
-    data_dir = PurePath("quantization_tutorial/data/hymenoptera_data")
+    data_dir = return_data_dir()
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
 
@@ -246,10 +258,23 @@ def create_combined_model(MODEL_FE):
     return model
 
 
+# Quantize the model
+def quantize_model():
+
+    model_fe = MODEL_FE
+    model = create_combined_model(model_fe)
+    model[0].qconfig = torch.quantization.default_qat_qconfig
+    model = torch.quantization.prepare_qat(model, inplace=True)
+    for param in model.parameters():
+        param.requires_grad = True
+
+    return model
+
+
 # Just a function that calls all the functions above it to keep main small
 def start():
 
-    data_dir = PurePath("quantization_tutorial/data/hymenoptera_data")
+    data_dir = return_data_dir()
 
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
 
@@ -263,9 +288,7 @@ def start():
 
     imshow(out, title=[class_names[x] for x in classes], ax=ax)
 
-    model_fe = MODEL_FE
-
-    model = create_combined_model(model_fe)
+    model = quantize_model()
 
     model = model.to(device)
 
@@ -284,8 +307,6 @@ def start():
     model_quantized_and_trained = convert(trained_model, inplace=False)
 
     visualize_model(model_quantized_and_trained, dataloaders, class_names)
-
-    plt.ioff()
 
     plt.tight_layout()
 

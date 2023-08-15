@@ -213,8 +213,8 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
 def setup_model():
 
     # Use the pretrained model resnet18
-    model_fe = models.resnet18(
-        weights=ResNet18_Weights.DEFAULT, progress=True, quantize=False)
+    model_fe = models.resnet18(weights=ResNet18_Weights.DEFAULT,
+                               progress=True, quantize=False)
 
     # Numbers of features to use from the model
     num_ftrs = model_fe.fc.in_features

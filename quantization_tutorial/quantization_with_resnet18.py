@@ -12,6 +12,7 @@ from torch.quantization import convert
 from pathlib import PurePath
 from torchvision.models import ResNet18_Weights
 
+
 # Followed a tutorial on quantization on pytorch's home page.
 # https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
 # Made a few modifications by adding a few functions for example the,

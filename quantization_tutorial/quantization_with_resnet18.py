@@ -204,6 +204,7 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
                 if current_row >= rows:
                     model.train(mode=was_training)
                     return
+
         model.train(mode=was_training)
 
 

@@ -1,5 +1,5 @@
 import torch
-import copy
+from copy import deepcopy
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -10,7 +10,7 @@ from torchvision import transforms, datasets
 from torch import nn
 from torch.quantization import convert
 from pathlib import PurePath
-
+from torchvision.models import ResNet18_Weights
 
 # Followed a tutorial on quantization on pytorch's home page.
 # https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
@@ -114,7 +114,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
 
-    best_model_wts = copy.deepcopy(model.state_dict())
+    best_model_wts = deepcopy(model.state_dict())
     best_acc = 0.0
 
     for epoch in range(num_epochs):
@@ -159,7 +159,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
 
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc
-                    best_model_wts = copy.deepcopy(model.state_dict())
+                    best_model_wts = deepcopy(model.state_dict())
 
                 print()
 
@@ -213,7 +213,8 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
 def setup_model():
 
     # Use the pretrained model resnet18
-    model_fe = models.resnet18(pretrained=True, progress=True, quantize=False)
+    model_fe = models.resnet18(
+        weights=ResNet18_Weights.DEFAULT,  progress=True, quantize=False)
 
     # Numbers of features to use from the model
     num_ftrs = model_fe.fc.in_features

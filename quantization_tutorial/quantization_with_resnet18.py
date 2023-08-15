@@ -39,10 +39,9 @@ from torchvision.models import ResNet18_Weights
 # From around 8 mins on Ubuntu to around 12-13 mins on Ubuntu,
 # if i quantize the model.
 
+
 # Create a function that loads data transforms using dataloaders and
 # the built in datasets and also adds some classes so you can classify the data
-
-
 def load_data(data_dir):
     data_transforms = {
         'train': transforms.Compose([

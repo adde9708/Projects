@@ -232,9 +232,8 @@ MODEL_FE, NUM_FTRS = setup_model()
 
 
 # Create a model with a custom head
-def create_combined_model(MODEL_FE):
+def create_combined_model(model_fe):
 
-    model_fe = MODEL_FE
     num_ftrs = NUM_FTRS
 
     model_fe_features = nn.Sequential(

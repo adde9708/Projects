@@ -35,7 +35,7 @@ from torchvision.models import ResNet18_Weights
 
 # I saw that i had missed one thing in the tutorial so that the model,
 # would get quantized so i added that via the new function
-# quantized_model but for me personally it's a lot slower to train,
+# quantize_model but for me personally it's a lot slower to train,
 # the quantized model then the non quantized model.
 # From around 8 mins on Ubuntu to around 12-13 mins on Ubuntu,
 # if i quantize the model.

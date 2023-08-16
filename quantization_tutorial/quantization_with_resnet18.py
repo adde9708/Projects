@@ -25,13 +25,12 @@ from torchvision.models import ResNet18_Weights
 # mine only takes around 8 mins. The original train function even uses,
 # more threads/num_workers then mine does and mine is still faster
 
-# I've now tested it on Windows with cuda as well and I have to,
-# do some debugging on it because with cuda on Windows this is,
-# extremely slow and i have no idea why, it might be because of,
-# Windows itself or Windows might not be writing to VRAM,
-# and writes to RAM instead.
-# It takes about 40 minutes to train on Windows with cuda but only,
-# around 8 min on Ubuntu purely on the cpu, with 4 threads
+# I think that i somehow must have fixed the cuda problem on Windows,
+# because i'm now getting about the same perf as on Ubuntu
+# Meaning around 8 mins with and without quantization.
+
+# I'm going to have to see if have mad eany improvements on Ubuntu as well,
+# or at least if i've managed to get the quantized version under 10 mins.
 
 # I saw that i had missed one thing in the tutorial so that the model,
 # would get quantized so i added that via the new function

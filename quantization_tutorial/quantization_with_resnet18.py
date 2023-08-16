@@ -195,13 +195,17 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
 
             for jdx in range(imgs.size(0)):
                 imshow(imgs.data[jdx], title='predicted: {}'.format(
-                    class_names[preds[jdx]]), ax=ax[current_row, current_col])
-                ax[current_row, current_col].axis('off')
+                       class_names[preds[jdx]]),
+                       ax=ax[current_row, current_col])
 
+                ax[current_row, current_col].axis('off')
                 current_col += 1
+
                 if current_col >= cols:
+
                     current_row += 1
                     current_col = 0
+
                 if current_row >= rows:
                     model.train(mode=was_training)
                     return

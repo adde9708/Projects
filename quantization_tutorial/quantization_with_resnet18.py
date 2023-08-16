@@ -29,7 +29,7 @@ from torchvision.models import ResNet18_Weights
 # because i'm now getting about the same perf as on Ubuntu
 # Meaning around 8 mins with and without quantization.
 
-# I'm going to have to see if have mad eany improvements on Ubuntu as well,
+# I'm going to have to see if have mad any improvements on Ubuntu as well,
 # or at least if i've managed to get the quantized version under 10 mins.
 
 # I saw that i had missed one thing in the tutorial so that the model,

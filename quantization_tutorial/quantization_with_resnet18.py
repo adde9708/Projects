@@ -114,7 +114,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
 
-    best_model_wts = deepcopy(model.state_dict())
+    best_model_wts = None
     best_acc = 0.0
 
     for epoch in range(num_epochs):
@@ -168,7 +168,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                     time_elapsed // 60, time_elapsed % 60))
                 print('Best val Acc: {:4f}'.format(best_acc))
 
-    model.load_state_dict(best_model_wts)
+    if best_model_wts is not None:
+        model.load_state_dict(best_model_wts)
 
     return model
 

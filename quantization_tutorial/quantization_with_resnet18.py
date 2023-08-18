@@ -46,7 +46,7 @@ from torchvision.models import ResNet18_Weights
 # smaller bit sizes for floats and integers give better performance
 # and also use only one worker thread for the fastest training on the,
 # GPU. On the other hand for training on the CPU, the opposite is true,
-# except maybe the batch size might improve accuracy but the training,
+# except maybe a bigger batch size might improve accuracy but the training,
 # would be slower.
 
 

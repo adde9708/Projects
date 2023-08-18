@@ -27,7 +27,14 @@ from torchvision.models import ResNet18_Weights
 
 # I think that i somehow must have fixed the cuda problem on Windows,
 # because i'm now getting about the same perf as on Ubuntu
-# Meaning around 8 mins with and without quantization.
+# Meaning around 8 mins without quantization.
+
+# I saw that i had missed one thing in the tutorial so that the model,
+# would get quantized so i added that via the new function
+# quantize_model but for me personally it's a lot slower to train,
+# the quantized model then the non quantized model.
+# From around 8 mins on Ubuntu to around 12-13 mins on Ubuntu,
+# if i quantize the model.
 
 # I have now tested if i improved performance for the quantized version,
 # on Ubuntu by fixing the cuda problem.
@@ -39,13 +46,6 @@ from torchvision.models import ResNet18_Weights
 # smaller bit sizes for floats and integers give better performance
 # and also use only one worker thread for the fastest training on the,
 # GPU. On the other hand for training on the CPU, the opposite is true.
-
-# I saw that i had missed one thing in the tutorial so that the model,
-# would get quantized so i added that via the new function
-# quantize_model but for me personally it's a lot slower to train,
-# the quantized model then the non quantized model.
-# From around 8 mins on Ubuntu to around 12-13 mins on Ubuntu,
-# if i quantize the model.
 
 
 # Create a function that loads data transforms using dataloaders and

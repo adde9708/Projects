@@ -29,8 +29,16 @@ from torchvision.models import ResNet18_Weights
 # because i'm now getting about the same perf as on Ubuntu
 # Meaning around 8 mins with and without quantization.
 
-# I'm going to have to see if have made any improvements on Ubuntu as well,
-# or at least if i've managed to get the quantized version under 10 mins.
+# I have now tested if i improved performance for the quantized version,
+# on Ubuntu by fixing the cuda problem.
+# It didn't improve the performance on Ubuntu.
+# But i've run a few other tests like trying different,
+# batch sizes and number of worker threads.
+# What i've found is that for training on the GPU,
+# for the fastest and accurate training, the bigger the batch size the better,
+# smaller bit sizes for floats and integers give better performance
+# and also use only one worker thread for the fastest training on the,
+# GPU. On the other hand for training on the CPU, the opposite is true.
 
 # I saw that i had missed one thing in the tutorial so that the model,
 # would get quantized so i added that via the new function

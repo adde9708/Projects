@@ -47,7 +47,7 @@ from torchvision.models import ResNet18_Weights
 # and also use only one worker thread for the fastest training on the,
 # GPU. On the other hand for training on the CPU, the opposite is true,
 # except maybe the batch size might improve accuracy but the training,
-# would be slower
+# would be slower.
 
 
 # Create a function that loads data transforms using dataloaders and

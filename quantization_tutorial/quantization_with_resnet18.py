@@ -26,8 +26,8 @@ from torchvision.models import ResNet18_Weights
 # more threads/num_workers then mine does and mine is still faster
 
 # I think that i somehow must have fixed the cuda problem on Windows,
-# because i'm now getting about the same perf as on Ubuntu
-# Meaning around 8 mins without quantization.
+# because i'm now getting about the same perf as on Ubuntu,
+# meaning around 8 mins without quantization.
 
 # I saw that i had missed one thing in the tutorial so that the model,
 # would get quantized so i added that via the new function

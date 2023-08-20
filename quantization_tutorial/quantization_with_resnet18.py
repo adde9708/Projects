@@ -71,6 +71,7 @@ def load_data(data_dir):
 
     image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                               data_transforms[x])
+
                       for x in ['train', 'val']}
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x],
                                                   batch_size=16,
@@ -83,28 +84,6 @@ def load_data(data_dir):
     class_names = image_datasets['train'].classes
 
     return dataloaders, dataset_sizes, class_names
-
-
-# Create a helper function for the subplot,
-# which uses numpy to set the input for the making of a grid that,
-# the subplot will use to display the predictions made by the AI model
-def imshow(inp, title=None, ax=None, figsize=(5, 5)):
-
-    inp = inp.numpy().transpose((1, 2, 0))
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.225, 0.224])
-    inp = std * inp + mean
-    inp = np.clip(inp, 0, 1)
-
-    if ax is None:
-        fig, ax = plt.subplots(1, figsize=figsize)
-
-    ax.imshow(inp)
-    ax.set_xticks([])
-    ax.set_yticks([])
-
-    if title is not None:
-        ax.set_title(title)
 
 
 # Just a function that returns the directory where the data is stored
@@ -181,6 +160,28 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
         model.load_state_dict(best_model_wts)
 
     return model
+
+
+# Create a helper function for the subplot,
+# which uses numpy to set the input for the making of a grid that,
+# the subplot will use to display the predictions made by the AI model
+def imshow(inp, title=None, ax=None, figsize=(5, 5)):
+
+    inp = inp.numpy().transpose((1, 2, 0))
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.225, 0.224])
+    inp = std * inp + mean
+    inp = np.clip(inp, 0, 1)
+
+    if ax is None:
+        fig, ax = plt.subplots(1, figsize=figsize)
+
+    ax.imshow(inp)
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    if title is not None:
+        ax.set_title(title)
 
 
 # This is the function that will load the images and creation of the,

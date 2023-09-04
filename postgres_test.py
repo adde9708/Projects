@@ -1,7 +1,9 @@
 import psycopg2
 
+
 def connect_postgres():
-    conn = psycopg2.connect(database="postgres", host="localhost", user="postgres", password="segerlund97", port="5432")
+    conn = psycopg2.connect(database="postgres", host="localhost",
+                            user="postgres", password="password", port="5432")
 
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM tweets")

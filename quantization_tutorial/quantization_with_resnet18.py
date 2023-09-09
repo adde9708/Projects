@@ -101,7 +101,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
     data_dir = return_data_dir()
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
-
     best_model_wts = None
     best_acc = 0.0
 

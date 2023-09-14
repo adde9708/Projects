@@ -61,7 +61,8 @@ def ohm_dec(key, random_key, iv, encrypted_message, message):
     message_hash = decrypted_bytes[:original_hash_length]
 
     # Compute the SHAKE256 hash of the original message
-    original_hash = shake_256(message.encode("utf-8")).digest(original_hash_length)
+    original_hash = shake_256(message.encode("utf-8")).digest(
+                              original_hash_length)
 
     # Compare the message hash with the original hash
     if compare_digest(message_hash, original_hash):

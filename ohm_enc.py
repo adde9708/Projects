@@ -42,8 +42,9 @@ def ohm_enc(message):
 
     # XOR the hash with the random key and the encryption key
     res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ key
-   
+
     return key, random_key, iv, res
+
 
 def ohm_dec(key, random_key, iv, encrypted_message, message):
     # Calculate the number of bytes needed to represent the integer
@@ -58,7 +59,6 @@ def ohm_dec(key, random_key, iv, encrypted_message, message):
     # Extract the original message hash and IV
     original_hash_length = len(shake_256(message.encode("utf-8")).digest(512))
     message_hash = decrypted_bytes[:original_hash_length]
-   
 
     # Compute the SHAKE256 hash of the original message
     original_hash = shake_256(message.encode("utf-8")).digest(original_hash_length)
@@ -75,15 +75,16 @@ def main():
     # Encrypt a message using ohm_enc
     message = "This is a secret message."
     key, random_key, iv, res = ohm_enc(message)
-    
+
     # Decrypt the message using ohm_dec
     decrypted_message = ohm_dec(key, random_key, iv, res, message)
 
     if decrypted_message is not None:
-     print("Decryption successful:")
-     print("Original Message:", message)
-     print("Decrypted Message:", decrypted_message)
+        print("Decryption successful:")
+        print("Original Message:", message)
+        print("Decrypted Message:", decrypted_message)
     else:
-     print("Decryption failed. The message may have been tampered with.")
+        print("Decryption failed. The message may have been tampered with.")
+
 
 main()

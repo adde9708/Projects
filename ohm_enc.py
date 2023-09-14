@@ -8,57 +8,82 @@ def ohm_enc(message):
     key = random_key = real_p = i = E = equations = padding = res = message_hash = None
     sys_random = None
     sys_random = SystemRandom()
-    E = sys_random.randint(-600000000000, -39081)
+    E = 0
+    while E == 0:
+        E = sys_random.randint(-600000000000, -39081)
+
     i = sys_random.randint(-2000000000000, 2**448 - 1 + 2**224 - 1)
     p = i * E
     real_p = p / E
     equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}
 
-    # choose random equation
-    key = choice(tuple(equations))
-    # Extract digits from the key
-    key = int(key)
-    key = hex(ceil(key))
-    key = ''.join(filter(str.isdigit, key))
-    key = float(key)
-    key = ceil(key)
+    while key is None or key == 0:
+        # Choose a random equation
+        key = choice(tuple(equations))
+        # Extract digits from the key
+        key = int(key)
+        key = hex(ceil(key))
+        key = ''.join(filter(str.isdigit, key))
+        key = float(key)
+        key = ceil(key)
+
+    # Generate a random initialization vector
+    iv = sys_random.randbytes(64)
 
     # Generate a random key for xoring the hash string
-    random_key = sys_random.randint(int(2 * 256), int(2 * 512))
+    random_key = sys_random.randint(int(2 ** 256), int(2 ** 512))
 
     # Hash the message using SHAKE256
     message_hash = shake_256(message.encode("utf-8")).digest(512)
 
     # Append a fixed-length padding to the hash
-    padding = b"\x00" * 1024
+    padding = b"\x80" + b"\x00" * 1024 + iv
     message_hash += padding
 
     # XOR the hash with the random key and the encryption key
     res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ key
+   
+    return key, random_key, iv, res
 
-    return key, random_key, res
+def ohm_dec(key, random_key, iv, encrypted_message, message):
+    # Calculate the number of bytes needed to represent the integer
+    num_bytes = (encrypted_message.bit_length() + 7) // 8
 
+    # Decrypt the XOR result using the same keys
+    decrypted_data = encrypted_message ^ random_key ^ key
 
-res = ohm_enc("test")
-print(res)
+    # Convert the decrypted data to bytes
+    decrypted_bytes = decrypted_data.to_bytes(num_bytes, byteorder='big')
 
+    # Extract the original message hash and IV
+    original_hash_length = len(shake_256(message.encode("utf-8")).digest(512))
+    message_hash = decrypted_bytes[:original_hash_length]
+   
 
-def ohm_dec(key, random_key, encrypted):
-    # Convert the encryption key to string
-    key_str = hex(key)[2:]
-    # Add leading zeros if necessary
-    key_str = "0" * (len(key_str) % 2) + key_str
-    # Convert the key string to bytes
-    key_bytes = bytes.fromhex(key_str)
-    # Reverse the XOR operation
-    message_hash = encrypted ^ random_key ^ int.from_bytes(
-        key_bytes, byteorder="big")
-    # Remove the padding
-    message_hash = message_hash[:-1024]
     # Compute the SHAKE256 hash of the original message
-    original_hash = shake_256(encrypted.encode("utf-8")).digest(512)
+    original_hash = shake_256(message.encode("utf-8")).digest(original_hash_length)
+
     # Compare the message hash with the original hash
-    if compare_digest(message_hash, int.from_bytes(original_hash, byteorder="big")):
-        return encrypted
+    if compare_digest(message_hash, original_hash):
+        return message
     else:
         return None
+
+
+def main():
+
+    # Encrypt a message using ohm_enc
+    message = "This is a secret message."
+    key, random_key, iv, res = ohm_enc(message)
+    
+    # Decrypt the message using ohm_dec
+    decrypted_message = ohm_dec(key, random_key, iv, res, message)
+
+    if decrypted_message is not None:
+     print("Decryption successful:")
+     print("Original Message:", message)
+     print("Decrypted Message:", decrypted_message)
+    else:
+     print("Decryption failed. The message may have been tampered with.")
+
+main()

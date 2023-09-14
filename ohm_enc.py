@@ -5,7 +5,8 @@ from secrets import SystemRandom, choice
 
 
 def ohm_enc(message):
-    key = random_key = real_p = i = E = equations = padding = res = message_hash = None
+    key = random_key = real_p = i = E = equations = padding = res = None
+    message_hash = None
     sys_random = None
     sys_random = SystemRandom()
     E = 0

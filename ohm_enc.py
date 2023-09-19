@@ -11,7 +11,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     real_p: Union[float, None] = None
     i: int = 0
     E: int = 0
-    equations: set[Optional[float]] = set()
+    equations: set[Union[float, int]] = set()
     padding: bytes = b""
     res: int = 0
     message_hash: bytes = b""
@@ -31,12 +31,11 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
         key = choice(tuple(equations))
 
         # Extract digits from the key
-        key = int(key)
+        key = float(key)
         key = hex(ceil(key))
         key_str = str(key)
         key = ''.join(filter(str.isdigit, key_str))
-        key = float(key)
-        key = ceil(key)
+        key = int(key)
 
     # Generate a random initialization vector
     iv = sys_random.randbytes(64)
@@ -60,12 +59,18 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     return key, random_key, iv, res
 
 
-def ohm_dec(key, random_key, iv, encrypted_message, message):
+def ohm_dec(key: float, random_key: int, iv: bytes, encrypted_message: int,
+            message: str) -> Optional[str]:
+
     # Calculate the number of bytes needed to represent the integer
     num_bytes = (encrypted_message.bit_length() + 7) // 8
 
+    # Create a temp variable because a static typed variable,
+    # can't change type
+    key_int = int(key)
+
     # Decrypt the XOR result using the same keys
-    decrypted_data = encrypted_message ^ random_key ^ key
+    decrypted_data = encrypted_message ^ random_key ^ key_int
 
     # Convert the decrypted data to bytes
     decrypted_bytes = decrypted_data.to_bytes(num_bytes, byteorder='big')
@@ -85,7 +90,7 @@ def ohm_dec(key, random_key, iv, encrypted_message, message):
         return None
 
 
-def main():
+def main() -> None:
 
     # Encrypt a message using ohm_enc
     message = "This is a secret message."

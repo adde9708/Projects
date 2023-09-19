@@ -26,12 +26,15 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}
 
     while key is None or key == 0:
+
         # Choose a random equation
         key = choice(tuple(equations))
+
         # Extract digits from the key
         key = int(key)
         key = hex(ceil(key))
-        key = ''.join(filter(str.isdigit, key))
+        key_str = str(key)
+        key = ''.join(filter(str.isdigit, key_str))
         key = float(key)
         key = ceil(key)
 

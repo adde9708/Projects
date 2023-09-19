@@ -6,9 +6,9 @@ from typing import Tuple, Union, Optional
 
 
 def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
-    key: Union[float, None] = None
-    random_key: Union[float, None] = None
-    real_p: Union[float, None] = None
+    key: Union[float, str] = "0"
+    random_key: Union[float, int] = 0
+    real_p: Union[float, int] = 0.0
     i: int = 0
     E: int = 0
     equations: set[Union[float, int]] = set()

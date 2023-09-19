@@ -2,16 +2,16 @@ from hashlib import shake_256
 from hmac import compare_digest
 from math import ceil, sqrt
 from secrets import SystemRandom, choice
-from typing import Tuple, Union, List
+from typing import Tuple, Union, Optional
 
 
-def ohm_enc(message: str) -> Tuple[int, int, bytes, int]:
-    key: Union[int, None] = None
-    random_key: Union[int, None] = None
+def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
+    key: Union[float, None] = None
+    random_key: Union[float, None] = None
     real_p: Union[float, None] = None
     i: int = 0
     E: int = 0
-    equations: set[Union[float, int]] = set()
+    equations: set[Optional[float]] = set()
     padding: bytes = b""
     res: int = 0
     message_hash: bytes = b""
@@ -47,6 +47,9 @@ def ohm_enc(message: str) -> Tuple[int, int, bytes, int]:
     # Append a fixed-length padding to the hash
     padding = b"\x80" + b"\x00" * 1024 + iv
     message_hash += padding
+
+    # Convert the key to int
+    key = int(key)
 
     # XOR the hash with the random key and the encryption key
     res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ key

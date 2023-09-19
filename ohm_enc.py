@@ -33,8 +33,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
         # Extract digits from the key
         key = float(key)
         key = hex(ceil(key))
-        key_str = str(key)
-        key = ''.join(filter(str.isdigit, key_str))
+        key = ''.join(filter(str.isdigit, key))
         key = int(key)
 
     # Generate a random initialization vector

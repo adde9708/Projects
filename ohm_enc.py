@@ -2,14 +2,21 @@ from hashlib import shake_256
 from hmac import compare_digest
 from math import ceil, sqrt
 from secrets import SystemRandom, choice
+from typing import Tuple, Union, List
 
 
-def ohm_enc(message):
-    key = random_key = real_p = i = E = equations = padding = res = None
-    message_hash = None
-    sys_random = None
-    sys_random = SystemRandom()
-    E = 0
+def ohm_enc(message: str) -> Tuple[int, int, bytes, int]:
+    key: Union[int, None] = None
+    random_key: Union[int, None] = None
+    real_p: Union[float, None] = None
+    i: int = 0
+    E: int = 0
+    equations: set[Union[float, int]] = set()
+    padding: bytes = b""
+    res: int = 0
+    message_hash: bytes = b""
+    sys_random: SystemRandom = SystemRandom()
+
     while E == 0:
         E = sys_random.randint(-600000000000, -39081)
 
@@ -63,7 +70,7 @@ def ohm_dec(key, random_key, iv, encrypted_message, message):
 
     # Compute the SHAKE256 hash of the original message
     original_hash = shake_256(message.encode("utf-8")).digest(
-                              original_hash_length)
+        original_hash_length)
 
     # Compare the message hash with the original hash
     if compare_digest(message_hash, original_hash):

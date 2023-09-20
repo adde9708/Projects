@@ -29,7 +29,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
 
         # Choose a random equation
         key = choice(tuple(equations))
-        print(key)
+
         # Extract digits from the key
         key = float(key)
         key = hex(ceil(key))

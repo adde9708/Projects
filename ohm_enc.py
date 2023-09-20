@@ -6,12 +6,12 @@ from typing import Tuple, Union, Optional
 
 
 def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
-    key: Union[float, str] = "0"
+    key: Union[float, str] = 0.0
     random_key: Union[float, int] = 0
     real_p: Union[float, int] = 0.0
     i: int = 0
     E: int = 0
-    equations: set[Union[float, int]] = set()
+    equations: set[Union[float, str]] = set()
     padding: bytes = b""
     res: int = 0
     message_hash: bytes = b""
@@ -29,7 +29,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
 
         # Choose a random equation
         key = choice(tuple(equations))
-
+        print(key)
         # Extract digits from the key
         key = float(key)
         key = hex(ceil(key))

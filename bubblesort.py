@@ -13,5 +13,5 @@ def bubble_sort(speed):
 speed = [100, 80, 130, 111, 96, 110, 90, 94, 86, 150, 120, 144, 146]
 bubble_sort(speed)
 
-for item in speed:
-    print(item)
+for item in range(len(speed)):
+    print(speed[item])

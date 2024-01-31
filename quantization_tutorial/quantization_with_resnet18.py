@@ -12,7 +12,6 @@ from torch.quantization import convert
 from pathlib import PurePath
 from torchvision.models import ResNet18_Weights
 
-
 # Followed a tutorial on quantization on pytorch's home page.
 # https://pytorch.org/tutorials/intermediate/quantized_transfer_learning_tutorial.html
 # Made a few modifications by adding a few functions for example the,
@@ -108,11 +107,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
         print('-' * 10)
 
         for phase in ['train', 'val']:
-            if phase == 'train':
-                model.train()
-            else:
-                model.eval()
-
+            model.train() if phase == 'train' else model.eval()
             running_loss = 0.0
             running_corrects = 0
 
@@ -222,33 +217,8 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
         model.train(mode=was_training)
 
 
-# Setup the pretrained model resnet18 that we will use to further train our
-# model and not just the custom head
-def setup_model():
-
-    # Use the pretrained model resnet18
-    model_fe = models.resnet18(weights=ResNet18_Weights.DEFAULT,
-                               progress=True, quantize=False)
-
-    # Numbers of features to use from the model
-    num_ftrs = model_fe.fc.in_features
-
-    # Train the model
-    model_fe.train()
-
-    # Fuse the model with a custom head
-    model_fe.fuse_model()
-
-    return model_fe, num_ftrs
-
-
-MODEL_FE, NUM_FTRS = setup_model()
-
-
 # Create a model with a custom head
-def create_combined_model(model_fe):
-
-    num_ftrs = NUM_FTRS
+def create_combined_model(model_fe, num_ftrs):
 
     model_fe_features = nn.Sequential(
         model_fe.quant,
@@ -279,16 +249,35 @@ def create_combined_model(model_fe):
 
 
 # Quantize the model
-def quantize_model():
+def quantize_model(model_fe, num_ftrs):
 
-    model_fe = MODEL_FE
-    model = create_combined_model(model_fe)
+    model = create_combined_model(model_fe, num_ftrs)
     model[0].qconfig = torch.quantization.default_qat_qconfig
     model = torch.quantization.prepare_qat(model, inplace=True)
     for param in model.parameters():
         param.requires_grad = True
 
     return model
+
+
+# Setup the pretrained model resnet18 that we will use to further train our
+# model and not just the custom head
+def setup_model():
+
+    # Use the pretrained model resnet18
+    model_fe = models.resnet18(weights=ResNet18_Weights.DEFAULT,
+                               progress=True, quantize=False)
+
+    # Numbers of features to use from the model
+    num_ftrs = model_fe.fc.in_features
+
+    # Train the model
+    model_fe.train()
+
+    # Fuse the model with a custom head
+    model_fe.fuse_model()
+
+    return model_fe, num_ftrs
 
 
 # Just a function that calls all the functions above it to keep main small
@@ -308,7 +297,9 @@ def start():
 
     imshow(out, title=[class_names[x] for x in classes], ax=ax)
 
-    model = quantize_model()
+    model_fe, num_ftrs = setup_model()
+
+    model = quantize_model(model_fe, num_ftrs)
 
     model = model.to(device)
 

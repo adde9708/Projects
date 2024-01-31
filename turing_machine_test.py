@@ -1,6 +1,3 @@
-import dis
-
-
 def turing_machine():
     i = 0
     lst = [0, 1, {10, 20, 3, 1, 4}, [0, 1]]

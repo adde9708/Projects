@@ -201,7 +201,7 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
                 imshow(imgs.data[jdx], title='predicted: {}'.format(
                        class_names[preds[jdx]]),
                        ax=ax[current_row, current_col])
-
+                x = 5
                 ax[current_row, current_col].axis('off')
                 current_col += 1
 

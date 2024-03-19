@@ -59,23 +59,24 @@ def load_data(data_dir):
                 transforms.RandomCrop(256),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
-            ]
-        ),
+                transforms.Normalize([0.485, 0.456, 0.406],
+                                     [0.229, 0.225, 0.224]),
+            ]),
+
         "val": transforms.Compose(
             [
                 transforms.Resize(256),
                 transforms.RandomCrop(256),
                 transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
+                transforms.Normalize([0.485, 0.456, 0.406], [
+                                     0.229, 0.225, 0.224]),
             ]
         ),
     }
 
-    image_datasets = {
-        x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x])
-        for x in ["train", "val"]
-    }
+    image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
+                                              data_transforms[x])
+                      for x in ["train", "val"]}
 
     dataloaders = {
         x: torch.utils.data.DataLoader(
@@ -138,9 +139,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="c
                 epoch_loss = running_loss / dataset_sizes[phase]
                 epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-                print(
-                    "{} Loss: {:.4f} Acc: {:.4f}".format(phase, epoch_loss, epoch_acc)
-                )
+                print("{} Loss: {:.4f} Acc: {:.4f}".format(
+                    phase, epoch_loss, epoch_acc))
 
                 if phase == "val" and epoch_acc > best_acc:
                     best_acc = epoch_acc
@@ -201,11 +201,9 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
             _, preds = torch.max(outputs, 1)
 
             for jdx in range(imgs.size(0)):
-                imshow(
-                    imgs.data[jdx],
-                    title="predicted: {}".format(class_names[preds[jdx]]),
-                    ax=ax[current_row, current_col],
-                )
+                imshow(imgs.data[jdx],
+                       title="predicted: {}".format(class_names[preds[jdx]]),
+                       ax=ax[current_row, current_col])
 
                 ax[current_row, current_col].axis("off")
                 current_col += 1
@@ -310,11 +308,12 @@ def start():
 
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, step_size=7, gamma=0.1)
 
-    trained_model = train_model(
-        model, criterion, optimizer, scheduler, num_epochs=25, device=device
-    )
+    trained_model = train_model(model, criterion, optimizer,
+                                scheduler, num_epochs=25,
+                                device=device)
 
     trained_model.cpu()
 

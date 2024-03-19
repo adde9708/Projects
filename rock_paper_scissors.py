@@ -3,7 +3,7 @@ from secrets import choice
 
 def play():
     win = False
-    loose = False
+    lose = False
     score = 0
     highscore_lst = []
 
@@ -28,12 +28,12 @@ def play():
 
             win = True
         else:
-            loose = True
+            lose = True
 
         if win:
             print("\nYou won")
             score += 1
-        elif loose:
+        elif lose:
             print("\nYou lost, try again")
 
         highscore_lst.append((name, score))

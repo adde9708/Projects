@@ -68,8 +68,8 @@ def load_data(data_dir):
                 transforms.Resize(256),
                 transforms.RandomCrop(256),
                 transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [
-                                     0.229, 0.225, 0.224]),
+                transforms.Normalize([0.485, 0.456, 0.406],
+                                     [0.229, 0.225, 0.224]),
             ]
         ),
     }
@@ -78,12 +78,8 @@ def load_data(data_dir):
                                               data_transforms[x])
                       for x in ["train", "val"]}
 
-    dataloaders = {
-        x: torch.utils.data.DataLoader(
-            image_datasets[x], batch_size=16, shuffle=True, num_workers=4
-        )
-        for x in ["train", "val"]
-    }
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=16, shuffle=True, num_workers=4)
+                   for x in ["train", "val"]}
 
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "val"]}
 
@@ -149,11 +145,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="c
                 print()
 
                 time_elapsed = time.time() - since
-                print(
-                    "Training complete in {:.0f}m {:.0f}s".format(
-                        time_elapsed // 60, time_elapsed % 60
-                    )
-                )
+
+                print("Training complete in {:.0f}m {:.0f}s".format(
+                    time_elapsed // 60, time_elapsed % 60))
+
                 print("Best val Acc: {:4f}".format(best_acc))
 
     if best_model_wts is not None:

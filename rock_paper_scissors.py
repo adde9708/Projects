@@ -1,16 +1,17 @@
 from secrets import choice
+from typing import List, Tuple
 
 
-def play():
-    win = False
-    lose = False
-    score = 0
-    highscore_lst = []
+def play() -> List[Tuple[str, int]]:
+    win: bool = False
+    lose: bool = False
+    score: int = 0
+    highscore_lst: List[Tuple[str, int]] = []
 
-    name = input("What's your name? ")
+    name: str = input("What's your name? ")
 
-    player_choice = input("Rock, paper or scissors? ").lower()
-    choices = ("rock", "paper", "scissors")
+    player_choice: str = input("Rock, paper or scissors? ").lower()
+    choices: Tuple[str, str, str] = ("rock", "paper", "scissors")
 
     if player_choice in choices:
 
@@ -43,22 +44,22 @@ def play():
     return highscore_lst
 
 
-def view_users():
-    highscore_lst = play()
+def view_users() -> None:
+    highscore_lst: List[Tuple[str, int]] = play()
     print("\nHighscore list\n")
     for name, score in highscore_lst:
         print(f"{name}: {score}")
 
 
-def main():
+def main() -> None:
     while True:
         print("\nMenu:")
         print("1. Do you want to play?")
         print("2. Highscore")
         print("3. Exit")
 
-        player_choice = input("Enter your choice: ")
-        choices = ("1", "2", "3")
+        player_choice: str = input("Enter your choice: ")
+        choices: Tuple[str, str, str] = ("1", "2", "3")
 
         if player_choice == choices[0]:
             play()

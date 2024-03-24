@@ -1,2 +1,2 @@
 # Projects
-A few different python scripts and projects in python
+A few different projects in python and scripts

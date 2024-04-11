@@ -1,42 +1,44 @@
-
-
-def add_hash(ans, hash_set, hash, repeated_sequence):
-    if hash in hash_set and repeated_sequence not in ans:
+def add_hash(ans, hash_set, hash_val, repeated_sequence):
+    if hash_val in hash_set and repeated_sequence not in ans:
         ans.add(repeated_sequence)
     else:
-        hash_set.add(hash)
+        hash_set.add(hash_val)
 
 
-def build_hash(s, ans, hash_set, hash, lst_len, inp, base_power_10):
-    for i in range(1, lst_len - 9):
-        repeated_sequence = s[i:i+10]
-        hash = hash * 4 - inp[i - 1] * base_power_10 + inp[i + 9]
-        add_hash(ans, hash_set, hash, repeated_sequence)
+def build_hash(s, nucleotide_mapping, start_index):
+    hash_val = 0
+    for i in range(10):
+        hash_val += nucleotide_mapping[start_index + i] * (4 ** (9 - i))
+    return hash_val
 
 
 def find_repeated_dna_sequences(s):
     ans = set()
     hash_set = set()
-    hash = 0
     lst_len = len(s)
-    inp = [0] * lst_len
 
     if lst_len < 10:
         return list(ans)
 
     nucleotide_mapping = {'A': 1, 'C': 2, 'G': 3, 'T': 4}
+    nucleotide_mapping = [nucleotide_mapping.get(char, 0) for char in s]
 
-    inp = [nucleotide_mapping.get(x, 0) for x in s]
+    hash_val = build_hash(s, nucleotide_mapping, 0)
+    hash_set.add(hash_val)
 
-    hash = sum(inp[i] * (4 ** (9 - i)) for i in range(10))
-    hash_set.add(hash)
-    base_power_10 = 4 ** 10
-    build_hash(s, ans, hash_set, hash, lst_len, inp, base_power_10)
+    for i in range(1, lst_len - 9):
+        repeated_sequence = s[i:i + 10]
+        hash_val = build_hash(s, nucleotide_mapping, i - 1)
+        add_hash(ans, hash_set, hash_val, repeated_sequence)
 
     return list(ans)
 
 
-s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+def main():
+    s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+    ans = find_repeated_dna_sequences(s)
+    print(ans)
 
-ret = find_repeated_dna_sequences(s)
-print(ret)
+
+if __name__ == "__main__":
+    main()

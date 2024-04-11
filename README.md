@@ -1,2 +1,2 @@
 # Projects
-A few different python scripts and projects 
+A few different projects in python and python scripts and a calculator using kivy as GUI

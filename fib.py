@@ -3,14 +3,14 @@ from math import sqrt
 # O(1)
 
 
-def fib(n):
+def fib_const_time(n):
     print("Fibonacci series")
     phi = (1 + sqrt(5)) / 2
     Fn = round((phi**n) / sqrt(5))
     print(Fn)
 
 
-fib(10)
+fib_const_time(10)
 
 
 # O(n)

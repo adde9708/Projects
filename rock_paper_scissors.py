@@ -14,19 +14,19 @@ def play() -> List[Tuple[str, int]]:
     choices: Tuple[str, str, str] = ("rock", "paper", "scissors")
 
     if player_choice in choices:
-
         computer_choice = choice(choices)
 
         if player_choice == computer_choice:
             print("\nDraw, try again")
 
-        elif (player_choice == choices[0]
-              and computer_choice == choices[2]
-              or player_choice == choices[1]
-              and computer_choice == choices[0]
-              or player_choice == choices[2]
-              and computer_choice == choices[1]):
-
+        elif (
+            player_choice == choices[0]
+            and computer_choice == choices[2]
+            or player_choice == choices[1]
+            and computer_choice == choices[0]
+            or player_choice == choices[2]
+            and computer_choice == choices[1]
+        ):
             win = True
         else:
             lose = True

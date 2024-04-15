@@ -20,14 +20,14 @@ def find_repeated_dna_sequences(s):
     if lst_len < 10:
         return list(ans)
 
-    nucleotide_mapping = {'A': 1, 'C': 2, 'G': 3, 'T': 4}
+    nucleotide_mapping = {"A": 1, "C": 2, "G": 3, "T": 4}
     nucleotide_mapping = [nucleotide_mapping.get(char, 0) for char in s]
 
     hash_val = build_hash(s, nucleotide_mapping, 0)
     hash_set.add(hash_val)
 
     for i in range(1, lst_len - 9):
-        repeated_sequence = s[i:i + 10]
+        repeated_sequence = s[i : i + 10]
         hash_val = build_hash(s, nucleotide_mapping, i - 1)
         add_hash(ans, hash_set, hash_val, repeated_sequence)
 

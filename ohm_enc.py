@@ -26,21 +26,20 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}
 
     while key is None or key == 0:
-
         # Choose a random equation
         key = choice(tuple(equations))
 
         # Extract digits from the key
         key = float(key)
         key = hex(ceil(key))
-        key = ''.join(filter(str.isdigit, key))
+        key = "".join(filter(str.isdigit, key))
         key = int(key)
 
     # Generate a random initialization vector
     iv = sys_random.randbytes(64)
 
     # Generate a random key for xoring the hash string
-    random_key = sys_random.randint(int(2 ** 256), int(2 ** 512))
+    random_key = sys_random.randint(int(2**256), int(2**512))
 
     # Hash the message using SHAKE256
     message_hash = shake_256(message.encode("utf-8")).digest(512)
@@ -58,9 +57,9 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     return key, random_key, iv, res
 
 
-def ohm_dec(key: float, random_key: int, iv: bytes, encrypted_message: int,
-            message: str) -> Optional[str]:
-
+def ohm_dec(
+    key: float, random_key: int, iv: bytes, encrypted_message: int, message: str
+) -> Optional[str]:
     # Calculate the number of bytes needed to represent the integer
     num_bytes = (encrypted_message.bit_length() + 7) // 8
 
@@ -72,7 +71,7 @@ def ohm_dec(key: float, random_key: int, iv: bytes, encrypted_message: int,
     decrypted_data = encrypted_message ^ random_key ^ key_int
 
     # Convert the decrypted data to bytes
-    decrypted_bytes = decrypted_data.to_bytes(num_bytes, byteorder='big')
+    decrypted_bytes = decrypted_data.to_bytes(num_bytes, byteorder="big")
 
     # Extract the original message hash and IV
     original_hash_length = len(shake_256(message.encode("utf-8")).digest(512))
@@ -80,7 +79,8 @@ def ohm_dec(key: float, random_key: int, iv: bytes, encrypted_message: int,
 
     # Compute the SHAKE256 hash of the original message
     original_hash = shake_256(message.encode("utf-8")).digest(
-        original_hash_length)
+        original_hash_length
+    )
 
     # Compare the message hash with the original hash
     if compare_digest(message_hash, original_hash):
@@ -90,7 +90,6 @@ def ohm_dec(key: float, random_key: int, iv: bytes, encrypted_message: int,
 
 
 def main() -> None:
-
     # Encrypt a message using ohm_enc
     message = "This is a secret message."
     key, random_key, iv, res = ohm_enc(message)

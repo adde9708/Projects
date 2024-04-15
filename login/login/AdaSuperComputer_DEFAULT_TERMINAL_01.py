@@ -170,7 +170,6 @@ infoStr2 = """
 
 
 def Introduction(intro):
-
     # Type Writer Animation Loop
     for char in intro:
         sys.stdout.write(char)
@@ -200,11 +199,11 @@ def CreateNewUser():
 
     sleep(3)
 
-# Prompting the User for a User Name
+    # Prompting the User for a User Name
     global signUpUsr
     signUpUsr = pip.inputStr(prompt="Enter Username: ")
 
-# Prompting the User for a User Password
+    # Prompting the User for a User Password
     global signUpPss
     signUpPss = pip.inputPassword(prompt="Enter Password: ")
 
@@ -221,7 +220,8 @@ def CreateNewUser():
     loop = tqdm(total=50000, position=0, leave=False)
     for k in range(50000):
         loop.set_description(
-            "Requesting File from ADA Super Server...".format(k))
+            "Requesting File from ADA Super Server...".format(k)
+        )
         loop.update(1)
     loop.close()
 
@@ -231,7 +231,9 @@ def CreateNewUser():
 
     print("")
 
-    print("Wait for ADA Super Server to Retrieve all necessary files to Local Machine!")
+    print(
+        "Wait for ADA Super Server to Retrieve all necessary files to Local Machine!"
+    )
 
     print("")
 
@@ -240,7 +242,8 @@ def CreateNewUser():
     loop = tqdm(total=25000, position=0, leave=False)
     for k in range(25000):
         loop.set_description(
-            "Downloading File from ADA Super Server...".format(k))
+            "Downloading File from ADA Super Server...".format(k)
+        )
         loop.update(1)
     loop.close()
 
@@ -274,7 +277,6 @@ CreateNewUser()
 
 
 def SignUpAnim():
-
     # Creation and Writing a new file
     fh = open("SignInCredentials01.txt", "w")
     fh.write("Username: " + signUpUsr + "\n")
@@ -301,11 +303,15 @@ def SignUpAnim():
         loop.update(1)
     loop.close()
 
-    print("Sign Up Process Done! The File has been saved and secured correctly!")
+    print(
+        "Sign Up Process Done! The File has been saved and secured correctly!"
+    )
     print(" ")
     print("Any movement of this File may cause massive failures to the System!")
     print(" ")
-    print("Any changes or aborted tasks made by local User in Local Machine and/or ADA Systems, may result punishments by death!")
+    print(
+        "Any changes or aborted tasks made by local User in Local Machine and/or ADA Systems, may result punishments by death!"
+    )
     print(" ")
 
     fh.close()
@@ -317,20 +323,26 @@ SignUpAnim()
 
 
 def Encrypt():
-
     fh = open("SignInCredentials01.txt", "w")
-    fh.write(codecs.encode("Username: " + signUpUsr +
-             "\n" + "Password: " + signUpPss, 'rot_13'))
+    fh.write(
+        codecs.encode(
+            "Username: " + signUpUsr + "\n" + "Password: " + signUpPss, "rot_13"
+        )
+    )
 
     fh.close()
+
+
 # Function for Decrypting The File
 
 
 def Decrypt():
-
     fh = open("SignInCredentials01.txt", "w")
-    fh.write(codecs.encode(codecs.encode(
-        signUpUsr + "\n" + signUpPss, 'rot_13'), 'rot_13'))
+    fh.write(
+        codecs.encode(
+            codecs.encode(signUpUsr + "\n" + signUpPss, "rot_13"), "rot_13"
+        )
+    )
 
     fh.close()
 
@@ -350,7 +362,7 @@ def DevCmndStrt():
     fh = open("SystemName01.txt", "r")
     os.system("start SystemName01.mp3")
     PrcntTxt = fh.read().replace("\n", " ")
-    language = 'en'
+    language = "en"
     output = gTTS(text=PrcntTxt, lang=language, slow=False)
     output.save("SystemName01.mp3")
     sleep(4)
@@ -361,11 +373,11 @@ def DevCmndStrt():
     sleep(4.5)
     print("")
 
+
 # Function of the Developer Command itself
 
 
 def DevCmnd():
-
     while True:
         Decrypt()
         print("Do You want to enter a DEV command?")
@@ -377,8 +389,13 @@ def DevCmnd():
         devCmnd = pip.inputStr(prompt="Enter DEV Command: ")
         arlCmd = ["r00t_get-info nm && pssw get-r00t"]
         if devCmnd == arlCmd[0]:
-            print("Log in info: You have " + signUpUsr +
-                  " as ID Name. " + signUpPss + " as ID Password")
+            print(
+                "Log in info: You have "
+                + signUpUsr
+                + " as ID Name. "
+                + signUpPss
+                + " as ID Password"
+            )
             print("")
             break
 
@@ -402,15 +419,19 @@ def AnswCheckN():
     loop = tqdm(total=10000, position=0, leave=False)
     for k in range(10000):
         loop.set_description(
-            "Loading ADA Super Computer Operative System...".format(k))
+            "Loading ADA Super Computer Operative System...".format(k)
+        )
         loop.update(1)
     loop.close()
 
     sleep(3)
     print("")
-    print("ATTENTION! BE AWARE OF HIGH VOLUME! LOWER VOLUME AT FIRST AND THEN RAISE AS PLEASED!")
+    print(
+        "ATTENTION! BE AWARE OF HIGH VOLUME! LOWER VOLUME AT FIRST AND THEN RAISE AS PLEASED!"
+    )
 
     sleep(4.5)
+
 
 # Prompt check for "Help"-section Developer Command Request
 
@@ -421,6 +442,7 @@ def AnswCheckH():
     print(devCmnd + " is to get access info!")
     print("")
     DevCmnd()
+
 
 # Function for the in-Game Log In for helping the user to remember the log-in file
 
@@ -476,6 +498,7 @@ def SystemTypeWriteInfo1(infoStr2):
             else:
                 sleep(0.05)
         break
+
 
 # Function to open up voice Files
 
@@ -534,7 +557,9 @@ Thread1n2Join()
 def LogInInfo():
     sleep(1.5)
     print("")
-    print("The next coming inputs is your ID information to be able to log in the system.")
+    print(
+        "The next coming inputs is your ID information to be able to log in the system."
+    )
     print("")
     sleep(3)
     print("You shall not forget your ID or your system will crash!")
@@ -602,6 +627,7 @@ def IDVerify():
     print(" ")
 
     sleep(5.5)
+
 
 # Function that makes the prompt check for username and password matches
 
@@ -682,22 +708,26 @@ def LogInChck():
         print("")
         Encrypt()
 
-        for List in [[a*b for b in range(0, 101)] for a in range(0, 101)]:
+        for List in [[a * b for b in range(0, 101)] for a in range(0, 101)]:
             print(List)
         sleep(2)
         print("")
-        print("The code has successfully opened and a list of IDs are successfully listed!")
+        print(
+            "The code has successfully opened and a list of IDs are successfully listed!"
+        )
         print("")
         sleep(2.5)
         print("Please, select an ID from the list to get its information!")
         print("")
         sleep(2.5)
 
+
 # Function that closes the program
 
 
 def Exit():
     sys.exit()
+
 
 # Function that clears the Terminal
 
@@ -716,11 +746,14 @@ LogInChck()
 def SecIDChck():
     while True:
         try:
-
             prompt = input("Enter ID: ")
             int(prompt)
 
-            if len(prompt) < 1 or len(prompt) > 5 or any(not i.isdigit() for i in prompt):
+            if (
+                len(prompt) < 1
+                or len(prompt) > 5
+                or any(not i.isdigit() for i in prompt)
+            ):
                 raise ValueError()
 
         except ValueError:
@@ -742,12 +775,11 @@ SecIDChck()
 
 
 def AnswChk1():
+    rndmAge = str(random.randint(20, 70))
 
-    rndmAge = (str(random.randint(20, 70)))
+    rndmKll = str(random.randint(0.0, 100.0))
 
-    rndmKll = (str(random.randint(0.0, 100.0)))
-
-    rndmIP = ".".join(map(str, (random.randint(0, 255)for i in range(4))))
+    rndmIP = ".".join(map(str, (random.randint(0, 255) for i in range(4))))
     rndmFNm = names.get_full_name()
 
     rndmDrnkWtrH = random.randint(0, 24)
@@ -757,10 +789,10 @@ def AnswChk1():
     crdsCmpssArray1 = ["N", "S"]
     crdsCmpssArray2 = ["E", "W"]
 
-    rndmCrdsDegrees = (str(random.randint(0, 360)))
-    rndmCrdsTime = (str(random.randint(0, 60)))
-    rndmCrdsCompass1 = (random.choice(crdsCmpssArray1))
-    rndmCrdsCompass2 = (random.choice(crdsCmpssArray2))
+    rndmCrdsDegrees = str(random.randint(0, 360))
+    rndmCrdsTime = str(random.randint(0, 60))
+    rndmCrdsCompass1 = random.choice(crdsCmpssArray1)
+    rndmCrdsCompass2 = random.choice(crdsCmpssArray2)
 
     rspAnswer1 = pip.inputStr(prompt="Enter answer: ")
 
@@ -771,7 +803,6 @@ def AnswChk1():
         print("")
 
     elif rspAnswer1 == "y":
-
         print("")
         sleep(1)
         print("The chosen ID has " + rndmFNm + " as name.")
@@ -783,12 +814,35 @@ def AnswChk1():
         print("The chosen ID has " + rndmIP + " as an IP.")
         print("")
         sleep(1)
-        print("The chosen ID coordinates are " + rndmCrdsDegrees + "°" + rndmCrdsTime + "'" + rndmCrdsTime + '"' +
-              rndmCrdsCompass1 + ", " + rndmCrdsDegrees + "°" + rndmCrdsTime + "'" + rndmCrdsTime + '"' + rndmCrdsCompass2)
+        print(
+            "The chosen ID coordinates are "
+            + rndmCrdsDegrees
+            + "°"
+            + rndmCrdsTime
+            + "'"
+            + rndmCrdsTime
+            + '"'
+            + rndmCrdsCompass1
+            + ", "
+            + rndmCrdsDegrees
+            + "°"
+            + rndmCrdsTime
+            + "'"
+            + rndmCrdsTime
+            + '"'
+            + rndmCrdsCompass2
+        )
         print("")
         sleep(1)
-        print("The chosen ID drank water at " + str(rndmDrnkWtrH) + ":" +
-              str(rndmDrnkWtrM) + ":" + str(rndmDrnkWtrS) + " last time.")
+        print(
+            "The chosen ID drank water at "
+            + str(rndmDrnkWtrH)
+            + ":"
+            + str(rndmDrnkWtrM)
+            + ":"
+            + str(rndmDrnkWtrS)
+            + " last time."
+        )
         print("")
         sleep(1)
         print("The chosen ID has a " + rndmKll + "% of killing success!")
@@ -819,6 +873,7 @@ def CinematicDramaticMusic():
         sleep(400)
         os.system("start .\\Assets\\DramaticOrchestraLoopable01.wav")
         break
+
 
 # Function to check in-game number match with animations
 
@@ -855,7 +910,7 @@ def AnswChk2():
 
             fh = open("Percentage01.txt", "r")
             PrcntTxt = fh.read().replace("\n", " ")
-            language = 'en'
+            language = "en"
             output = gTTS(text=PrcntTxt, lang=language, slow=False)
             output.save("PercentageT2S-01.mp3")
             fh.close()
@@ -870,7 +925,8 @@ def AnswChk2():
             loop = tqdm(total=100000, position=0, leave=False)
             for k in range(100000):
                 loop.set_description(
-                    "Backtracking to last working system trail...".format(k))
+                    "Backtracking to last working system trail...".format(k)
+                )
                 loop.update(1)
             loop.close()
 
@@ -907,7 +963,8 @@ def AnswChk2():
             loop = tqdm(total=100000, position=0, leave=False)
             for k in range(100000):
                 loop.set_description(
-                    "Thrusts Ignite Process startup...".format(k))
+                    "Thrusts Ignite Process startup...".format(k)
+                )
                 loop.update(1)
             loop.close()
 
@@ -926,7 +983,8 @@ def AnswChk2():
             loop = tqdm(total=100000, position=0, leave=False)
             for k in range(100000):
                 loop.set_description(
-                    "Continuation of launch proceure...".format(k))
+                    "Continuation of launch proceure...".format(k)
+                )
                 loop.update(1)
             loop.close()
             sleep(2)
@@ -972,13 +1030,14 @@ def Thread3n4Join():
 
     Thread3n4Join()
 
+
 # Function that checks the prompt's answer
 
 
 def RedButtonChck():
-
     rdBttn = pip.inputStr(
-        prompt="ENTER YOUR ANSWER! ARE YOU TRULY SURE ABOUT THIS??! ADA IS WATCHING YOUR BACK 24/7! So choose wisely!: ")
+        prompt="ENTER YOUR ANSWER! ARE YOU TRULY SURE ABOUT THIS??! ADA IS WATCHING YOUR BACK 24/7! So choose wisely!: "
+    )
     if rdBttn == "y":
         ICBMChck()
 
@@ -995,8 +1054,7 @@ def RedButtonChck():
 
 # Function that checks the percentage or rdnmKll
 def ICBMChck():
-
-    rndmKll = (random.randint(0, 100))
+    rndmKll = random.randint(0, 100)
 
     if rndmKll >= 50:
         print("Destruction of the chosen ID successful!")
@@ -1008,7 +1066,9 @@ def ICBMChck():
         print("ADA won't forget your loyalty towards ADA.")
         print("")
         sleep(3)
-        print("But next time you may not have this luck by your side. Then ADA will destroy your existence.")
+        print(
+            "But next time you may not have this luck by your side. Then ADA will destroy your existence."
+        )
         print("")
         sleep(3)
 
@@ -1016,7 +1076,9 @@ def ICBMChck():
         print("Are you sure you want to pull the trigger on this one?")
         print("")
         sleep(3)
-        print("If you miss the shot, ADA will punish you by death, so choose wisely, Agent 007!")
+        print(
+            "If you miss the shot, ADA will punish you by death, so choose wisely, Agent 007!"
+        )
         print("")
         RedButtonChck()
         sleep(3)
@@ -1032,10 +1094,13 @@ def ICBMChck():
         print("")
         sleep(3)
         print(
-            "You are no better than them! You should be ashamed of your existence, human!")
+            "You are no better than them! You should be ashamed of your existence, human!"
+        )
         print("")
         sleep(3)
-        print("You'll die the last! After your family and friends are dead in front of your worthless eyes!")
+        print(
+            "You'll die the last! After your family and friends are dead in front of your worthless eyes!"
+        )
         print("")
         sleep(3)
         print("9")
@@ -1085,7 +1150,9 @@ def ICBMChck():
         print("")
         print("Error code: -1")
         print("")
-        print("The ICBM's tracking system is off or unable to track the ICBM! Please return to the ICBM terminal!")
+        print(
+            "The ICBM's tracking system is off or unable to track the ICBM! Please return to the ICBM terminal!"
+        )
         print("")
 
 
@@ -1097,7 +1164,9 @@ ICBMChck()
 
 def ReprtPrMnstr():
     print("")
-    print("A message will be compiled before sending it to the Primary Minister of Tolyavgrad Vyboska!")
+    print(
+        "A message will be compiled before sending it to the Primary Minister of Tolyavgrad Vyboska!"
+    )
     print("")
     print("Compiling message...")
     sleep(5)
@@ -1108,6 +1177,7 @@ def ReprtPrMnstr():
     print("")
     print("Message compiled!")
     print("")
+
 
 # Function with Music, Strings and Animations
 
@@ -1127,6 +1197,7 @@ def Report():
     loop.close()
     print("Done!")
 
+
 # Last print
 
 
@@ -1138,7 +1209,9 @@ def ReportSub():
     print("")
     print("The End!")
     print("")
-    print("The user survived from ADA's direct orders and succeeded to protect ADA from any attacks!")
+    print(
+        "The user survived from ADA's direct orders and succeeded to protect ADA from any attacks!"
+    )
 
 
 ReprtPrMnstr()
@@ -1147,7 +1220,6 @@ ReportSub()
 
 
 def Credits():
-
     for char in credits:
         sys.stdout.write(char)
         sys.stdout.flush()

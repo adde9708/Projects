@@ -1,5 +1,4 @@
 def fstring_test():
-
     name = "John"
     surname = "Doe"
 

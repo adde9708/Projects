@@ -1,4 +1,3 @@
-
 def bubble_sort(speed):
     n = len(speed)
     swapped = True

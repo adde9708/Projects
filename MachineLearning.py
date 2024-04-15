@@ -5,7 +5,6 @@ from scipy import stats
 
 
 def machine_learning_libs_test():
-
     speed = [100, 80, 130, 111, 96, 110, 90, 94, 86, 150, 120, 144, 146]
 
     rotation = [180, 90, 260, 360, 720, 144, 146, 80, 94, 86, 120, 1080, 333]

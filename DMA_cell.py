@@ -2,7 +2,9 @@ from typing import Union, Tuple, List
 from timeit import default_timer as timer
 
 
-def dma_list(dst: int, ea_low: int, nbytes: int) -> Union[Tuple[None], Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
+def dma_list(
+    dst: int, ea_low: int, nbytes: int
+) -> Union[None, Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
     t1 = timer()
     result: List[Tuple[int, int, int, int, int, int]] = []
     tag_id: int = 0

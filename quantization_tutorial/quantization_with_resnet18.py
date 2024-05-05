@@ -1,15 +1,16 @@
-import torch
-from copy import deepcopy
-import matplotlib.pyplot as plt
-import numpy as np
 import os
 import time
+from copy import deepcopy
+from pathlib import PurePath
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 import torchvision
 import torchvision.models.quantization as models
-from torchvision import transforms, datasets
 from torch import nn
 from torch.quantization import convert
-from pathlib import PurePath
+from torchvision import datasets, transforms
 from torchvision.models import ResNet18_Weights
 
 # Followed a tutorial on quantization on pytorch's home page.
@@ -53,19 +54,23 @@ from torchvision.models import ResNet18_Weights
 # the built in datasets and also adds some classes so you can classify the data
 def load_data(data_dir):
     data_transforms = {
-        "train": transforms.Compose([
-            transforms.Resize(256),
-            transforms.RandomCrop(256),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
-        ]),
-        "val": transforms.Compose([
-            transforms.Resize(256),
-            transforms.RandomCrop(256),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
-        ]),
+        "train": transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.RandomCrop(256),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
+            ]
+        ),
+        "val": transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.RandomCrop(256),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.225, 0.224]),
+            ]
+        ),
     }
 
     image_datasets = {
@@ -95,9 +100,7 @@ def return_data_dir():
 
 
 # This is the function that actually trains the AI model
-def train_model(
-    model, criterion, optimizer, scheduler, num_epochs=25, device="cpu"
-):
+def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="cpu"):
     data_dir = return_data_dir()
     dataloaders, dataset_sizes, class_names = load_data(data_dir)
     since = time.time()
@@ -137,9 +140,7 @@ def train_model(
                 epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
                 print(
-                    "{} Loss: {:.4f} Acc: {:.4f}".format(
-                        phase, epoch_loss, epoch_acc
-                    )
+                    "{} Loss: {:.4f} Acc: {:.4f}".format(phase, epoch_loss, epoch_acc)
                 )
 
                 if phase == "val" and epoch_acc > best_acc:
@@ -310,9 +311,7 @@ def start():
 
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
-    scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=7, gamma=0.1
-    )
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
     trained_model = train_model(
         model, criterion, optimizer, scheduler, num_epochs=25, device=device

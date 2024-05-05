@@ -2,7 +2,7 @@ from hashlib import shake_256
 from hmac import compare_digest
 from math import ceil, sqrt
 from secrets import SystemRandom, choice
-from typing import Tuple, Union, Optional
+from typing import Optional, Tuple, Union
 
 
 def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
@@ -78,9 +78,7 @@ def ohm_dec(
     message_hash = decrypted_bytes[:original_hash_length]
 
     # Compute the SHAKE256 hash of the original message
-    original_hash = shake_256(message.encode("utf-8")).digest(
-        original_hash_length
-    )
+    original_hash = shake_256(message.encode("utf-8")).digest(original_hash_length)
 
     # Compare the message hash with the original hash
     if compare_digest(message_hash, original_hash):

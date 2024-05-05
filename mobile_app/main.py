@@ -1,5 +1,6 @@
-from secrets import choice
+from ast import literal_eval
 from pathlib import Path
+from secrets import choice
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -66,9 +67,7 @@ class MainApp(App):
         if button_text == "C":
             self.solution.text = ""
         else:
-            if current and (
-                self.last_was_operator and button_text in self.operators
-            ):
+            if current and (self.last_was_operator and button_text in self.operators):
                 return
             elif current == "" and button_text in self.operators:
                 return
@@ -81,7 +80,7 @@ class MainApp(App):
     def on_solution(self, instance):
         text = self.solution.text
         if text:
-            solution = str(eval(self.solution.text))
+            solution = str(literal_eval(self.solution.text))
             self.solution.text = solution
 
 

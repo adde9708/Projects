@@ -1,5 +1,5 @@
-from typing import Union, Tuple, List
 from timeit import default_timer as timer
+from typing import List, Tuple, Union
 
 
 def dma_list(

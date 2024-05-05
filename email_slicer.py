@@ -9,9 +9,7 @@ def email_slicer() -> None:
     domain = email[email.index("@") + 1 :]
 
     # Format message
-    message = (
-        f"Your username is '{username}' and your domain name is '{domain}'"
-    )
+    message = f"Your username is '{username}' and your domain name is '{domain}'"
 
     # Print message
     print(message)

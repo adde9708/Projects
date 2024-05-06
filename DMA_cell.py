@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-from timeit import default_timer as timer
->>>>>>> f013c67be6a99ff5de8c4ecb85536c20e831aebf
 from typing import List, Tuple, Union
 
 

@@ -44,8 +44,8 @@ def main():
         start = time.perf_counter()
 
         # Call the function to benchmark
-        checksum = checksum(data)
-        print(checksum)
+        big_endian_checksum = checksum(data)
+        print(big_endian_checksum)
         # End the timer
         end = time.perf_counter()
 

@@ -28,7 +28,6 @@ def try_remove_front(queue: Queue, front: int) -> bool:
                 next_node: Node = head.next
                 if next_node.value == front:
                     head.next = next_node.next
-                    del next_node
                     return True
     return False
 

@@ -1,7 +1,7 @@
 import time
 
 
-def checksum_hacker(arr: bytearray) -> int:
+def checksum(arr: bytearray) -> int:
     length: int = len(arr)
     if length == 0:
         return 0
@@ -44,7 +44,7 @@ def main():
         start = time.perf_counter()
 
         # Call the function to benchmark
-        checksum = checksum_hacker(data)
+        checksum = checksum(data)
         print(checksum)
         # End the timer
         end = time.perf_counter()

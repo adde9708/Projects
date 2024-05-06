@@ -1,28 +1,25 @@
 import time
+from typing import Tuple
 
 
-def checksum(arr: bytearray) -> int:
+def checksum(arr: Tuple) -> int:
     length: int = len(arr)
     if length == 0:
         return 0
 
-    sum_values: bytearray = bytearray([0] * 4)
+    sum_values = (0, 0, 0, 0)
 
-    sum_values = bytearray(
-        [
-            sum_values[j] + arr[z + i + j]
-            for z in range(0, length - 256 + 1, 256)
-            for i in range(0, min(256, length - z), 4)
-            for j in range(4)
-        ]
+    sum_values = tuple(
+        sum_values[j] + arr[z + i + j]
+        for z in range(0, length - 256 + 1, 256)
+        for i in range(0, min(256, length - z), 4)
+        for j in range(4)
     )
 
-    sum_values += bytearray(
-        [
-            arr[i]
-            for z in range(0, length - 256 + 1, 256)
-            for i in range(z + 256, min(length, z + 256))
-        ]
+    sum_values += tuple(
+        arr[i]
+        for z in range(0, length - 256 + 1, 256)
+        for i in range(z + 256, min(length, z + 256))
     )
 
     return sum(sum_values[:4]) ^ sum(sum_values[4:])
@@ -38,7 +35,7 @@ def main():
 
     for dataSize in range(minSize, maxSize + 1, step):
         # Generate random data of given size
-        data = bytearray(dataSize - 1000)
+        data = tuple(range(dataSize - 1000))
 
         # Start the timer
         start = time.perf_counter()

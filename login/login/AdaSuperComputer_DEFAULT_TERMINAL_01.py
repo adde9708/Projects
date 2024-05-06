@@ -1,17 +1,18 @@
 # Imported Modules, please Don't Touch!
 import codecs
-import pyinputplus as pip
 import os
-import sys
 import random
-import names
+import sys
 import threading
 
 # Still importing Modules, please Don't Touch
 from time import sleep
+
+import names
+import pyinputplus as pip
+from gtts import gTTS
 from tqdm import tqdm
 from tqdm.auto import tqdm
-from gtts import gTTS
 
 # AsciiArt for The Terminal
 adaSCnm = """
@@ -167,8 +168,6 @@ infoStr2 = """
  """
 
 # Function to animate Introducing text to user
-
-
 def Introduction(intro):
     # Type Writer Animation Loop
     for char in intro:
@@ -186,10 +185,9 @@ def Introduction(intro):
 
 Introduction(intro)
 
+
 # Prompting the user to create a new user
 # From here ->
-
-
 def CreateNewUser():
     print("")
 
@@ -219,9 +217,7 @@ def CreateNewUser():
 
     loop = tqdm(total=50000, position=0, leave=False)
     for k in range(50000):
-        loop.set_description(
-            "Requesting File from ADA Super Server...".format(k)
-        )
+        loop.set_description("Requesting File from ADA Super Server...".format(k))
         loop.update(1)
     loop.close()
 
@@ -231,9 +227,7 @@ def CreateNewUser():
 
     print("")
 
-    print(
-        "Wait for ADA Super Server to Retrieve all necessary files to Local Machine!"
-    )
+    print("Wait for ADA Super Server to Retrieve all necessary files to Local Machine!")
 
     print("")
 
@@ -241,9 +235,7 @@ def CreateNewUser():
 
     loop = tqdm(total=25000, position=0, leave=False)
     for k in range(25000):
-        loop.set_description(
-            "Downloading File from ADA Super Server...".format(k)
-        )
+        loop.set_description("Downloading File from ADA Super Server...".format(k))
         loop.update(1)
     loop.close()
 
@@ -303,9 +295,7 @@ def SignUpAnim():
         loop.update(1)
     loop.close()
 
-    print(
-        "Sign Up Process Done! The File has been saved and secured correctly!"
-    )
+    print("Sign Up Process Done! The File has been saved and secured correctly!")
     print(" ")
     print("Any movement of this File may cause massive failures to the System!")
     print(" ")
@@ -320,8 +310,6 @@ def SignUpAnim():
 SignUpAnim()
 
 # Function for Encrypting The File
-
-
 def Encrypt():
     fh = open("SignInCredentials01.txt", "w")
     fh.write(
@@ -334,14 +322,10 @@ def Encrypt():
 
 
 # Function for Decrypting The File
-
-
 def Decrypt():
     fh = open("SignInCredentials01.txt", "w")
     fh.write(
-        codecs.encode(
-            codecs.encode(signUpUsr + "\n" + signUpPss, "rot_13"), "rot_13"
-        )
+        codecs.encode(codecs.encode(signUpUsr + "\n" + signUpPss, "rot_13"), "rot_13")
     )
 
     fh.close()
@@ -350,8 +334,6 @@ def Decrypt():
 Encrypt()
 
 # Function for the n-Game Developer Command Request
-
-
 def DevCmndStrt():
     sleep(3)
     loop = tqdm(total=10000, position=0, leave=False)
@@ -375,8 +357,6 @@ def DevCmndStrt():
 
 
 # Function of the Developer Command itself
-
-
 def DevCmnd():
     while True:
         Decrypt()
@@ -410,17 +390,13 @@ def DevCmnd():
 DevCmnd()
 
 # Prompt check for "No"-section Developer Command Request
-
-
 def AnswCheckN():
     sleep(2)
     print("")
 
     loop = tqdm(total=10000, position=0, leave=False)
     for k in range(10000):
-        loop.set_description(
-            "Loading ADA Super Computer Operative System...".format(k)
-        )
+        loop.set_description("Loading ADA Super Computer Operative System...".format(k))
         loop.update(1)
     loop.close()
 
@@ -434,8 +410,6 @@ def AnswCheckN():
 
 
 # Prompt check for "Help"-section Developer Command Request
-
-
 def AnswCheckH():
     devCmnd = "r00t_get-info nm && pssw get-r00t"
     print("")
@@ -445,8 +419,6 @@ def AnswCheckH():
 
 
 # Function for the in-Game Log In for helping the user to remember the log-in file
-
-
 def LogInCredentials():
     while True:
         ArLsAns = ["y", "help", "n"]
@@ -473,18 +445,17 @@ def LogInCredentials():
             print("If You need help, type it!")
             print("")
             LogInCredentials()
-            (print(""))
+            print("")
             break
 
 
 LogInCredentials()
 
+
 # Function for type writer string Animation
-
-
 def SystemTypeWriteInfo1(infoStr2):
     while True:
-        if stopThdB1 == True:
+        if stopThdB1 is True:
             break
 
         for char in infoStr2:
@@ -500,9 +471,8 @@ def SystemTypeWriteInfo1(infoStr2):
         break
 
 
+
 # Function to open up voice Files
-
-
 def FileStarterVOInfo():
     os.system("start .\\Assets\\5_ADA_VO_ImportantBusiness01.wav")
     sleep(14)
@@ -529,7 +499,7 @@ def FileStarterVOInfo():
 # Function to seamless Sound and reading, dealt by Multi-Threading
 def SystemInfoVO():
     while True:
-        if stopThdB1 == True:
+        if stopThdB1 is True:
             break
         FileStarterVOInfo()
         sleep(5)
@@ -551,9 +521,8 @@ def Thread1n2Join():
 
 Thread1n2Join()
 
+
 # Function for in-Game information to the player
-
-
 def LogInInfo():
     sleep(1.5)
     print("")
@@ -584,9 +553,8 @@ rspPssw = pip.inputPassword(prompt="Enter User Password: ")
 
 print(" ")
 
+
 # Function for Terminal Animations
-
-
 def IDVerify():
     sleep(3)
 
@@ -629,9 +597,8 @@ def IDVerify():
     sleep(5.5)
 
 
+
 # Function that makes the prompt check for username and password matches
-
-
 def LogInChck():
     Decrypt()
 
@@ -722,16 +689,14 @@ def LogInChck():
         sleep(2.5)
 
 
+
 # Function that closes the program
-
-
 def Exit():
     sys.exit()
 
 
+
 # Function that clears the Terminal
-
-
 def Close():
     os.system("cls")
 
@@ -740,9 +705,8 @@ IDVerify()
 
 LogInChck()
 
+
 # Function for the in-Game NPCs' ID Number Verification
-
-
 def SecIDChck():
     while True:
         try:
@@ -860,30 +824,28 @@ def AnswChk1():
 
 AnswChk1()
 
+
 # Function to play music in Multi Thread
-
-
 def CinematicDramaticMusic():
     global stopThdB2
     stopThdB2 = False
 
     while True:
-        if stopThdB2 == True:
+        if stopThdB2 is True:
             break
         sleep(400)
         os.system("start .\\Assets\\DramaticOrchestraLoopable01.wav")
         break
 
 
+
 # Function to check in-game number match with animations
-
-
 def AnswChk2():
     global stopThdB2
     stopThdB2 = False
 
     while True:
-        if stopThdB2 == True:
+        if stopThdB2 is True:
             break
 
         sleep(4)
@@ -962,9 +924,7 @@ def AnswChk2():
 
             loop = tqdm(total=100000, position=0, leave=False)
             for k in range(100000):
-                loop.set_description(
-                    "Thrusts Ignite Process startup...".format(k)
-                )
+                loop.set_description("Thrusts Ignite Process startup...".format(k))
                 loop.update(1)
             loop.close()
 
@@ -982,9 +942,7 @@ def AnswChk2():
 
             loop = tqdm(total=100000, position=0, leave=False)
             for k in range(100000):
-                loop.set_description(
-                    "Continuation of launch proceure...".format(k)
-                )
+                loop.set_description("Continuation of launch proceure...".format(k))
                 loop.update(1)
             loop.close()
             sleep(2)
@@ -1031,9 +989,8 @@ def Thread3n4Join():
     Thread3n4Join()
 
 
+
 # Function that checks the prompt's answer
-
-
 def RedButtonChck():
     rdBttn = pip.inputStr(
         prompt="ENTER YOUR ANSWER! ARE YOU TRULY SURE ABOUT THIS??! ADA IS WATCHING YOUR BACK 24/7! So choose wisely!: "
@@ -1159,9 +1116,8 @@ def ICBMChck():
 AnswChk2()
 ICBMChck()
 
+
 # Function with Music and Strings
-
-
 def ReprtPrMnstr():
     print("")
     print(
@@ -1179,9 +1135,8 @@ def ReprtPrMnstr():
     print("")
 
 
+
 # Function with Music, Strings and Animations
-
-
 def Report():
     print("Preparing to send report...")
     os.system("start .\\Assets\\MachineFXPrintEDITED01.wav")
@@ -1198,9 +1153,8 @@ def Report():
     print("Done!")
 
 
+
 # Last print
-
-
 def ReportSub():
     sleep(1)
     print("")

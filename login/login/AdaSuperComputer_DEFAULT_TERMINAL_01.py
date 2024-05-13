@@ -12,7 +12,6 @@ import names
 import pyinputplus as pip
 from gtts import gTTS
 from tqdm import tqdm
-from tqdm.auto import tqdm
 
 # AsciiArt for The Terminal
 adaSCnm = """
@@ -167,6 +166,7 @@ infoStr2 = """
  
  """
 
+
 # Function to animate Introducing text to user
 def Introduction(intro):
     # Type Writer Animation Loop
@@ -216,8 +216,8 @@ def CreateNewUser():
     sleep(3)
 
     loop = tqdm(total=50000, position=0, leave=False)
-    for k in range(50000):
-        loop.set_description("Requesting File from ADA Super Server...".format(k))
+    for _ in range(50000):
+        loop.set_description("Requesting File from ADA Super Server...".format())
         loop.update(1)
     loop.close()
 
@@ -234,8 +234,8 @@ def CreateNewUser():
     sleep(3)
 
     loop = tqdm(total=25000, position=0, leave=False)
-    for k in range(25000):
-        loop.set_description("Downloading File from ADA Super Server...".format(k))
+    for _ in range(25000):
+        loop.set_description("Downloading File from ADA Super Server...".format())
         loop.update(1)
     loop.close()
 
@@ -252,8 +252,8 @@ def CreateNewUser():
     sleep(3)
 
     loop = tqdm(total=5000, position=0, leave=False)
-    for k in range(5000):
-        loop.set_description("Making File ready to Transcript...".format(k))
+    for _ in range(5000):
+        loop.set_description("Making File ready to Transcript...".format())
         loop.update(1)
     loop.close()
 
@@ -290,8 +290,8 @@ def SignUpAnim():
     sleep(3)
 
     loop = tqdm(total=55000, position=0, leave=False)
-    for k in range(55000):
-        loop.set_description("Bulk Saving File Locally...".format(k))
+    for _ in range(55000):
+        loop.set_description("Bulk Saving File Locally...".format())
         loop.update(1)
     loop.close()
 
@@ -308,6 +308,7 @@ def SignUpAnim():
 
 
 SignUpAnim()
+
 
 # Function for Encrypting The File
 def Encrypt():
@@ -333,12 +334,13 @@ def Decrypt():
 
 Encrypt()
 
+
 # Function for the n-Game Developer Command Request
 def DevCmndStrt():
     sleep(3)
     loop = tqdm(total=10000, position=0, leave=False)
-    for k in range(10000):
-        loop.set_description("Starting Up...".format(k))
+    for _ in range(10000):
+        loop.set_description("Starting Up...".format())
         loop.update(1)
     loop.close()
     fh = open("SystemName01.txt", "r")
@@ -389,14 +391,15 @@ def DevCmnd():
 
 DevCmnd()
 
+
 # Prompt check for "No"-section Developer Command Request
 def AnswCheckN():
     sleep(2)
     print("")
 
     loop = tqdm(total=10000, position=0, leave=False)
-    for k in range(10000):
-        loop.set_description("Loading ADA Super Computer Operative System...".format(k))
+    for _ in range(10000):
+        loop.set_description("Loading ADA Super Computer Operative System...".format())
         loop.update(1)
     loop.close()
 
@@ -469,7 +472,6 @@ def SystemTypeWriteInfo1(infoStr2):
             else:
                 sleep(0.05)
         break
-
 
 
 # Function to open up voice Files
@@ -559,8 +561,8 @@ def IDVerify():
     sleep(3)
 
     loop = tqdm(total=100000, position=0, leave=False)
-    for k in range(100000):
-        loop.set_description("User is being verified...".format(k))
+    for _ in range(100000):
+        loop.set_description("User is being verified...".format())
         loop.update(1)
     loop.close()
 
@@ -568,8 +570,8 @@ def IDVerify():
     print(" ")
 
     loop = tqdm(total=5000, position=0, leave=False)
-    for k in range(5000):
-        loop.set_description("Checking all instances for malware...".format(k))
+    for _ in range(5000):
+        loop.set_description("Checking all instances for malware...".format())
         loop.update(1)
     loop.close()
 
@@ -577,8 +579,8 @@ def IDVerify():
     print(" ")
 
     loop = tqdm(total=10000, position=0, leave=False)
-    for k in range(10000):
-        loop.set_description("Checking User's references...".format(k))
+    for _ in range(10000):
+        loop.set_description("Checking User's references...".format())
         loop.update(1)
     loop.close()
 
@@ -586,8 +588,8 @@ def IDVerify():
     print(" ")
 
     loop = tqdm(total=50000, position=0, leave=False)
-    for k in range(50000):
-        loop.set_description("Checking Users's records...".format(k))
+    for _ in range(50000):
+        loop.set_description("Checking Users's records...".format())
         loop.update(1)
     loop.close()
 
@@ -595,7 +597,6 @@ def IDVerify():
     print(" ")
 
     sleep(5.5)
-
 
 
 # Function that makes the prompt check for username and password matches
@@ -665,8 +666,8 @@ def LogInChck():
         print("")
 
         loop = tqdm(total=100000, position=0, leave=False)
-        for k in range(100000):
-            loop.set_description("Loading available IDs:".format(k))
+        for _ in range(100000):
+            loop.set_description("Loading available IDs:".format())
             loop.update(1)
         loop.close()
         print("")
@@ -689,11 +690,9 @@ def LogInChck():
         sleep(2.5)
 
 
-
 # Function that closes the program
 def Exit():
     sys.exit()
-
 
 
 # Function that clears the Terminal
@@ -817,7 +816,7 @@ def AnswChk1():
         print("")
         print("Command not found! Try again!")
         print("")
-        rspAnswer1
+        rspAnswer1()
         AnswChk1()
         print("")
 
@@ -836,7 +835,6 @@ def CinematicDramaticMusic():
         sleep(400)
         os.system("start .\\Assets\\DramaticOrchestraLoopable01.wav")
         break
-
 
 
 # Function to check in-game number match with animations
@@ -885,9 +883,9 @@ def AnswChk2():
             print("")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
+            for _ in range(100000):
                 loop.set_description(
-                    "Backtracking to last working system trail...".format(k)
+                    "Backtracking to last working system trail...".format()
                 )
                 loop.update(1)
             loop.close()
@@ -896,8 +894,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Fixing startup...".format(k))
+            for _ in range(100000):
+                loop.set_description("Fixing startup...".format())
                 loop.update(1)
             loop.close()
 
@@ -905,8 +903,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Stabilizing startup...".format(k))
+            for _ in range(100000):
+                loop.set_description("Stabilizing startup...".format())
                 loop.update(1)
             loop.close()
 
@@ -914,8 +912,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Stabilizing...".format(k))
+            for _ in range(100000):
+                loop.set_description("Stabilizing...".format())
                 loop.update(1)
             loop.close()
 
@@ -923,8 +921,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Thrusts Ignite Process startup...".format(k))
+            for _ in range(100000):
+                loop.set_description("Thrusts Ignite Process startup...".format())
                 loop.update(1)
             loop.close()
 
@@ -932,8 +930,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Igniting thrusts...".format(k))
+            for _ in range(100000):
+                loop.set_description("Igniting thrusts...".format())
                 loop.update(1)
             loop.close()
 
@@ -941,8 +939,8 @@ def AnswChk2():
             print(" ")
 
             loop = tqdm(total=100000, position=0, leave=False)
-            for k in range(100000):
-                loop.set_description("Continuation of launch proceure...".format(k))
+            for _ in range(100000):
+                loop.set_description("Continuation of launch proceure...".format())
                 loop.update(1)
             loop.close()
             sleep(2)
@@ -987,7 +985,6 @@ def Thread3n4Join():
     thd4.join()
 
     Thread3n4Join()
-
 
 
 # Function that checks the prompt's answer
@@ -1135,7 +1132,6 @@ def ReprtPrMnstr():
     print("")
 
 
-
 # Function with Music, Strings and Animations
 def Report():
     print("Preparing to send report...")
@@ -1146,12 +1142,11 @@ def Report():
     sleep(4)
 
     loop = tqdm(total=100000, position=0, leave=False)
-    for k in range(100000):
-        loop.set_description("Sending...".format(k))
+    for _ in range(100000):
+        loop.set_description("Sending...".format())
         loop.update(1)
     loop.close()
     print("Done!")
-
 
 
 # Last print

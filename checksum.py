@@ -7,7 +7,7 @@ def checksum(arr: Tuple) -> int:
     if length == 0:
         return 0
 
-    sum_values = (0, 0, 0, 0)
+    sum_values: Tuple[int, int, int, int] = (0, 0, 0, 0)
 
     sum_values = tuple(
         sum_values[j] + arr[z + i + j]
@@ -38,13 +38,13 @@ def main():
         data = tuple(range(dataSize - 1000))
 
         # Start the timer
-        start = time.perf_counter()
+        start = time.perf_counter_ns()
 
         # Call the function to benchmark
         big_endian_checksum = checksum(data)
         print(big_endian_checksum)
         # End the timer
-        end = time.perf_counter()
+        end = time.perf_counter_ns()
 
         # Calculate elapsed time in nanoseconds
         elapsedTime = end - start

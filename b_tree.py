@@ -4,9 +4,9 @@ def b_tree(node1=0, node2=1):
     keys = (key1, key2)
     max_len = max(len(key1), len(key2))
     min_len = min(len(key1), len(key2))
-    for leaf_page in keys:
-        print(leaf_page)
-        if len(leaf_page) > max_len or len(leaf_page) < min_len:
+    for leaf_page in range(len(keys)):
+        print(keys[leaf_page])
+        if len(keys[leaf_page]) > max_len or len(keys[leaf_page]) < min_len:
             return leaf_page
     return leaf_page
 

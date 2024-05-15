@@ -19,14 +19,14 @@ This project contains:
 11. Assets where it stores most of the soundsFX and Music
 12. Updated the License
 
-**METHOD A**
+##METHOD A
 
 1. Open a Terminal
 2. Use command: pip install "NAME OF MODULE"
    Check "requirements.txt" for the listed required Modules.
    To install the required module, write one at a time!.
 
-**METHOD B**
+##METHOD B
 
 1. Open a Terminal
 2. Use command: pip install -r requirements.txt

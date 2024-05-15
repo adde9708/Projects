@@ -7,7 +7,7 @@ def checksum(arr: Tuple) -> int:
     if length == 0:
         return 0
 
-    sum_values: Tuple[int, int, int, int] = (0, 0, 0, 0)
+    sum_values: Tuple[int, ...] = (0, 0, 0, 0)
 
     sum_values = tuple(
         sum_values[j] + arr[z + i + j]

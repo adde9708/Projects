@@ -132,7 +132,7 @@ Credits:
 
 Kira Todorova (aka M.S.)
 
-Adde9708
+adde9708
  
 """
 
@@ -458,7 +458,7 @@ LogInCredentials()
 # Function for type writer string Animation
 def SystemTypeWriteInfo1(infoStr2):
     while True:
-        if stopThdB1 is True:
+        if stopThdB1:
             break
 
         for char in infoStr2:
@@ -501,7 +501,7 @@ def FileStarterVOInfo():
 # Function to seamless Sound and reading, dealt by Multi-Threading
 def SystemInfoVO():
     while True:
-        if stopThdB1 is True:
+        if stopThdB1:
             break
         FileStarterVOInfo()
         sleep(5)
@@ -830,7 +830,7 @@ def CinematicDramaticMusic():
     stopThdB2 = False
 
     while True:
-        if stopThdB2 is True:
+        if stopThdB2:
             break
         sleep(400)
         os.system("start .\\Assets\\DramaticOrchestraLoopable01.wav")
@@ -843,7 +843,7 @@ def AnswChk2():
     stopThdB2 = False
 
     while True:
-        if stopThdB2 is True:
+        if stopThdB2:
             break
 
         sleep(4)

@@ -2,16 +2,14 @@ import threading
 from typing import Optional
 
 
-# Node class with padding
 class Node:
     def __init__(self, value: int) -> None:
         self._padding: bytes = b"\x00" * (64 - (8 + 8))
         self.value: int = value
-        self.next: Optional[Node] = None
+        self.next: Optional["Node"] = None
         self.mutex: threading.Lock = threading.Lock()
 
 
-# Queue class
 class Queue:
     def __init__(self) -> None:
         dummy_value: int = 0
@@ -21,7 +19,6 @@ class Queue:
         self.mutex: threading.Lock = threading.Lock()
 
 
-# Function to try removing the front node
 def try_remove_front(queue: Queue, front: int) -> bool:
     with queue.mutex:
         head: Node = queue.head
@@ -34,7 +31,6 @@ def try_remove_front(queue: Queue, front: int) -> bool:
     return False
 
 
-# Function to help finish enqueue
 def help_finish_enq(queue: Queue) -> None:
     next_node: Optional[Node] = queue.tail.next
     if next_node is not None and next_node == queue.tail:
@@ -44,7 +40,6 @@ def help_finish_enq(queue: Queue) -> None:
                 queue.tail = next_node
 
 
-# Function to enqueue a value
 def enqueue(queue: Queue, value: int) -> None:
     node: Node = Node(value)
     with queue.tail.mutex:
@@ -52,18 +47,16 @@ def enqueue(queue: Queue, value: int) -> None:
         help_finish_enq(queue)
 
 
-# Main function
 def main() -> None:
     q: Queue = Queue()
     front_value: int = 10
     enqueue(q, front_value)
     result: bool = try_remove_front(q, front_value)
     if result:
-        print(f" Successfully removed front node: {front_value}")
+        print(f"Successfully removed front node: {front_value}")
     else:
         print("Failed to remove front node")
 
 
 if __name__ == "__main__":
-
     main()

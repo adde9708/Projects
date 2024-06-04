@@ -60,8 +60,8 @@ def create_concrete_server():
 
 # Function implementations
 def append_channel_point_reward_message(reward):
-
-    return f"Reward {reward['title']} appended."
+    reward_message = f"Reward {reward['title']} appended."
+    return reward_message
 
 
 def add_message(message):
@@ -72,7 +72,9 @@ def assert_in_gui_thread(thread_id):
 
     # Store the main thread ID
     main_thread_id = threading.current_thread()
-    assert main_thread_id == thread_id, "Function must be called from the GUI thread"
+    if main_thread_id != thread_id:
+        error = "Function must be called from the GUI thread"
+        raise AssertionError(error)
 
 
 def get_name(channel):
@@ -86,22 +88,19 @@ def get_twitch(server):
 
 
 def add_waiting_redemption(channel, redemption):
-    channel = {}
     with channel["lock"]:
         channel["waiting_redemptions"].append(redemption)
 
 
 def process_message(msg, server):
     base_server = server
-    print(
-        f"Processing message for redemption {msg['reward_id']} on Twitch server: {base_server['get_twitch']()}"
-    )
+    processing_message = f"Processing message for redemption {msg['reward_id']} on Twitch server: {base_server['get_twitch']()}"
+    print(processing_message)
 
 
 def retain_waiting_redemptions(channel, reward_id, server):
-    channel = {}
-    redemption = {}
 
+    redemption = {}
     with channel["lock"]:
         for redemption in channel["waiting_redemptions"][:]:
             if redemption and redemption["reward_id"] == reward_id:
@@ -117,12 +116,10 @@ def add_channel_point_reward(channel, reward, main_thread_id):
         add_message(builder)
         return 0
 
-    channel = {}
     channel["channel_point_rewards"].append(reward)
     channel_name = get_name(channel)
-    print(
-        f"[TwitchChannel {channel_name}] Channel point reward added: {reward['id']}, {reward['title']}, {reward['is_user_input_required']}"
-    )
+    channel_reward_message = f"[TwitchChannel {channel_name}] Channel point reward added: {reward['id']}, {reward['title']}, {reward['is_user_input_required']}"
+    print(channel_reward_message)
 
     server = create_concrete_server()
     retain_waiting_redemptions(channel, reward["id"], get_twitch(server))

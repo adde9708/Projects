@@ -2,7 +2,7 @@ import time
 from typing import Tuple
 
 
-def checksum(arr: Tuple) -> int:
+def checksum(arr: Tuple[int, ...]) -> int:
     length: int = len(arr)
     if length == 0:
         return 0
@@ -25,17 +25,17 @@ def checksum(arr: Tuple) -> int:
     return sum(sum_values[:4]) ^ sum(sum_values[4:])
 
 
-def main():
+def main() -> None:
     # Benchmarking parameters
-    minSize = 1000  # Minimum size of data
-    maxSize = 10000  # Maximum size of data
-    step = 1000  # Step size for increasing data size
+    minSize: int = 1000  # Minimum size of data
+    maxSize: int = 10000  # Maximum size of data
+    step: int = 1000  # Step size for increasing data size
 
     print("Data Size\tTime (ns)")
 
     for dataSize in range(minSize, maxSize + 1, step):
         # Generate random data of given size
-        data = tuple(range(dataSize - 1000))
+        data: Tuple[int, ...] = tuple(range(dataSize - 1000))
 
         # Start the timer
         start = time.perf_counter_ns()

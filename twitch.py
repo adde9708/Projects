@@ -78,8 +78,8 @@ def assert_in_gui_thread(thread_id):
 
 
 def get_name(channel):
-    channel = channel["name"]
-    return channel
+    channel_name = channel["name"]
+    return channel_name
 
 
 def get_twitch(server):
@@ -100,7 +100,6 @@ def process_message(msg, server):
 
 def retain_waiting_redemptions(channel, reward_id, server):
 
-    redemption = {}
     with channel["lock"]:
         for redemption in channel["waiting_redemptions"][:]:
             if redemption and redemption["reward_id"] == reward_id:

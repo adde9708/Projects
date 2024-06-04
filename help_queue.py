@@ -6,7 +6,7 @@ class Node:
     def __init__(self, value: int) -> None:
         self._padding: bytes = b"\x00" * (64 - (8 + 8))
         self.value: int = value
-        self.next: Optional["Node"] = None
+        self.next: Optional[Node] = None
         self.mutex: threading.Lock = threading.Lock()
 
 

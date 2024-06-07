@@ -1,13 +1,14 @@
 import threading
 
 
-def create_channel_point_reward(id, title, is_user_input_required):
-    channel_point_reward = {
-        "id": id,
+def create_channel_point_reward(channel_id, title, is_user_input_required):
+    channel_reward = {
+        "id": channel_id,
         "title": title,
         "is_user_input_required": is_user_input_required,
     }
-    return channel_point_reward
+
+    return channel_reward
 
 
 def create_waiting_redemption(reward_id, message, original_content):
@@ -16,28 +17,19 @@ def create_waiting_redemption(reward_id, message, original_content):
         "message": message,
         "original_content": original_content,
     }
+
     return waiting_redemption
 
 
 def create_twitch_account(user_name):
-    user_name = {"user_name": user_name}
-    return user_name
+    user = {"user_name": user_name}
+    return user
 
 
-def create_accounts(twitch_account):
-    twitch_account = {"twitch_account": twitch_account}
-    return twitch_account
-
-
-def create_app(accounts):
-    accounts = {"accounts": accounts}
-    return accounts
-
-
-def create_twitch_channel(name, app):
+def create_twitch_channel(name, user_name):
     twitch_channel = {
         "name": name,
-        "app": app,
+        "user_name": user_name,
         "channel_point_rewards": [],
         "waiting_redemptions": [],
         "rewards_count": 0,
@@ -47,18 +39,11 @@ def create_twitch_channel(name, app):
     return twitch_channel
 
 
-def concrete_get_twitch(server):
+def get_twitch_url():
     twitch_url = "http://twitch.tv/server"
     return twitch_url
 
 
-def create_concrete_server():
-    server = {}
-    server["get_twitch"] = concrete_get_twitch
-    return server
-
-
-# Function implementations
 def append_channel_point_reward_message(reward):
     reward_message = f"Reward {reward['title']} appended."
     return reward_message
@@ -69,8 +54,6 @@ def add_message(message):
 
 
 def assert_in_gui_thread(thread_id):
-
-    # Store the main thread ID
     main_thread_id = threading.current_thread()
     if main_thread_id != thread_id:
         error = "Function must be called from the GUI thread"
@@ -82,63 +65,80 @@ def get_name(channel):
     return channel_name
 
 
-def get_twitch(server):
-    server = server["get_twitch"]()
-    return server
-
-
 def add_waiting_redemption(channel, redemption):
     with channel["lock"]:
         channel["waiting_redemptions"].append(redemption)
+        return channel["waiting_redemptions"]
 
 
 def process_message(msg, server):
-    base_server = server
-    processing_message = f"Processing message for redemption {msg['reward_id']} on Twitch server: {base_server['get_twitch']()}"
-    print(processing_message)
+    process_message = f"Processing message for redemption {msg['reward_id']} on Twitch server: {server}"
+    print(process_message)
 
 
 def retain_waiting_redemptions(channel, reward_id, server):
-
     with channel["lock"]:
-        for redemption in channel["waiting_redemptions"][:]:
-            if redemption and redemption["reward_id"] == reward_id:
-                process_message(redemption, server)
-                channel["waiting_redemptions"].remove(redemption)
+        new_waiting_redemptions = [
+            redemption
+            for redemption in channel["waiting_redemptions"]
+            if redemption["reward_id"] != reward_id
+        ]
+
+        [
+            process_message(redemption, server)
+            for redemption in channel["waiting_redemptions"]
+            if redemption["reward_id"] == reward_id
+        ]
+        channel["waiting_redemptions"] = new_waiting_redemptions
+        return new_waiting_redemptions
 
 
 def add_channel_point_reward(channel, reward, main_thread_id):
     assert_in_gui_thread(main_thread_id)
-
     if reward["is_user_input_required"] == 0:
         builder = append_channel_point_reward_message(reward)
         add_message(builder)
-        return 0
+        return channel
 
     channel["channel_point_rewards"].append(reward)
     channel_name = get_name(channel)
-    channel_reward_message = f"[TwitchChannel {channel_name}] Channel point reward added: {reward['id']}, {reward['title']}, {reward['is_user_input_required']}"
-    print(channel_reward_message)
+    reward_id = reward["id"]
+    reward_title = reward["title"]
+    reward_required = reward["is_user_input_required"]
+    channel_point_message = f"[TwitchChannel {channel_name}] Channel point reward added: {reward_id}, {reward_title}, {reward_required}"
+    print(channel_point_message)
 
-    server = create_concrete_server()
-    retain_waiting_redemptions(channel, reward["id"], get_twitch(server))
+    server = get_twitch_url()
+    retain_waiting_redemptions(channel, reward_id, server)
 
-    return 0
+    return channel
 
 
-def main_func():
-    account = create_twitch_account("broadcaster_name")
-    accounts = create_accounts(account)
-    app = create_app(accounts)
-    channel = create_twitch_channel("channel_name", app)
+def main_func(user_name, channel_name, reward_id, reward_title, is_user_input_required):
+    twitch_account = create_twitch_account(user_name)
+    twitch_channel = create_twitch_channel(channel_name, twitch_account["user_name"])
 
-    reward = create_channel_point_reward("reward1", "Reward 1", 0)
-    add_channel_point_reward(channel, reward, threading.current_thread())
+    reward = create_channel_point_reward(
+        reward_id, reward_title, is_user_input_required
+    )
+    channel = add_channel_point_reward(
+        twitch_channel, reward, threading.current_thread()
+    )
+
+    return channel
 
 
 def main():
+    user_name = "broadcaster_name"
+    channel_name = "channel_name"
+    reward_id = "reward1"
+    reward_title = "Reward 1"
+    is_user_input_required = 0
 
-    main_func()
+    channel = main_func(
+        user_name, channel_name, reward_id, reward_title, is_user_input_required
+    )
+    print(f"Final channel state: {channel}")
 
 
 if __name__ == "__main__":

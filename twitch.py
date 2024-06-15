@@ -51,8 +51,8 @@ def add_message(message):
     print(message)
 
 
-def assert_in_gui_thread(main_thread_id):
-    current_thread_id = threading.current_thread().ident
+def assert_in_gui_thread(current_thread_id):
+    main_thread_id = threading.main_thread().ident
     if current_thread_id != main_thread_id:
         error = "Function must be called from the GUI thread"
         raise AssertionError(error)
@@ -86,8 +86,8 @@ def retain_waiting_redemptions(channel, reward_id, server):
         return new_waiting_redemptions
 
 
-def add_channel_point_reward(channel, reward, main_thread_id):
-    assert_in_gui_thread(main_thread_id)
+def add_channel_point_reward(channel, reward, current_thread_id):
+    assert_in_gui_thread(current_thread_id)
     if reward["is_user_input_required"] == 0:
         builder = append_channel_point_reward_message(reward)
         add_message(builder)
@@ -113,7 +113,7 @@ def main_func(
     reward_id,
     reward_title,
     is_user_input_required,
-    main_thread_id,
+    current_thread_id,
 ):
     twitch_account = create_twitch_account(user_name)
     twitch_channel = create_twitch_channel(channel_name, twitch_account["user_name"])
@@ -121,7 +121,7 @@ def main_func(
     reward = create_channel_point_reward(
         reward_id, reward_title, is_user_input_required
     )
-    channel = add_channel_point_reward(twitch_channel, reward, main_thread_id)
+    channel = add_channel_point_reward(twitch_channel, reward, current_thread_id)
 
     return channel
 
@@ -133,7 +133,7 @@ def main():
     reward_title = "Reward 1"
     is_user_input_required = 0
 
-    main_thread_id = threading.current_thread().ident
+    current_thread_id = threading.current_thread().ident
 
     channel = main_func(
         user_name,
@@ -141,7 +141,7 @@ def main():
         reward_id,
         reward_title,
         is_user_input_required,
-        main_thread_id,
+        current_thread_id,
     )
     print(f"Final channel state: {channel}")
 

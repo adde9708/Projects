@@ -25,10 +25,13 @@ def create_twitch_account(user_name):
 
 
 def create_twitch_channel(name, user_name):
+    channel_point_rewards = []
     twitch_channel = {
         "name": name,
         "user_name": user_name,
-        "channel_point_rewards": [],
+        "channel_point_rewards": channel_point_rewards,
+        "channel_point_rewards_len": len(channel_point_rewards),
+        "channel_point_rewards_capacity": len(channel_point_rewards),
         "waiting_redemptions": [],
         "rewards_count": 0,
         "redemptions_count": 0,
@@ -64,26 +67,55 @@ def get_name(channel):
 
 
 def add_waiting_redemption(channel, redemption):
-    with channel["lock"]:
-        channel["waiting_redemptions"].append(redemption)
-        return channel["waiting_redemptions"]
+    channel_lock = channel["lock"]
+    with channel_lock:
+        waiting_redemptions_len = channel["waiting_redemptions_len"]
+        waiting_redemptions_capacity = channel["waiting_redemptions_capacity"]
+
+        if waiting_redemptions_len == waiting_redemptions_capacity:
+
+            initial_capacity = 4
+
+            new_capacity = (
+                initial_capacity
+                if waiting_redemptions_capacity == 0
+                else waiting_redemptions_capacity * 2
+            )
+
+            waiting_redemptions = channel["waiting_redemptions"]
+            waiting_redemptions += [None] * (
+                new_capacity - waiting_redemptions_capacity
+            )
+
+            waiting_redemptions_capacity = new_capacity
+
+        waiting_redemptions[waiting_redemptions_len] = redemption
+        waiting_redemptions_len += 1
+
+    return waiting_redemptions
 
 
 def process_message(msg, server):
-    process_message = f"Processing message for redemption {msg['reward_id']} on Twitch server: {server}"
-    print(process_message)
+    processing_message = f"Processing message for redemption {msg['reward_id']} on Twitch server: {server}"
+    print(processing_message)
 
 
 def retain_waiting_redemptions(channel, reward_id, server):
-    with channel["lock"]:
+    channel_lock = channel["lock"]
+
+    with channel_lock:
+        waiting_redemptions = channel["waiting_redemptions"]
         new_waiting_redemptions = []
-        for redemption in channel["waiting_redemptions"]:
-            if redemption["reward_id"] != reward_id:
-                new_waiting_redemptions.append(redemption)
-            else:
+
+        for redemption in waiting_redemptions:
+            if redemption["reward_id"] == reward_id:
                 process_message(redemption, server)
-        channel["waiting_redemptions"] = new_waiting_redemptions
-        return new_waiting_redemptions
+            else:
+                new_waiting_redemptions.append(redemption)
+
+        waiting_redemptions = new_waiting_redemptions
+
+    return new_waiting_redemptions
 
 
 def add_channel_point_reward(channel, reward, current_thread_id):
@@ -91,19 +123,14 @@ def add_channel_point_reward(channel, reward, current_thread_id):
     if reward["is_user_input_required"] == 0:
         builder = append_channel_point_reward_message(reward)
         add_message(builder)
-        return channel
 
-    channel["channel_point_rewards"].append(reward)
-    channel_name = get_name(channel)
+    channel_point_reward_message = (
+        f"Channel point reward added: {reward['id']}, {reward['title']}"
+    )
+    print(channel_point_reward_message)
     reward_id = reward["id"]
-    reward_title = reward["title"]
-    reward_required = reward["is_user_input_required"]
-    channel_point_message = f"[TwitchChannel {channel_name}] Channel point reward added: {reward_id}, {reward_title}, {reward_required}"
-    print(channel_point_message)
-
     server = get_twitch_url()
     retain_waiting_redemptions(channel, reward_id, server)
-
     return channel
 
 
@@ -115,15 +142,16 @@ def main_func(
     is_user_input_required,
     current_thread_id,
 ):
+
     twitch_account = create_twitch_account(user_name)
     twitch_channel = create_twitch_channel(channel_name, twitch_account["user_name"])
 
     reward = create_channel_point_reward(
         reward_id, reward_title, is_user_input_required
     )
-    channel = add_channel_point_reward(twitch_channel, reward, current_thread_id)
+    channel = add_channel_point_reward(twitch_channel, reward, main_thread_id)
 
-    return channel
+    return channel_point_reward
 
 
 def main():
@@ -133,7 +161,7 @@ def main():
     reward_title = "Reward 1"
     is_user_input_required = 0
 
-    current_thread_id = threading.current_thread().ident
+    main_thread_id = threading.current_thread().ident
 
     channel = main_func(
         user_name,
@@ -143,7 +171,8 @@ def main():
         is_user_input_required,
         current_thread_id,
     )
-    print(f"Final channel state: {channel}")
+
+    print(f"Final channel state: Channel created successfully: {channel}")
 
 
 if __name__ == "__main__":

@@ -17,10 +17,10 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     message_hash: bytes = b""
     sys_random: SystemRandom = SystemRandom()
 
-    while E == 0:
-        E = sys_random.randint(-600000000000, -39081)
 
-    i = sys_random.randint(-2000000000000, 2**448 - 1 + 2**224 - 1)
+    E = sys_random.randint(-600000000000, -39081)
+
+    i = sys_random.randint(2, 2**448 - 1 + 2**224 - 1)
     p = i * E
     real_p = p / E
     equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}

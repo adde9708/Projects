@@ -19,14 +19,10 @@ def create_waiting_redemption(reward_id, message, original_content):
     return waiting_redemption
 
 
-def create_twitch_account(user_name):
-    user = {"user_name": user_name}
-    return user
-
-
 def create_twitch_channel(name, user_name):
     channel_point_rewards = []
     twitch_channel = {
+        "lock": threading.Lock(),
         "name": name,
         "user_name": user_name,
         "channel_point_rewards": channel_point_rewards,
@@ -35,9 +31,14 @@ def create_twitch_channel(name, user_name):
         "waiting_redemptions": [],
         "rewards_count": 0,
         "redemptions_count": 0,
-        "lock": threading.Lock(),
+        
     }
     return twitch_channel
+
+
+def create_twitch_account(user_name):
+    user = {"user_name": user_name}
+    return user
 
 
 def get_twitch_url():
@@ -108,19 +109,21 @@ def retain_waiting_redemptions(channel, reward_id, server):
         new_waiting_redemptions = []
 
         for redemption in waiting_redemptions:
-            if redemption["reward_id"] == reward_id:
+            redemption_id = redemption["reward_id"]
+            if redemption_id == reward_id:
                 process_message(redemption, server)
             else:
                 new_waiting_redemptions.append(redemption)
 
         waiting_redemptions = new_waiting_redemptions
-
+        
     return new_waiting_redemptions
 
 
 def add_channel_point_reward(channel, reward, current_thread_id):
     assert_in_gui_thread(current_thread_id)
-    if reward["is_user_input_required"] == 0:
+    is_user_input_required = reward["is_user_input_required"] 
+    if is_user_input_required is False:
         builder = append_channel_point_reward_message(reward)
         add_message(builder)
 
@@ -149,7 +152,9 @@ def main_func(
     reward = create_channel_point_reward(
         reward_id, reward_title, is_user_input_required
     )
-    channel = add_channel_point_reward(twitch_channel, reward, main_thread_id)
+    channel_point_reward = add_channel_point_reward(
+        twitch_channel, reward, current_thread_id
+    )
 
     return channel_point_reward
 
@@ -159,9 +164,9 @@ def main():
     channel_name = "channel_name"
     reward_id = "reward1"
     reward_title = "Reward 1"
-    is_user_input_required = 0
+    is_user_input_required = False
 
-    main_thread_id = threading.current_thread().ident
+    current_thread_id = threading.current_thread().ident
 
     channel = main_func(
         user_name,

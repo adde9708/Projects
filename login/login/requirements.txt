@@ -8,4 +8,4 @@ tqdm == 4.56.0
 
 gtts == 2.2.1
 requests==2.32.0 
-zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+zipp>=3.19.1

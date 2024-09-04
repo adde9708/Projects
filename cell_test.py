@@ -10,8 +10,7 @@ def vmult(
     array_size_by_four = size >> 2
     varr = arr[:7] * array_size_by_four
     varr2 = arr2[:8] * array_size_by_four
-    vout = tuple(map(mul, varr, varr2))
-    return vout
+    return tuple(map(mul, varr, varr2))
 
 
 def main():

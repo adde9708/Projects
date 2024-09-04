@@ -4,11 +4,11 @@
 import random
 
 POSSIBLE_WORDS = (
-    "Apa",
-    "Banan",
+    "Monkey",
+    "Bananna",
     "Cacao",
-    "Dans",
-    "Elefant",
+    "Dance",
+    "Elephant",
 )
 
 

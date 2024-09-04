@@ -37,32 +37,32 @@ class HangmanGame:
         for letter in self.word_to_guess:
             if letter not in self.guessed_letters:
                 return
-        print("Du vann! Det hemliga ordet var", self.word_to_guess)
+        print("You won! The secret word was", self.word_to_guess)
         quit()
 
     def check_game_over(self):
         if self.incorrect_guesses_made == self.allowed_guesses:
-            print("Game over! Det hemliga ordet var", self.word_to_guess)
+            print("Game over! The secret word was", self.word_to_guess)
             quit()
 
     def correct_guess(self):
-        print(self.current_guess.upper(), "finns i det hemliga ordet.\n")
+        print(self.current_guess.upper(), "is in the secret word.\n")
         self.check_game_won()
 
     def incorrect_guess(self):
-        print(self.current_guess.upper(), "finns inte i det hemliga ordet.\n")
+        print(self.current_guess.upper(), "is not in the secret word.\n")
         self.incorrect_guesses_made += 1
         self.check_game_over()
 
     def display_current_state(self):
         print("Det hemliga ordet är", len(self.word_to_guess), "tecken långt.")
         if len(self.guessed_letters) > 0:
-            print("Du har gissat dessa bokstäver:", self.guessed_letters)
-            print("Du har gissat fel", self.incorrect_guesses_made, "gånger.")
+            print("You have guessed these letters:", self.guessed_letters)
+            print("You have guessd wrong ", self.incorrect_guesses_made, "gånger.")
         print(
-            "Du har",
+            "You have",
             self.allowed_guesses - self.incorrect_guesses_made,
-            "gissningar kvar.",
+            "guesses left.",
         )
         self.make_guess()
 

@@ -31,7 +31,6 @@ def create_twitch_channel(name, user_name):
         "waiting_redemptions": [],
         "rewards_count": 0,
         "redemptions_count": 0,
-        
     }
     return twitch_channel
 
@@ -116,13 +115,13 @@ def retain_waiting_redemptions(channel, reward_id, server):
                 new_waiting_redemptions.append(redemption)
 
         waiting_redemptions = new_waiting_redemptions
-        
+
     return new_waiting_redemptions
 
 
 def add_channel_point_reward(channel, reward, current_thread_id):
     assert_in_gui_thread(current_thread_id)
-    is_user_input_required = reward["is_user_input_required"] 
+    is_user_input_required = reward["is_user_input_required"]
     if is_user_input_required is False:
         builder = append_channel_point_reward_message(reward)
         add_message(builder)

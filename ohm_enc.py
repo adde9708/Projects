@@ -17,14 +17,15 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     message_hash: bytes = b""
     sys_random: SystemRandom = SystemRandom()
 
-
     E = sys_random.randint(-600000000000, -39081)
 
     i = sys_random.randint(2, 2**448 - 1 + 2**224 - 1)
     p = i * E
     real_p = p / E
-    equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}
+    print()
 
+    equations = {real_p / i**2, E**2 / real_p, E / i, sqrt(i) * E}
+    print(p)
     while key is None or key == 0:
         # Choose a random equation
         key = choice(tuple(equations))
@@ -101,4 +102,5 @@ def main() -> None:
         print("Decryption failed. The message may have been tampered with.")
 
 
-main()
+if __name__ == "__main__":
+    main()

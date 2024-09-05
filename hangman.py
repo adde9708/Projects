@@ -52,10 +52,10 @@ class HangmanGame:
         self.check_game_over()
 
     def display_current_state(self):
-        print("Det hemliga ordet är", len(self.word_to_guess), "tecken långt.")
+        print("The secret word is", len(self.word_to_guess), "characters long.")
         if len(self.guessed_letters) > 0:
             print("You have guessed these letters:", self.guessed_letters)
-            print("You have guessd wrong ", self.incorrect_guesses_made, "gånger.")
+            print("You have guessd wrong ", self.incorrect_guesses_made, "times.")
         print(
             "You have",
             self.allowed_guesses - self.incorrect_guesses_made,
@@ -64,7 +64,7 @@ class HangmanGame:
         self.make_guess()
 
     def make_guess(self):
-        guess = input("Gissa en bokstav: ").lower()
+        guess = input("Guess a letter: ").lower()
         self.guessed_letters.add(guess)
         self.current_guess = guess
         check_correct = self.check_guess()

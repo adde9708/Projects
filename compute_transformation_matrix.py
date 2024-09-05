@@ -18,33 +18,30 @@ def sanitize_value(value):
     return value if not isnan(value) or not isinf(value) else 0.0
 
 
-def calculate_matrix_product(product,matrix1, matrix2):
+def calculate_matrix_product(product, matrix1, matrix2):
     # Get the dimensions of the input matrices
     rows_matrix1 = len(matrix1)
     cols_matrix1 = len(matrix1[0])
     rows_matrix2 = len(matrix2)
     cols_matrix2 = len(matrix2[0])
-    
+
     # Ensure the matrices can be multiplied
     if cols_matrix1 != rows_matrix2:
         raise ValueError("Matrix1 columns must equal Matrix2 rows for multiplication")
 
-    
     # Perform matrix multiplication
     for row in range(rows_matrix1):
         for col in range(cols_matrix2):
             value = sum(matrix1[row][k] * matrix2[k][col] for k in range(cols_matrix1))
             product[row][col] = sanitize_value(value)
-    
+
     # Convert the product matrix to a tuple of tuples
     product = tuple(tuple(row) for row in product)
-    
+
     return product
 
 
-
 def rotate_and_transform_matrix(product, input_matrix, angle):
-    
 
     angle = min(angle, 65535)
     angle_radians = angle * pi / 180.0
@@ -61,6 +58,7 @@ def rotate_and_transform_matrix(product, input_matrix, angle):
     product = calculate_matrix_product(product, input_matrix, rotation_matrix)
 
     return product
+
 
 def sanitize_vector(vector):
     santized_vector = [sanitize_value(x) for x in vector]

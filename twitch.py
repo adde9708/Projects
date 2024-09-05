@@ -2,26 +2,24 @@ import threading
 
 
 def create_channel_point_reward(channel_id, title, is_user_input_required):
-    channel_reward = {
+    return {
         "id": channel_id,
         "title": title,
         "is_user_input_required": is_user_input_required,
     }
-    return channel_reward
 
 
 def create_waiting_redemption(reward_id, message, original_content):
-    waiting_redemption = {
+    return {
         "reward_id": reward_id,
         "message": message,
         "original_content": original_content,
     }
-    return waiting_redemption
 
 
 def create_twitch_channel(name, user_name):
     channel_point_rewards = []
-    twitch_channel = {
+    return {
         "lock": threading.Lock(),
         "name": name,
         "user_name": user_name,
@@ -32,22 +30,18 @@ def create_twitch_channel(name, user_name):
         "rewards_count": 0,
         "redemptions_count": 0,
     }
-    return twitch_channel
 
 
 def create_twitch_account(user_name):
-    user = {"user_name": user_name}
-    return user
+    return {"user_name": user_name}
 
 
 def get_twitch_url():
-    twitch_url = "http://twitch.tv/server"
-    return twitch_url
+    return "http://twitch.tv/server"
 
 
 def append_channel_point_reward_message(reward):
-    reward_message = f"Reward {reward['title']} appended."
-    return reward_message
+    return f"Reward {reward['title']} appended."
 
 
 def add_message(message):
@@ -62,8 +56,7 @@ def assert_in_gui_thread(current_thread_id):
 
 
 def get_name(channel):
-    channel_name = channel["name"]
-    return channel_name
+    return channel["name"]
 
 
 def add_waiting_redemption(channel, redemption):
@@ -151,11 +144,7 @@ def main_func(
     reward = create_channel_point_reward(
         reward_id, reward_title, is_user_input_required
     )
-    channel_point_reward = add_channel_point_reward(
-        twitch_channel, reward, current_thread_id
-    )
-
-    return channel_point_reward
+    return add_channel_point_reward(twitch_channel, reward, current_thread_id)
 
 
 def main():

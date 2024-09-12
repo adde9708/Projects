@@ -75,7 +75,6 @@ class HangmanGame:
         if len(self.guessed_letters) > 0:
 
             print("You have guessed these letters:",
-
                   *sorted(tuple(self.guessed_letters)))
 
             print("You have guessed wrong ", self.incorrect_guesses_made,

@@ -9,13 +9,12 @@ def if_statement():
 
     while not done:
         done = True
-        if done:
-            print()
-            print("done")
-            print()
-            sleep(2)
-        else:
+        if not done:
             return print("dead code")
+        print()
+        print("done")
+        print()
+        sleep(2)
 
 
 if_statement()

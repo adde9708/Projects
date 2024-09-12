@@ -24,8 +24,11 @@ class HangmanGame:
         self.get_word_to_guess()
         self.display_current_state()
 
-    def get_word_to_guess(self):
-        self.word_to_guess = random.choice(POSSIBLE_WORDS).lower()
+    def get_word_to_guess(self, words_to_guess=None):
+        if words_to_guess is not None:
+            random.choice(words_to_guess).lower()
+        else:
+            self.word_to_guess = random.choice(POSSIBLE_WORDS).lower()
 
     def check_guess(self):
         return self.current_guess in self.word_to_guess
@@ -51,18 +54,6 @@ class HangmanGame:
         self.incorrect_guesses_made += 1
         self.check_game_over()
 
-    def display_current_state(self):
-        print("The secret word is", len(self.word_to_guess), "characters long.")
-        if len(self.guessed_letters) > 0:
-            print("You have guessed these letters:", self.guessed_letters)
-            print("You have guessd wrong ", self.incorrect_guesses_made, "times.")
-        print(
-            "You have",
-            self.allowed_guesses - self.incorrect_guesses_made,
-            "guesses left.",
-        )
-        self.make_guess()
-
     def make_guess(self):
         guess = input("Guess a letter: ").lower()
         self.guessed_letters.add(guess)
@@ -76,6 +67,27 @@ class HangmanGame:
 
         self.display_current_state()
 
+    def display_current_state(self):
+
+        print("The secret word is", len(self.word_to_guess),
+              "characters long.")
+
+        if len(self.guessed_letters) > 0:
+
+            print("You have guessed these letters:",
+
+                  *sorted(tuple(self.guessed_letters)))
+
+            print("You have guessed wrong ", self.incorrect_guesses_made,
+                  "times.")
+
+        print("You have",
+              self.allowed_guesses - self.incorrect_guesses_made,
+              "guesses left.",)
+
+        self.make_guess()
+
 
 if __name__ == "__main__":
     game = HangmanGame()
+    game.setup()

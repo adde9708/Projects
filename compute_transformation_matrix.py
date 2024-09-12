@@ -1,24 +1,18 @@
+from itertools import product
 from math import cos, isinf, isnan, pi, sin, sqrt
 
 
 def normalize_vector(vec):
     magnitude = sqrt(sum(x**2 for x in vec))
 
-    if magnitude > 0.0:
-        normalized_vector = [x / magnitude for x in vec]
-
-        return normalized_vector
-
-    normalized_vector = [1.0, 0.0, 0.0]
-
-    return normalized_vector
+    return [x / magnitude for x in vec] if magnitude > 0.0 else [1.0, 0.0, 0.0]
 
 
 def sanitize_value(value):
     return value if not isnan(value) or not isinf(value) else 0.0
 
 
-def calculate_matrix_product(product, matrix1, matrix2):
+def calculate_matrix_product(mult_result, matrix1, matrix2):
     # Get the dimensions of the input matrices
     rows_matrix1 = len(matrix1)
     cols_matrix1 = len(matrix1[0])
@@ -30,15 +24,14 @@ def calculate_matrix_product(product, matrix1, matrix2):
         raise ValueError("Matrix1 columns must equal Matrix2 rows for multiplication")
 
     # Perform matrix multiplication
-    for row in range(rows_matrix1):
-        for col in range(cols_matrix2):
-            value = sum(matrix1[row][k] * matrix2[k][col] for k in range(cols_matrix1))
-            product[row][col] = sanitize_value(value)
+    for row, col in product(range(rows_matrix1), range(cols_matrix2)):
+        value = sum(matrix1[row][k] * matrix2[k][col] for k in range(cols_matrix1))
+        mult_result[row][col] = sanitize_value(value)
 
     # Convert the product matrix to a tuple of tuples
-    product = tuple(tuple(row) for row in product)
+    mult_result = tuple(tuple(row) for row in mult_result)
 
-    return product
+    return mult_result
 
 
 def rotate_and_transform_matrix(product, input_matrix, angle):
@@ -61,29 +54,25 @@ def rotate_and_transform_matrix(product, input_matrix, angle):
 
 
 def sanitize_vector(vector):
-    santized_vector = [sanitize_value(x) for x in vector]
-    return santized_vector
+    return [sanitize_value(x) for x in vector]
 
 
 def cross_product(a, b):
-    product = [
+    return [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
         a[0] * b[1] - a[1] * b[0],
     ]
-    return product
 
 
 def get_direction(position_start, position_end):
 
     direction = [position_end[i] - position_start[i] for i in range(3)]
-    direction = normalize_vector(direction)
-    return direction
+    return normalize_vector(direction)
 
 
 def get_custom_params():
-    params = [1, 2, 3]
-    return params
+    return [1, 2, 3]
 
 
 def check_custom_params_availability(params):

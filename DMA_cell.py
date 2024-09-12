@@ -19,11 +19,11 @@ def dma_list(
         return None
 
     i: int = 0
+    all_32 = 32
     while nbytes > 0:
         sz: int = min(nbytes, 16384)
         nbytes -= sz
         ea_low += sz
-        all_32 = 32
         dma_list_elem[3] = aligned_ea_low
         sz += size
         bits: int = sz >> 3

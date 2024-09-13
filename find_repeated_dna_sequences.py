@@ -29,7 +29,7 @@ def find_repeated_dna_sequences(s):
     hash_val = build_hash_local(s, nucleotide_mapping, 0)
     hash_set = {hash_val}
     for i in range(1, lst_len - 9):
-        repeated_sequence = s[i:i + 10]
+        repeated_sequence = s[i : i + 10]
         hash_val = build_hash_local(s, nucleotide_mapping, i - 1)
         add_hash_local(ans, hash_set, hash_val, repeated_sequence)
 

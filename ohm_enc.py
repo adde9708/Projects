@@ -19,7 +19,9 @@ def initialize_sys_random() -> SystemRandom:
 
 
 # Function to initialize the variables
-def initialize_variables() -> Tuple[int, int, Union[float, int], Union[float, str], Union[float, int]]:
+def initialize_variables() -> (
+    Tuple[int, int, Union[float, int], Union[float, str], Union[float, int]]
+):
     key: Union[float, str] = 0.0
     random_key: Union[float, int] = 0
     real_p: Union[float, int] = 0.0

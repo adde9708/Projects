@@ -19,11 +19,9 @@ def calculate_matrix_product(mult_result, matrix1, matrix2):
     rows_matrix2 = len(matrix2)
     cols_matrix2 = len(matrix2[0])
 
-
     if cols_matrix1 != rows_matrix2:
         raise ValueError("Matrix1 columns must equal Matrix2 rows for multiplication")
 
-<<<<<<< Updated upstream
     # Perform matrix multiplication
     for row, col in product(range(rows_matrix1), range(cols_matrix2)):
         value = sum(matrix1[row][k] * matrix2[k][col] for k in range(cols_matrix1))
@@ -31,15 +29,6 @@ def calculate_matrix_product(mult_result, matrix1, matrix2):
 
     # Convert the product matrix to a tuple of tuples
     mult_result = tuple(tuple(row) for row in mult_result)
-=======
-    for row in range(rows_matrix1):
-        for col in range(cols_matrix2):
-            value = sum(matrix1[row][k] * matrix2[k][col] for k in range(cols_matrix1))
-            product[row][col] = sanitize_value(value)
-
-
-    product = tuple(tuple(row) for row in product)
->>>>>>> Stashed changes
 
     return mult_result
 

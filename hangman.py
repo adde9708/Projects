@@ -33,6 +33,11 @@ class HangmanGame:
     def check_guess(self):
         return self.current_guess in self.word_to_guess
 
+    def win_or_loss_msg(self, msg):
+        win_or_loss_message = f"{msg}{self.word_to_guess}"
+        print(win_or_loss_message)
+        quit()
+
     def check_game_won(self):
         for letter in self.word_to_guess:
             if letter not in self.guessed_letters:
@@ -42,11 +47,6 @@ class HangmanGame:
     def check_game_over(self):
         if self.incorrect_guesses_made == self.allowed_guesses:
             self.win_or_loss_msg("Game over! The secret word was ")
-
-    def win_or_loss_msg(self, msg):
-        win_or_loss_message = f"{msg}{self.word_to_guess}"
-        print(win_or_loss_message)
-        quit()
 
     def correct_guess(self):
         correct_msg = f"{self.current_guess.upper()} is in the secret word.\n"

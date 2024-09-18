@@ -19,7 +19,6 @@ def calculate_matrix_product(mult_result, matrix1, matrix2):
     rows_matrix2 = len(matrix2)
     cols_matrix2 = len(matrix2[0])
 
-    # Ensure the matrices can be multiplied
     if cols_matrix1 != rows_matrix2:
         raise ValueError("Matrix1 columns must equal Matrix2 rows for multiplication")
 

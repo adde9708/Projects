@@ -59,9 +59,9 @@ class HangmanGame:
         self.incorrect_guesses_made += 1
         self.check_game_over()
 
-    def make_guess(self):
+    def make_guess(self):  # sourcery skip: use-named-expression
         guess = ""
-        guess_prompt = "Guess a letter or leave blank to quit the game: "
+        guess_prompt = "Guess a letter or write quit to quit the game: "
         while guess in self.guessed_letters or len(guess) != 1:
             guess = input(guess_prompt).lower()
             if not guess:

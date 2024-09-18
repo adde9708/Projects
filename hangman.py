@@ -79,25 +79,21 @@ class HangmanGame:
         self.display_current_state()
 
     def display_current_state(self):
-        secret_word_info = (
-            f"The secret word is {len(self.word_to_guess)} characters long."
-        )
-        print(secret_word_info)
+        word_info = f"The secret word is {len(self.word_to_guess)} characters long."
+        print(word_info)
 
         if len(self.guessed_letters) > 0:
             letters_guessed = "You have guessed these letters:"
             print(letters_guessed, *sorted(tuple(self.guessed_letters)))
 
-            wrong_guess_info = (
-                f"You have guessed wrong {self.incorrect_guesses_made} times."
-            )
-            print(wrong_guess_info)
+            wrong_guess = f"You have guessed wrong {self.incorrect_guesses_made} times."
+            print(wrong_guess)
 
-        remaining_guesses = (
+        guesses_left = (
             f"You have {self.allowed_guesses - self.incorrect_guesses_made}"
             " guesses left."
         )
-        print(remaining_guesses)
+        print(guesses_left)
 
         self.make_guess()
 

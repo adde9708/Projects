@@ -62,7 +62,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     equations, padding, message_hash, res = initialize_equations()
 
     # Generate random values for i and E
-    E = sys_random.randint(-600000000000, -39081)
+    E = sys_random.randint(-39081, -1)
     i = sys_random.randint(2, 2**448 - 1 + 2**224 - 1)
     p = i * E
     real_p = p / E
@@ -71,12 +71,11 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     equations = generate_equations(i, E, real_p)
 
     # Choose a random key from the equations
-    while key is None or key == 0:
-        key = sys_random.choice(tuple(equations))
-        key = float(key)
-        key = hex(ceil(key))
-        key = "".join(filter(str.isdigit, key))
-        key = int(key)
+    key = sys_random.choice(tuple(equations))
+    key = float(key)
+    key = hex(ceil(key))
+    key = "".join(filter(str.isdigit, key))
+    key = int(key)
 
     # Generate a random initialization vector (IV)
     iv: bytes = sys_random.randbytes(64)
@@ -92,7 +91,7 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     message_hash += padding
 
     # XOR the hash with the random key and the encryption key
-    res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ int(key)
+    res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ key
 
     return float(key), random_key, iv, res
 

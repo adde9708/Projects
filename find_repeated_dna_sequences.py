@@ -9,10 +9,7 @@ def add_hash(ans, hash_set, hash_val, repeated_sequence):
 
 
 def build_hash(s, nucleotide_mapping, start_index):
-    hash_val = 0
-    for i in range(10):
-        hash_val += nucleotide_mapping[start_index + i] * (4 ** (9 - i))
-    return hash_val
+    return sum(nucleotide_mapping[start_index + i] * (4 ** (9 - i)) for i in range(10))
 
 
 def find_repeated_dna_sequences(s):

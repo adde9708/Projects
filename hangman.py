@@ -60,12 +60,13 @@ class HangmanGame:
         self.check_game_over()
 
     def make_guess(self):
+        guess_message = "Guess a letter or write quit to quit the game: "
         guess = ""
-        guess_prompt = "Guess a letter or write quit to quit the game: "
-        while guess in self.guessed_letters or len(guess) != 1:
-            guess = input(guess_prompt).lower()
-            if not guess:
+        while guess in self.guessed_letters or not guess:
+            guess = input(guess_message).lower()
+            if guess == "quit":
                 self.game_finished = True
+                quit()
 
         self.guessed_letters.add(guess)
         self.current_guess = guess

@@ -60,7 +60,7 @@ class HangmanGame:
         self.check_game_over()
 
     def make_guess(self):
-        guess_message = "Guess a letter or write quit to quit the game: "
+        guess_message = "Do you want to play again? Write quit if you want to quit: "
         guess = ""
         while guess in self.guessed_letters or not guess:
             guess = input(guess_message).lower()
@@ -70,9 +70,9 @@ class HangmanGame:
 
         self.guessed_letters.add(guess)
         self.current_guess = guess
-        check_correct = self.check_guess()
+        check_guess = self.check_guess()
 
-        if check_correct:
+        if check_guess:
             self.correct_guess()
         else:
             self.incorrect_guess()
@@ -101,10 +101,10 @@ class HangmanGame:
 
 def main():
     game = HangmanGame()
-    done = input("Do you want to play again? Write quit if you want to quit: ")
-    while done != "quit":
+    answer = input("Guess a letter or write quit to quit the game: ")
+    while answer != "quit":
         game.setup()
-        while game.game_finished is False:
+        while game.game_finished is not True:
             game.display_current_state()
             game.make_guess()
 

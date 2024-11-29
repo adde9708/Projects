@@ -1,13 +1,5 @@
 import random
 
-POSSIBLE_WORDS = (
-    "Monkey",
-    "Bananna",
-    "Cacao",
-    "Dance",
-    "Elephant",
-)
-
 
 class HangmanGame:
 
@@ -15,6 +7,7 @@ class HangmanGame:
         self.game_finished = False
         self.allowed_guesses = allowed_guesses
         self.incorrect_guesses_made = 0
+        self.guessed_letters = set()
         self.word_to_guess = ""
         self.current_guess = ""
 
@@ -24,11 +17,16 @@ class HangmanGame:
         self.guessed_letters = set()
         self.get_word_to_guess()
 
+    def get_possible_words(self):
+        return "Monkey", "Banana", "Cacao", "Dance", "Elephant"
+
     def get_word_to_guess(self, possible_words=None):
-        if possible_words is not None:
-            self.word_to_guess = random.choice(possible_words).lower()
-        else:
+        POSSIBLE_WORDS = self.get_possible_words()
+        if possible_words is None:
+
             self.word_to_guess = random.choice(POSSIBLE_WORDS).lower()
+        else:
+            self.word_to_guess = random.choice(possible_words).lower()
 
     def check_guess(self):
         return self.current_guess in self.word_to_guess
@@ -59,17 +57,34 @@ class HangmanGame:
         self.incorrect_guesses_made += 1
         self.check_game_over()
 
+    def check_valid(self, guess):
+
+        is_alpha = guess.isalpha()
+
+        if len(guess) != 1 or not is_alpha:
+            print("\nPlease guess a single valid letter.")
+            return False
+
+        if guess in self.guessed_letters:
+            print(f"\nYou've already guessed '{guess}'. Try a different letter.")
+            return False
+
+        return True
+
     def make_guess(self):
-        guess_message = "Do you want to play again? Write quit if you want to quit: "
-        guess = ""
-        while guess in self.guessed_letters or not guess:
-            guess = input(guess_message).lower()
-            if guess == "quit":
-                self.game_finished = True
+        while True:
+            guess = input("Guess a letter or write 'q' to quit: ").lower()
+
+            if guess == "q":
+
                 quit()
 
-        self.guessed_letters.add(guess)
-        self.current_guess = guess
+            is_guess_valid = self.check_valid(guess)
+            if is_guess_valid is not False:
+                self.current_guess = guess
+                self.guessed_letters.add(guess)
+                break
+
         check_guess = self.check_guess()
 
         if check_guess:
@@ -101,12 +116,15 @@ class HangmanGame:
 
 def main():
     game = HangmanGame()
-    answer = input("Guess a letter or write quit to quit the game: ")
-    while answer != "quit":
-        game.setup()
-        while game.game_finished is not True:
-            game.display_current_state()
-            game.make_guess()
+    answer = input("Guess a letter or write q to quit the game: ")
+    is_guess_valid = game.check_valid(answer)
+
+    if is_guess_valid:
+        while answer != "q":
+            game.setup()
+            while game.game_finished is not True:
+                game.display_current_state()
+                game.make_guess()
 
 
 if __name__ == "__main__":

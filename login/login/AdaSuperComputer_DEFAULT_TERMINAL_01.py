@@ -269,23 +269,17 @@ CreateNewUser()
 
 
 def SignUpAnim():
-    # Creation and Writing a new file
-    fh = open("SignInCredentials01.txt", "w")
-    fh.write("Username: " + signUpUsr + "\n")
-    fh.write("Password: " + signUpPss)
+    with open("SignInCredentials01.txt", "w") as fh:
+        fh.write(f"Username: {signUpUsr}" + "\n")
+        fh.write(f"Password: {signUpPss}")
 
-    fh.close()
+    with open("SignInCredentials01.txt", "r") as fh:
+        content = fh.readlines()
+        nm = content[0]
+        pssw = content[1]
 
-    # Assigning the File's sentences to each value
-    fh = open("SignInCredentials01.txt", "r")
-    content = fh.readlines()
-    nm = content[0]
-    pssw = content[1]
-
-    nm.strip()
-    pssw.strip()
-
-    fh.close()
+        nm.strip()
+        pssw.strip()
 
     sleep(3)
 
@@ -312,27 +306,36 @@ SignUpAnim()
 
 # Function for Encrypting The File
 def Encrypt():
-    fh = open("SignInCredentials01.txt", "w")
-    fh.write(
-        codecs.encode(
-            "Username: " + signUpUsr + "\n" + "Password: " + signUpPss, "rot_13"
+    with open("SignInCredentials01.txt", "w") as fh:
+        fh.write(
+            codecs.encode(
+                f"Username: {signUpUsr}" + "\n" + "Password: " + signUpPss,
+                "rot_13",
+            )
         )
-    )
-
-    fh.close()
 
 
 # Function for Decrypting The File
 def Decrypt():
-    fh = open("SignInCredentials01.txt", "w")
-    fh.write(
-        codecs.encode(codecs.encode(signUpUsr + "\n" + signUpPss, "rot_13"), "rot_13")
-    )
-
-    fh.close()
+    with open("SignInCredentials01.txt", "w") as fh:
+        fh.write(
+            codecs.encode(
+                codecs.encode(signUpUsr + "\n" + signUpPss, "rot_13"), "rot_13"
+            )
+        )
 
 
 Encrypt()
+
+
+# Execute a mp3 file and kill the media player
+def ExecuteSystemNameMp3(fh):
+    os.system("start SystemName01.mp3")
+    PrcntTxt = fh.read().replace("\n", " ")
+    output = gTTS(text=PrcntTxt, lang="en", slow=False)
+    output.save("SystemName01.mp3")
+    sleep(4)
+    os.system("@taskkill /IM Music.UI.exe /F")
 
 
 # Function for the n-Game Developer Command Request
@@ -340,20 +343,14 @@ def DevCmndStrt():
     sleep(3)
     loop = tqdm(total=10000, position=0, leave=False)
     for _ in range(10000):
-        loop.set_description("Starting Up...".format())
+        loop.set_description("Starting Up...")
         loop.update(1)
     loop.close()
-    fh = open("SystemName01.txt", "r")
-    os.system("start SystemName01.mp3")
-    PrcntTxt = fh.read().replace("\n", " ")
-    language = "en"
-    output = gTTS(text=PrcntTxt, lang=language, slow=False)
-    output.save("SystemName01.mp3")
-    sleep(4)
-    os.system("@taskkill /IM Music.UI.exe /F")
-    fh.close()
+
+    with open("SystemName01.txt", "r") as fh:
+        ExecuteSystemNameMp3(fh)
+
     print(adaSCnm)
-    fh.close()
     sleep(4.5)
     print("")
 
@@ -416,7 +413,7 @@ def AnswCheckN():
 def AnswCheckH():
     devCmnd = "r00t_get-info nm && pssw get-r00t"
     print("")
-    print(devCmnd + " is to get access info!")
+    print(f"{devCmnd} is to get access info!")
     print("")
     DevCmnd()
 
@@ -500,9 +497,7 @@ def FileStarterVOInfo():
 
 # Function to seamless Sound and reading, dealt by Multi-Threading
 def SystemInfoVO():
-    while True:
-        if stopThdB1:
-            break
+    while not stopThdB1:
         FileStarterVOInfo()
         sleep(5)
         break
@@ -676,7 +671,7 @@ def LogInChck():
         print("")
         Encrypt()
 
-        for List in [[a * b for b in range(0, 101)] for a in range(0, 101)]:
+        for List in [[a * b for b in range(101)] for a in range(101)]:
             print(List)
         sleep(2)
         print("")
@@ -742,7 +737,7 @@ def AnswChk1():
 
     rndmKll = str(random.randint(0.0, 100.0))
 
-    rndmIP = ".".join(map(str, (random.randint(0, 255) for i in range(4))))
+    rndmIP = ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
     rndmFNm = names.get_full_name()
 
     rndmDrnkWtrH = random.randint(0, 24)
@@ -762,19 +757,19 @@ def AnswChk1():
     if rspAnswer1 == "n":
         print("")
         sleep(1)
-        print("The chosen ID has a " + rndmKll + "% of killing success!")
+        print(f"The chosen ID has a {rndmKll}% of killing success!")
         print("")
 
     elif rspAnswer1 == "y":
         print("")
         sleep(1)
-        print("The chosen ID has " + rndmFNm + " as name.")
+        print(f"The chosen ID has {rndmFNm} as name.")
         print("")
         sleep(1)
-        print("The chosen ID is " + rndmAge + " years old.")
+        print(f"The chosen ID is {rndmAge} years old.")
         print("")
         sleep(1)
-        print("The chosen ID has " + rndmIP + " as an IP.")
+        print(f"The chosen ID has {rndmIP} as an IP.")
         print("")
         sleep(1)
         print(
@@ -808,7 +803,7 @@ def AnswChk1():
         )
         print("")
         sleep(1)
-        print("The chosen ID has a " + rndmKll + "% of killing success!")
+        print(f"The chosen ID has a {rndmKll}" + "% of killing success!")
         sleep(1)
         print("")
 
@@ -829,9 +824,7 @@ def CinematicDramaticMusic():
     global stopThdB2
     stopThdB2 = False
 
-    while True:
-        if stopThdB2:
-            break
+    while not stopThdB2:
         sleep(400)
         os.system("start .\\Assets\\DramaticOrchestraLoopable01.wav")
         break
@@ -842,10 +835,7 @@ def AnswChk2():
     global stopThdB2
     stopThdB2 = False
 
-    while True:
-        if stopThdB2:
-            break
-
+    while not stopThdB2:
         sleep(4)
         print("Do You want to kill the chosen ID?")
         print("")
@@ -868,12 +858,11 @@ def AnswChk2():
             print("Thrusts ignited at:")
             sleep(1)
 
-            fh = open("Percentage01.txt", "r")
-            PrcntTxt = fh.read().replace("\n", " ")
-            language = "en"
-            output = gTTS(text=PrcntTxt, lang=language, slow=False)
-            output.save("PercentageT2S-01.mp3")
-            fh.close()
+            with open("Percentage01.txt", "r") as fh:
+                PrcntTxt = fh.read().replace("\n", " ")
+                language = "en"
+                output = gTTS(text=PrcntTxt, lang=language, slow=False)
+                output.save("PercentageT2S-01.mp3")
             os.system("start PercentageT2S-01.mp3")
             print("")
             sleep(155)
@@ -964,7 +953,7 @@ def AnswChk2():
             AnswChk1()
             AnswChk2()
 
-        elif rspAnswer2 != "y" or rspAnswer2 != "n":
+        else:
             print("Wrong answer. Try Again!")
             print("")
             sleep(1.5)

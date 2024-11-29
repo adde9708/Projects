@@ -9,7 +9,16 @@ def add_hash(ans, hash_set, hash_val, repeated_sequence):
 
 
 def build_hash(s, nucleotide_mapping, start_index):
-    return sum(nucleotide_mapping[start_index + i] * (4 ** (9 - i)) for i in range(10))
+    return sum(
+        nucleotide_mapping[s[start_index + i]] * (4 ** (9 - i)) for i in range(10)
+    )
+
+
+def loop_through_hash_set(s, ans, lst_len, nucleotide_mapping, hash_set):
+    for i in range(1, lst_len - 9):
+        repeated_sequence = s[i : i + 10]
+        hash_val = build_hash(s, nucleotide_mapping, i - 1)
+        add_hash(ans, hash_set, hash_val, repeated_sequence)
 
 
 def find_repeated_dna_sequences(s):
@@ -20,15 +29,10 @@ def find_repeated_dna_sequences(s):
         return list(ans)
 
     nucleotide_mapping = {"A": 1, "C": 2, "G": 3, "T": 4}
-    nucleotide_mapping = [nucleotide_mapping.get(char, 0) for char in s]
-    build_hash_local = build_hash
-    add_hash_local = add_hash
-    hash_val = build_hash_local(s, nucleotide_mapping, 0)
+
+    hash_val = build_hash(s, nucleotide_mapping, 0)
     hash_set = {hash_val}
-    for i in range(1, lst_len - 9):
-        repeated_sequence = s[i : i + 10]
-        hash_val = build_hash_local(s, nucleotide_mapping, i - 1)
-        add_hash_local(ans, hash_set, hash_val, repeated_sequence)
+    loop_through_hash_set(s, ans, lst_len, nucleotide_mapping, hash_set)
 
     return list(ans)
 

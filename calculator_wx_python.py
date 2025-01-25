@@ -1,8 +1,8 @@
-import wx
-from ast import literal_eval
-from secrets import choice
 import re
+from ast import literal_eval
 from functools import partial
+from secrets import choice
+import wx
 
 
 def create_solution_text(panel):
@@ -25,7 +25,6 @@ def create_solution_text(panel):
 
 
 def handle_button_press(event, operators):
-
     button = event.GetEventObject()
     solution = button.GetParent().FindWindowByName("solution_text")
     label = button.GetLabel()
@@ -33,8 +32,10 @@ def handle_button_press(event, operators):
 
     if label == "C":
         solution.Clear()
-    elif not (current and current[-1] in operators and label in operators):
-        solution.SetValue(current + label)
+        del solution
+
+    elif not current.endswith(tuple(operators)) or label not in operators:
+        return solution.SetValue(current + label)
 
 
 def show_error_message(message):
@@ -72,21 +73,22 @@ def handle_solution(event, expression_pattern):
             )
 
 
-def bind_events(operators, expression_pattern, label, button):
-    if label == "=":
-        button.Bind(
-            wx.EVT_LEFT_DOWN,
-            partial(handle_solution, expression_pattern=expression_pattern),
-        )
-
-    else:
-        button.Bind(wx.EVT_LEFT_DOWN, partial(handle_button_press, operators=operators))
-
-
 def put_button_in_panel(panel, colors, label):
     button = wx.Button(panel, label=label, size=(80, 60))
     button.SetBackgroundColour(choice(colors))
     return button
+
+
+def bind_events(operators, expression_pattern, label, button):
+    if label == "=":
+        return button.Bind(
+            wx.EVT_LEFT_DOWN,
+            partial(handle_solution, expression_pattern=expression_pattern),
+        )
+    else:
+        return button.Bind(
+            wx.EVT_LEFT_DOWN, partial(handle_button_press, operators=operators)
+        )
 
 
 def add_button_to_hbox_sizer(hbox_sizer, button):

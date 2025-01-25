@@ -1,5 +1,0 @@
-language: python
-python:
-  - 3.8.5
-script:
-  - python AdaSuperComputer_DEFAULT_01.py

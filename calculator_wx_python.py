@@ -3,9 +3,10 @@ from ast import literal_eval
 from secrets import choice
 import re
 from functools import partial
+from typing import Dict, Any, Tuple
 
 
-def get_shared_state():
+def get_shared_state() -> Dict[str, Any]:
     """Encapsulates shared state and configuration."""
     return {
         "operators": {"/", "*", "+", "-"},
@@ -26,7 +27,7 @@ def get_shared_state():
     }
 
 
-def create_solution_text(panel):
+def create_solution_text(panel: wx.Panel) -> wx.TextCtrl:
     solution = wx.TextCtrl(
         panel,
         name="solution_text",
@@ -44,11 +45,11 @@ def create_solution_text(panel):
     return solution
 
 
-def handle_button_press(event, shared_state):
+def handle_button_press(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> None:
     button = event.GetEventObject()
     solution = button.GetParent().FindWindowByName("solution_text")
-    label = button.GetLabel()
-    current = solution.GetValue()
+    label: str = button.GetLabel()
+    current: str = solution.GetValue()
     operators = shared_state["operators"]
 
     if label == "C":
@@ -60,14 +61,14 @@ def handle_button_press(event, shared_state):
         solution.SetValue(current + label)
 
 
-def show_error_message(message):
+def show_error_message(message: str) -> int:
     return wx.MessageBox(message, "Error", wx.OK | wx.ICON_ERROR)
 
 
-def handle_solution(event, shared_state):
+def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> None:
     parent = event.GetEventObject().GetParent()
     solution = parent.FindWindowByName("solution_text")
-    expression = solution.GetValue().strip()
+    expression: str = solution.GetValue().strip()
     expression_pattern = shared_state["expression_pattern"]
 
     if not expression:
@@ -86,7 +87,7 @@ def handle_solution(event, shared_state):
             show_error_message("The entered expression is invalid. Please correct it.")
 
 
-def bind_events(shared_state, label, button):
+def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> None:
     if label == "=":
         button.Bind(
             wx.EVT_LEFT_DOWN,
@@ -97,21 +98,25 @@ def bind_events(shared_state, label, button):
         button.Bind(wx.EVT_LEFT_DOWN, button_handler)
 
 
-def put_button_in_panel(panel, colors, label):
+def put_button_in_panel(
+    panel: wx.Panel, colors: Tuple[wx.Colour, ...], label: str
+) -> wx.Button:
     button = wx.Button(panel, label=label, size=(80, 60))
     button.SetBackgroundColour(choice(colors))
     return button
 
 
-def add_button_to_hbox_sizer(hbox_sizer, button):
+def add_button_to_hbox_sizer(hbox_sizer: wx.BoxSizer, button: wx.Button) -> None:
     hbox_sizer.Add(button, 1, flag=wx.EXPAND | wx.ALL, border=5)
 
 
-def add_hbox_sizer_to_vbox(sizer, hbox_sizer):
+def add_hbox_sizer_to_vbox(sizer: wx.BoxSizer, hbox_sizer: wx.BoxSizer) -> None:
     sizer.Add(hbox_sizer, flag=wx.EXPAND)
 
 
-def create_buttons(panel, shared_state, sizer):
+def create_buttons(
+    panel: wx.Panel, shared_state: Dict[str, Any], sizer: wx.BoxSizer
+) -> None:
     colors = shared_state["colors"]
     buttons = shared_state["buttons"]
 
@@ -119,41 +124,31 @@ def create_buttons(panel, shared_state, sizer):
         hbox_sizer = wx.BoxSizer(wx.HORIZONTAL)
         for label in row:
             button = put_button_in_panel(panel, colors, label)
-
-            # Bind events based on button label
             bind_events(shared_state, label, button)
-
             add_button_to_hbox_sizer(hbox_sizer, button)
-
         add_hbox_sizer_to_vbox(sizer, hbox_sizer)
 
 
-def create_panel(frame, shared_state):
+def create_panel(frame: wx.Frame, shared_state: Dict[str, Any]) -> None:
     panel = wx.Panel(frame)
     sizer = wx.BoxSizer(wx.VERTICAL)
-
     solution = create_solution_text(panel)
     sizer.Add(solution, flag=wx.EXPAND | wx.ALL, border=10)
-
     create_buttons(panel, shared_state, sizer)
-
     panel.SetSizer(sizer)
 
 
-def create_calculator():
+def create_calculator() -> None:
     shared_state = get_shared_state()
-
     app = wx.App()
     frame = wx.Frame(None, title="Calculator", size=(400, 500))
-
     create_panel(frame, shared_state)
-
     frame.Centre()
     frame.Show()
     app.MainLoop()
 
 
-def main():
+def main() -> None:
     create_calculator()
 
 

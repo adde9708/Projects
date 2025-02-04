@@ -89,13 +89,12 @@ def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> Non
 
 def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> None:
     if label == "=":
-        button.Bind(
+        return button.Bind(
             wx.EVT_LEFT_DOWN,
             partial(handle_solution, shared_state=shared_state),
         )
-    else:
-        button_handler = partial(handle_button_press, shared_state=shared_state)
-        button.Bind(wx.EVT_LEFT_DOWN, button_handler)
+    button_handler = partial(handle_button_press, shared_state=shared_state)
+    return button.Bind(wx.EVT_LEFT_DOWN, button_handler)
 
 
 def put_button_in_panel(

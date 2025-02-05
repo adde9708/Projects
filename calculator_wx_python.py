@@ -6,8 +6,6 @@ import wx
 from secrets import choice
 from typing import Any, Dict, Tuple
 
-import wx
-
 
 def get_shared_state() -> Dict[str, Any]:
     """Encapsulates shared state and configuration."""

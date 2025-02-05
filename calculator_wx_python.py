@@ -1,9 +1,10 @@
-import wx
-from ast import literal_eval
-from secrets import choice
 import re
+from ast import literal_eval
 from functools import partial
-from typing import Dict, Any, Tuple
+from secrets import choice
+from typing import Any, Dict, Tuple
+
+import wx
 
 
 def get_shared_state() -> Dict[str, Any]:
@@ -61,7 +62,7 @@ def handle_button_press(event: wx.CommandEvent, shared_state: Dict[str, Any]) ->
         solution.SetValue(current + label)
 
 
-def show_error_message(message: str) -> int:
+def show_error_message(message: str) -> Any:
     return wx.MessageBox(message, "Error", wx.OK | wx.ICON_ERROR)
 
 
@@ -87,7 +88,7 @@ def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> Non
             show_error_message("The entered expression is invalid. Please correct it.")
 
 
-def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> None:
+def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> Any:
     if label == "=":
         return button.Bind(
             wx.EVT_LEFT_DOWN,
@@ -105,12 +106,14 @@ def put_button_in_panel(
     return button
 
 
-def add_button_to_hbox_sizer(hbox_sizer: wx.BoxSizer, button: wx.Button) -> None:
-    hbox_sizer.Add(button, 1, flag=wx.EXPAND | wx.ALL, border=5)
+def add_button_to_hbox_sizer(
+    hbox_sizer: wx.BoxSizer, button: wx.Button
+) -> wx.SizerItem:
+    return hbox_sizer.Add(button, 1, flag=wx.EXPAND | wx.ALL, border=5)
 
 
-def add_hbox_sizer_to_vbox(sizer: wx.BoxSizer, hbox_sizer: wx.BoxSizer) -> None:
-    sizer.Add(hbox_sizer, flag=wx.EXPAND)
+def add_hbox_sizer_to_vbox(sizer: wx.BoxSizer, hbox_sizer: wx.BoxSizer) -> wx.SizerItem:
+    return sizer.Add(hbox_sizer, flag=wx.EXPAND)
 
 
 def create_buttons(

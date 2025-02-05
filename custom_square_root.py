@@ -4,7 +4,7 @@ def custom_square_root(x: float) -> float:
     i = x = xhalf & int(x)
     i = 0x5F3759DF - (i >> 1)
     x = float(i)
-    x = x * (1.5 - xhalf * x * x)
+    x *= 1.5 - xhalf * x * x
     print(x)
     return x
 

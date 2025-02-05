@@ -50,14 +50,17 @@ def handle_button_press(event, shared_state):
     label = button.GetLabel()
     current = solution.GetValue()
     operators = shared_state["operators"]
+    redundant_operator = (
+        current and current.endswith(tuple(operators)) and label in operators
+    )
 
     if label == "C":
         solution.Clear()
         del solution
         return
 
-    elif not ((current and current.endswith(tuple(operators)) and label in operators)):
-        solution.SetValue(current + label)
+    elif not redundant_operator:
+        return solution.SetValue(current + label)
 
 
 def show_error_message(message):
@@ -79,40 +82,29 @@ def handle_solution(event, shared_state):
     except (ValueError, SyntaxError):
         if expression_pattern.fullmatch(expression):
             try:
-                solution.SetValue(str(eval(expression)))
+                return solution.SetValue(str(eval(expression)))
             except Exception as e:
-                show_error_message(f"Error in expression: {e}")
+                return show_error_message(f"Error in expression: {e}")
         else:
-            show_error_message("The entered expression is invalid. Please correct it.")
+            return show_error_message(
+                "The entered expression is invalid. Please correct it."
+            )
 
 
 def bind_events(shared_state, label, button):
     if label == "=":
-        button.Bind(
+        return button.Bind(
             wx.EVT_LEFT_DOWN,
             partial(handle_solution, shared_state=shared_state),
         )
-    else:
-        button_handler = partial(handle_button_press, shared_state=shared_state)
-        button.Bind(wx.EVT_LEFT_DOWN, button_handler)
+    button_handler = partial(handle_button_press, shared_state=shared_state)
+    return button.Bind(wx.EVT_LEFT_DOWN, button_handler)
 
 
 def put_button_in_panel(panel, colors, label):
     button = wx.Button(panel, label=label, size=(80, 60))
     button.SetBackgroundColour(choice(colors))
     return button
-
-
-def bind_events(operators, expression_pattern, label, button):
-    if label == "=":
-        return button.Bind(
-            wx.EVT_LEFT_DOWN,
-            partial(handle_solution, expression_pattern=expression_pattern),
-        )
-    else:
-        return button.Bind(
-            wx.EVT_LEFT_DOWN, partial(handle_button_press, operators=operators)
-        )
 
 
 def add_button_to_hbox_sizer(hbox_sizer, button):

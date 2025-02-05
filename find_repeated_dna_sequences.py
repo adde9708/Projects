@@ -9,9 +9,10 @@ def add_hash(ans, hash_set, hash_val, repeated_sequence):
 
 
 def build_hash(s, nucleotide_mapping, start_index):
-    return sum(
+    built_hash = (
         nucleotide_mapping[s[start_index + i]] * (4 ** (9 - i)) for i in range(10)
     )
+    return sum(built_hash)
 
 
 def loop_through_hash_set(s, ans, lst_len, nucleotide_mapping, hash_set):
@@ -38,6 +39,7 @@ def find_repeated_dna_sequences(s):
 
 
 def main():
+
     s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
     print("Benchmarking find_repeated_dna_sequences...")
     start_time = perf_counter_ns()

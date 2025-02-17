@@ -2,9 +2,9 @@ import re
 from ast import literal_eval
 from functools import partial
 from secrets import choice
-from typing import Any, Dict, Tuple
-
 import wx
+from secrets import choice
+from typing import Any, Dict, Tuple
 
 
 def get_shared_state() -> Dict[str, Any]:
@@ -52,14 +52,17 @@ def handle_button_press(event: wx.CommandEvent, shared_state: Dict[str, Any]) ->
     label: str = button.GetLabel()
     current: str = solution.GetValue()
     operators = shared_state["operators"]
+    redundant_operator = (
+        current and current.endswith(tuple(operators)) and label in operators
+    )
 
     if label == "C":
         solution.Clear()
         del solution
         return
 
-    elif not ((current and current.endswith(tuple(operators)) and label in operators)):
-        solution.SetValue(current + label)
+    elif not redundant_operator:
+        return solution.SetValue(current + label)
 
 
 def show_error_message(message: str) -> Any:
@@ -81,11 +84,13 @@ def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> Non
     except (ValueError, SyntaxError):
         if expression_pattern.fullmatch(expression):
             try:
-                solution.SetValue(str(eval(expression)))
+                return solution.SetValue(str(eval(expression)))
             except Exception as e:
-                show_error_message(f"Error in expression: {e}")
+                return show_error_message(f"Error in expression: {e}")
         else:
-            show_error_message("The entered expression is invalid. Please correct it.")
+            return show_error_message(
+                "The entered expression is invalid. Please correct it."
+            )
 
 
 def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> Any:

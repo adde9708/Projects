@@ -22,20 +22,6 @@ def compute_rolling_hash(s, lst_len, nucleotide_mapping, hash_set, ans):
             hash_set.add(hash_val)
 
 
-def build_hash(s, nucleotide_mapping, start_index):
-    built_hash = (
-        nucleotide_mapping[s[start_index + i]] * (4 ** (9 - i)) for i in range(10)
-    )
-    return sum(built_hash)
-
-
-def loop_through_hash_set(s, ans, lst_len, nucleotide_mapping, hash_set):
-    for i in range(1, lst_len - 9):
-        repeated_sequence = s[i : i + 10]
-        hash_val = build_hash(s, nucleotide_mapping, i - 1)
-        add_hash(ans, hash_set, hash_val, repeated_sequence)
-
-
 def find_repeated_dna_sequences(s):
     ans = set()
     lst_len = len(s)

@@ -1,34 +1,26 @@
 import threading
 from typing import Optional
+from dataclasses import dataclass, field
 
 
+@dataclass
 class Node:
-    def __init__(self, value: int) -> None:
-        self._padding: bytes = b"\x00" * (64 - (8 + 8))
-        self.value: int = value
-        self.next: Optional[Node] = None
-        self.mutex: threading.Lock = threading.Lock()
+    value: int
+    next: Optional["Node"] = None
+    mutex: threading.Lock = field(default_factory=threading.Lock, init=False)
+    _padding: bytes = field(default=b"\x00" * (64 - (8 + 8)), init=False)
 
 
+@dataclass
 class Queue:
-    def __init__(self) -> None:
-        dummy_value: int = 0
-        self.dummy_node: Node = Node(dummy_value)
-        self.head: Node = self.dummy_node
-        self.tail: Node = self.dummy_node
-        self.mutex: threading.Lock = threading.Lock()
+    dummy_node: Node = field(default_factory=lambda: Node(0), init=False)
+    head: Node = field(init=False)
+    tail: Node = field(init=False)
+    mutex: threading.Lock = field(default_factory=threading.Lock, init=False)
 
-
-def try_remove_front(queue: Queue, front: int) -> bool:
-    with queue.mutex:
-        head: Node = queue.head
-        if head.next is not None:
-            with head.mutex:
-                next_node: Node = head.next
-                if next_node.value == front:
-                    head.next = next_node.next
-                    return True
-    return False
+    def __post_init__(self):
+        self.head = self.dummy_node
+        self.tail = self.dummy_node
 
 
 def help_finish_enq(queue: Queue) -> None:
@@ -45,6 +37,18 @@ def enqueue(queue: Queue, value: int) -> None:
     with queue.tail.mutex:
         queue.tail.next = node
         help_finish_enq(queue)
+
+
+def try_remove_front(queue: Queue, front: int) -> bool:
+    with queue.mutex:
+        head: Node = queue.head
+        if head.next is not None:
+            with head.mutex:
+                next_node: Node = head.next
+                if next_node.value == front:
+                    head.next = next_node.next
+                    return True
+    return False
 
 
 def main() -> None:

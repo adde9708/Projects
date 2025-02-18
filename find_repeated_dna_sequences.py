@@ -9,9 +9,9 @@ def add_hash(ans, hash_set, hash_val, repeated_sequence):
 
 
 def build_hash(s, nucleotide_mapping, start_index):
-    built_hash = (
+    built_hash = {
         nucleotide_mapping[s[start_index + i]] * (4 ** (9 - i)) for i in range(10)
-    )
+    }
     return sum(built_hash)
 
 

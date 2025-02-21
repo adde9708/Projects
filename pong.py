@@ -104,7 +104,7 @@ def main():
     left_paddle, right_paddle, ball = create_ball_and_players()
 
     while True:
-        delta_time = clock.tick_busy_loop(240) / 1024
+        delta_time = clock.tick_busy_loop(60) / 1024
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

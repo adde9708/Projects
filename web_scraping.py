@@ -20,9 +20,7 @@ class Config:
     TOKEN_PATH: str = "token.pickle"
     CREDENTIALS_PATH: str = "creds.json"
     SPREADSHEET_NAME: str = "Test"
-    TARGET_URL: str = (
-        "https://www.motala.se/omsorg-och-hjalp/boenden-sarskilda/gruppboende-vid-funktionsnedsattning/torpavagen-gruppboende/"
-    )
+    TARGET_URL: str = "https://datatracker.ietf.org/doc/html/rfc1918"
 
 
 def scrape_website(url):

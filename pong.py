@@ -1,131 +1,110 @@
 import pygame
 import sys
-from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
-class Window:
-    WIDTH, HEIGHT = 640, 480
-
-
-@dataclass(frozen=True)
-class Players:
-    PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
-    PADDLE_SPEED = 500
-
-
-@dataclass(frozen=True)
-class Ball:
-    BALL_SIZE = 15
-
-
-@dataclass(frozen=True)
-class Colors:
-    WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
-
-
-# Initialize Pygame
-def init_pygame():
+def init_pygame(width, height):
     pygame.init()
-
-
-def setup_display():
-    # Set up the display
-    screen = pygame.display.set_mode((Window.WIDTH, Window.HEIGHT))
+    screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Pong Game")
     return screen
 
 
-# Create initial ball and players positions
-def create_ball_and_players():
+def create_game_state(width, height, paddle_width, paddle_height, ball_size):
     left_paddle = pygame.Rect(
-        30,
-        (Window.HEIGHT - Players.PADDLE_HEIGHT) // 2,
-        Players.PADDLE_WIDTH,
-        Players.PADDLE_HEIGHT,
+        30, (height - paddle_height) // 2, paddle_width, paddle_height
     )
     right_paddle = pygame.Rect(
-        Window.WIDTH - 40,
-        (Window.HEIGHT - Players.PADDLE_HEIGHT) // 2,
-        Players.PADDLE_WIDTH,
-        Players.PADDLE_HEIGHT,
+        width - 40, (height - paddle_height) // 2, paddle_width, paddle_height
     )
-    ball = pygame.Rect(
-        Window.WIDTH // 2,
-        Window.HEIGHT // 2,
-        Ball.BALL_SIZE,
-        Ball.BALL_SIZE,
-    )
+    ball = pygame.Rect(width // 2, height // 2, ball_size, ball_size)
 
-    return left_paddle, right_paddle, ball
+    return {
+        "left_paddle": left_paddle,
+        "right_paddle": right_paddle,
+        "ball": ball,
+        "ball_speed": [512, 512],  # Speed stays fixed, but could be a parameter too
+    }
 
 
-# Function to handle player movement
-def player_movement(left_paddle, right_paddle, delta_time):
-
+def handle_input(state, delta, speed, height):
     keys = pygame.key.get_pressed()
+    move_amount = int(speed * delta)
+
+    left_paddle = state["left_paddle"]
+    right_paddle = state["right_paddle"]
 
     if keys[pygame.K_w] and left_paddle.top > 0:
-        left_paddle.y -= Players.PADDLE_SPEED * delta_time
-
-    elif keys[pygame.K_s] and left_paddle.bottom < Window.HEIGHT:
-        left_paddle.y += Players.PADDLE_SPEED * delta_time
+        left_paddle.y -= move_amount
+    elif keys[pygame.K_s] and left_paddle.bottom < height:
+        left_paddle.y += move_amount
 
     if keys[pygame.K_UP] and right_paddle.top > 0:
-        right_paddle.y -= Players.PADDLE_SPEED * delta_time
-
-    elif keys[pygame.K_DOWN] and right_paddle.bottom < Window.HEIGHT:
-        right_paddle.y += Players.PADDLE_SPEED * delta_time
-
-
-def set_ball_speed():
-    ball_speed_x, ball_speed_y = 500, 500
-    return ball_speed_x, ball_speed_y
+        right_paddle.y -= move_amount
+    elif keys[pygame.K_DOWN] and right_paddle.bottom < height:
+        right_paddle.y += move_amount
 
 
-# Function to draw objects on screen
-def draw_screen(left_paddle, right_paddle, ball, screen):
-    screen.fill(Colors.BLACK)
-    pygame.draw.rect(screen, Colors.WHITE, left_paddle)
-    pygame.draw.rect(screen, Colors.WHITE, right_paddle)
-    pygame.draw.ellipse(screen, Colors.WHITE, ball)
+def update_ball(state, delta, width, height):
+
+    ball = state["ball"]
+    speed = state["ball_speed"]
+
+    ball.x += int(speed[0] * delta)
+    ball.y += int(speed[1] * delta)
+
+    if ball.top <= 0 or ball.bottom >= height:
+        speed[1] = -speed[1]
+
+    ball_did_colide = check_collison(state, ball)
+
+    if ball_did_colide:
+        speed[0] = -speed[0]
+
+    if ball.left <= 0 or ball.right >= width:
+        speed[0] = -speed[0]
+        ball.center = (width // 2, height // 2)
+
+
+def check_collison(state, ball):
+    return ball.colliderect(state["left_paddle"]) or ball.colliderect(
+        state["right_paddle"]
+    )
+
+
+def draw(state, screen, black, white):
+    screen.fill(black)
+    pygame.draw.rect(screen, white, state["left_paddle"])
+    pygame.draw.rect(screen, white, state["right_paddle"])
+    pygame.draw.ellipse(screen, white, state["ball"])
     pygame.display.flip()
 
 
-# Main game loop
 def main():
-    init_pygame()
-    screen = setup_display()
+
+    WINDOW_WIDTH, WINDOW_HEIGHT = 640, 512
+    PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
+    PADDLE_SPEED = 512
+    BALL_SIZE = 15
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+
+    screen = init_pygame(WINDOW_WIDTH, WINDOW_HEIGHT)
     clock = pygame.time.Clock()
-    # Initial ball speeds
-    ball_speed_x, ball_speed_y = set_ball_speed() 
-    # Create players and ball
-    left_paddle, right_paddle, ball = create_ball_and_players()
+    state = create_game_state(
+        WINDOW_WIDTH, WINDOW_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, BALL_SIZE
+    )
 
     while True:
-        delta_time = clock.tick_busy_loop(60) / 1024
+        delta = clock.tick_busy_loop(60) / 1024
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        player_movement(left_paddle, right_paddle, delta_time)
 
-        ball.x += ball_speed_x * delta_time
-        ball.y += ball_speed_y * delta_time
-
-        if ball.top <= 0 or ball.bottom >= Window.HEIGHT:
-            ball_speed_y = -ball_speed_y
-
-        if ball.colliderect(left_paddle) or ball.colliderect(right_paddle):
-            ball_speed_x = -ball_speed_x
-
-        if ball.left <= 0 or ball.right >= Window.WIDTH:
-            ball_speed_x = -ball_speed_x
-            ball.x = Window.WIDTH // 2
-            ball.y = Window.HEIGHT // 2
-
-        draw_screen(left_paddle, right_paddle, ball, screen)
+        handle_input(state, delta, PADDLE_SPEED, WINDOW_HEIGHT)
+        update_ball(state, delta, WINDOW_WIDTH, WINDOW_HEIGHT)
+        draw(state, screen, BLACK, WHITE)
 
 
 if __name__ == "__main__":

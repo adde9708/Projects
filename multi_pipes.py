@@ -28,8 +28,4 @@ if __name__ == "__main__":
         writer(count, p_input)
         p_output.close()
         reader_p.join()
-        print(
-            "Sending {} numbers to Pipe() took {} seconds".format(
-                count, (time.time() - _start)
-            )
-        )
+        print(f"Sending {count} numbers to Pipe() took {time.time() - _start} seconds")

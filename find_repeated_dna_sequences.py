@@ -1,52 +1,54 @@
 from time import perf_counter_ns
+from functools import reduce
 
 
-def create_hash(s, nucleotide_mapping, hash_val):
-    for i in range(10):
-        hash_val = (hash_val * 4) + nucleotide_mapping[s[i]]
-    return {hash_val}
+def compute_initial_hash(s, nucleotide_map):
+    return reduce(lambda acc, c: acc * 4 + nucleotide_map[c], s[:10], 0)
 
 
-def build_hash(s, nucleotide_mapping, start_index):
-    built_hash = {
-        nucleotide_mapping[s[start_index + i]] * (4 ** (9 - i)) for i in range(10)
-    }
-    return sum(built_hash)
+def rolling_hash(prev_hash, left_char, right_char, nucleotide_map, base):
+    return ((prev_hash - nucleotide_map[left_char] * base) * 4) + nucleotide_map[
+        right_char
+    ]
 
 
-def loop_through_hash_set(s, ans, lst_len, nucleotide_mapping, hash_set):
-    for i in range(1, lst_len - 9):
-        hash_val = (
-            (hash_val - nucleotide_mapping[s[i - 1]] * base) * 4
-        ) + nucleotide_mapping[s[i + 9]]
+def generate_hashes(s, nucleotide_map):
+    base = 4**9
+    first_hash = compute_initial_hash(s, nucleotide_map)
+    return reduce(
+        lambda acc, i: acc
+        + [rolling_hash(acc[-1], s[i - 1], s[i + 9], nucleotide_map, base)],
+        range(1, len(s) - 9),
+        [first_hash],
+    )
 
-        if hash_val in hash_set:
-            repeated_sequence = s[i : i + 10]
-            ans.add(repeated_sequence)
-        else:
-            hash_set.add(hash_val)
+
+# Collect repeated substrings
+def update_sets(acc, x):
+    seen, repeated = acc
+    return (
+        (seen | {x[0]}, repeated | {x[1]})
+        if x[0] in seen
+        else (seen | {x[0]}, repeated)
+    )
 
 
 def find_repeated_dna_sequences(s):
-    ans = set()
-    lst_len = len(s)
-    if lst_len < 10:
+    if len(s) < 10:
         return []
 
-    nucleotide_mapping = {"A": 0, "C": 1, "G": 2, "T": 3}
-    hash_val = 0
+    nucleotide_map = {"A": 0, "C": 1, "G": 2, "T": 3}
+    hashes = generate_hashes(s, nucleotide_map)
 
-    # Initial hash computation for first 10 characters
-    hash_set = create_hash(s, nucleotide_mapping, hash_val)
+    # Pair each hash with its substring
+    hash_to_substring = list(zip(hashes, (s[i : i + 10] for i in range(len(hashes)))))
 
-    # Compute rolling hash for the rest of the string
-    compute_rolling_hash(s, lst_len, nucleotide_mapping, hash_set, ans)
+    _, repeated = reduce(update_sets, hash_to_substring, (set(), set()))
 
-    return list(ans)
+    return list(repeated)
 
 
 def main():
-
     s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
     print("Benchmarking find_repeated_dna_sequences...")
     start_time = perf_counter_ns()

@@ -47,7 +47,7 @@ def generate_equations(
 
 
 # Encryption function
-def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
+def ohm_enc(message: str) -> Tuple[int, int, bytes, int]:
 
     # Check so it's a string so it doesn't crash if someone decides
     # to try and use ints as message. Because encode doesn't work
@@ -62,17 +62,17 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     equations, padding, message_hash, res = initialize_equations()
 
     # Generate random values for i and E
-    E = sys_random.randint(-39081, -1)
+    E = sys_random.randint(-39081, 39081)
     i = sys_random.randint(2, 2**448 - 1 + 2**224 - 1)
     p = i * E
-    real_p = p / E
+    real_p = int(p / E)
 
     # Generate equations based on i, E, and real_p
     equations = generate_equations(i, E, real_p)
 
     # Choose a random key from the equations
     key = sys_random.choice(tuple(equations))
-    key = float(key)
+    key = int(key)
     key = hex(ceil(key))
     key = "".join(filter(str.isdigit, key))
     key = int(key)
@@ -91,23 +91,23 @@ def ohm_enc(message: str) -> Tuple[float, int, bytes, int]:
     message_hash += padding
 
     # XOR the hash with the random key and the encryption key
-    res = int.from_bytes(message_hash, byteorder="big") ^ random_key ^ key
+    res = int.from_bytes(message_hash, byteorder="little") ^ random_key ^ key
 
-    return float(key), random_key, iv, res
+    return key, random_key, iv, res
 
 
 # Decryption function
 def ohm_dec(
-    key: float, random_key: int, iv: bytes, encrypted_message: int, message: str
+    key: int, random_key: int, iv: bytes, encrypted_message: int, message: str
 ) -> Optional[str]:
     # Calculate the number of bytes needed to represent the integer
     num_bytes: int = (encrypted_message.bit_length() + 7) // 8
 
     # Decrypt the XOR result using the same keys
-    decrypted_data: int = encrypted_message ^ random_key ^ int(key)
+    decrypted_data: int = encrypted_message ^ random_key ^ key
 
     # Convert the decrypted data to bytes
-    decrypted_bytes: bytes = decrypted_data.to_bytes(num_bytes, byteorder="big")
+    decrypted_bytes: bytes = decrypted_data.to_bytes(num_bytes, byteorder="little")
 
     # Compute the SHAKE256 hash of the original message
     original_hash: bytes = shake_256(message.encode("utf-8")).digest(512)

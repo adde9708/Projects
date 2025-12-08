@@ -1,131 +1,112 @@
 import random
 
 
-class HangmanGame:
+# -------------------------
+# State initialization
+# -------------------------
+def init_game_state(allowed_guesses=5, possible_words=None):
+    if possible_words is None:
+        possible_words = ("Monkey", "Banana", "Cacao", "Dance", "Elephant")
 
-    def __init__(self, allowed_guesses=5):
-        self.game_finished = False
-        self.allowed_guesses = allowed_guesses
-        self.incorrect_guesses_made = 0
-        self.guessed_letters = set()
-        self.word_to_guess = ""
-        self.current_guess = ""
+    word = random.choice(possible_words).lower()
+    return {
+        "game_finished": False,
+        "allowed_guesses": allowed_guesses,
+        "incorrect_guesses_made": 0,
+        "guessed_letters": frozenset(),
+        "word_to_guess": word,
+    }
 
-    def setup(self):
-        self.game_finished = False
-        self.incorrect_guesses_made = 0
-        self.guessed_letters = set()
-        self.get_word_to_guess()
 
-    def get_possible_words(self):
-        return "Monkey", "Banana", "Cacao", "Dance", "Elephant"
+# -------------------------
+# Pure functions (no side effects)
+# -------------------------
+def is_guess_valid(guess, guessed_letters):
+    guess_is_alpha = guess.isalpha()
+    if len(guess) != 1 or not guess_is_alpha:
+        return False, "Please guess a single valid letter."
+    if guess in guessed_letters:
+        return False, f"You've already guessed '{guess}'. Try a different letter."
+    return True, None
 
-    def get_word_to_guess(self, possible_words=None):
-        POSSIBLE_WORDS = self.get_possible_words()
-        if possible_words is None:
 
-            self.word_to_guess = random.choice(POSSIBLE_WORDS).lower()
+def check_guess(word, guess):
+    return guess in word
+
+
+def check_game_won(state):
+    word = state["word_to_guess"]
+    guessed_letters = state["guessed_letters"]
+
+    # Check if each letter in the word has been guessed
+    all_guessed = all(letter in guessed_letters for letter in word)
+
+    if all_guessed:
+        new_state = {**state, "game_finished": True}
+        print(f"You won! The secret word was {word}")
+        return new_state
+
+    return state
+
+
+def check_game_over(state):
+    if state["incorrect_guesses_made"] >= state["allowed_guesses"]:
+        new_state = {**state, "game_finished": True}
+        print(f"Game over! The secret word was {state['word_to_guess']}")
+        return new_state
+    return state
+
+
+def apply_guess(state, guess):
+    guessed_letters = state["guessed_letters"] | frozenset({guess})
+    if check_guess(state["word_to_guess"], guess):
+        print(f"{guess.upper()} is in the secret word.\n")
+        state = {**state, "guessed_letters": guessed_letters}
+        return check_game_won(state)
+    else:
+        print(f"{guess.upper()} is not in the secret word.\n")
+        state = {
+            **state,
+            "guessed_letters": guessed_letters,
+            "incorrect_guesses_made": state["incorrect_guesses_made"] + 1,
+        }
+        return check_game_over(state)
+
+
+# -------------------------
+# I/O functions
+# -------------------------
+def display_state(state):
+    print(f"The secret word is {len(state['word_to_guess'])} characters long.")
+    if state["guessed_letters"]:
+        print("You have guessed these letters:", *sorted(state["guessed_letters"]))
+        print(f"You have guessed wrong {state['incorrect_guesses_made']} times.")
+    guesses_left = state["allowed_guesses"] - state["incorrect_guesses_made"]
+    print(f"You have {guesses_left} guesses left.\n")
+
+
+def prompt_guess(state):
+    while True:
+        guess = input("Guess a letter or write 'q' to quit: ").lower()
+        if guess == "q":
+            exit()
+        valid, msg = is_guess_valid(guess, state["guessed_letters"])
+        if valid:
+            return guess
         else:
-            self.word_to_guess = random.choice(possible_words).lower()
-
-    def check_guess(self):
-        return self.current_guess in self.word_to_guess
-
-    def win_or_loss_msg(self, msg):
-        win_or_loss_message = f"{msg}{self.word_to_guess}"
-        print(win_or_loss_message)
-        quit()
-
-    def check_game_won(self):
-        for letter in self.word_to_guess:
-            if letter not in self.guessed_letters:
-                return
-        self.win_or_loss_msg("You won! The secret word was ")
-
-    def check_game_over(self):
-        if self.incorrect_guesses_made == self.allowed_guesses:
-            self.win_or_loss_msg("Game over! The secret word was ")
-
-    def correct_guess(self):
-        correct_msg = f"{self.current_guess.upper()} is in the secret word.\n"
-        print(correct_msg)
-        self.check_game_won()
-
-    def incorrect_guess(self):
-        incorrect_msg = f"{self.current_guess.upper()} is not in the secret word.\n"
-        print(incorrect_msg)
-        self.incorrect_guesses_made += 1
-        self.check_game_over()
-
-    def check_valid(self, guess):
-
-        is_alpha = guess.isalpha()
-
-        if len(guess) != 1 or not is_alpha:
-            print("\nPlease guess a single valid letter.")
-            return False
-
-        if guess in self.guessed_letters:
-            print(f"\nYou've already guessed '{guess}'. Try a different letter.")
-            return False
-
-        return True
-
-    def make_guess(self):
-        while True:
-            guess = input("Guess a letter or write 'q' to quit: ").lower()
-
-            if guess == "q":
-
-                quit()
-
-            is_guess_valid = self.check_valid(guess)
-            if is_guess_valid is not False:
-                self.current_guess = guess
-                self.guessed_letters.add(guess)
-                break
-
-        check_guess = self.check_guess()
-
-        if check_guess:
-            self.correct_guess()
-        else:
-            self.incorrect_guess()
-
-        self.display_current_state()
-
-    def display_current_state(self):
-        word_info = f"The secret word is {len(self.word_to_guess)} characters long."
-        print(word_info)
-
-        if len(self.guessed_letters) > 0:
-            letters_guessed = "You have guessed these letters:"
-            print(letters_guessed, *sorted(tuple(self.guessed_letters)))
-
-            wrong_guess = f"You have guessed wrong {self.incorrect_guesses_made} times."
-            print(wrong_guess)
-
-        guesses_left = (
-            f"You have {self.allowed_guesses - self.incorrect_guesses_made}"
-            " guesses left."
-        )
-        print(guesses_left)
-
-        self.make_guess()
+            print(msg)
 
 
-def main():
-    game = HangmanGame()
-    answer = input("Guess a letter or write q to quit the game: ")
-    is_guess_valid = game.check_valid(answer)
-
-    if is_guess_valid:
-        while answer != "q":
-            game.setup()
-            while game.game_finished is not True:
-                game.display_current_state()
-                game.make_guess()
+# -------------------------
+# Game loop
+# -------------------------
+def play_game():
+    state = init_game_state()
+    while not state["game_finished"]:
+        display_state(state)
+        guess = prompt_guess(state)
+        state = apply_guess(state, guess)
 
 
 if __name__ == "__main__":
-    main()
+    play_game()

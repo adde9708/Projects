@@ -289,14 +289,14 @@ class HaloSystem:
         )
 
         dir_factor = (math.copysign(1.0, ball.vx) + 1.0) * 0.5
-        r = (1.0 - dir_factor) * 0.4 + dir_factor * 1.0
-        g = 0.6
-        b = (1.0 - dir_factor) * 1.0 + dir_factor * 0.4
+        red = (1.0 - dir_factor) * 0.4 + dir_factor * 1.0
+        green = 0.6
+        blue = (1.0 - dir_factor) * 1.0 + dir_factor * 0.4
 
         # update integers for rgb, float for alpha
-        self.halo_color[0] = int(r * 255)
-        self.halo_color[1] = int(g * 255)
-        self.halo_color[2] = int(b * 255)
+        self.halo_color[0] = int(red * 255)
+        self.halo_color[1] = int(green * 255)
+        self.halo_color[2] = int(blue * 255)
         self.halo_color[3] = total_alpha
 
     def handle_toggle(self, halo_enabled: bool):

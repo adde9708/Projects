@@ -45,11 +45,7 @@ class PaddleControlMode(Enum):
 # ---------------------------
 # UTILS
 # ---------------------------
-def clamp(v, lo, hi):
-    return max(lo, min(v, hi))
-
-
-def clamp_int(v, lo, hi):
+def clamp(v, lo, hi) -> int:
     return max(lo, min(v, hi))
 
 
@@ -237,13 +233,32 @@ class PhysicsEngine:
 # ---------------------------
 class HaloSystem:
     def __init__(self):
-        # halo_color: [r, g, b, alpha(0..1)]
         self.halo_color = [102, 204, 255, Constants.HALO_ALPHA_BASE]
-        # single halo surface
         self.halo_diameter = max(1, Constants.BALL_SIZE * 4)
-        self.halo_surface = pygame.Surface(
-            (self.halo_diameter, self.halo_diameter), pygame.SRCALPHA
-        )
+        # Add cache here instead of single surface
+        self.halo_cache = self._create_halo_cache()
+
+    def _create_halo_cache(self):
+        """Pre-render halo surfaces at various alpha levels."""
+        cache = {}
+        radius = Constants.BALL_SIZE * 2
+        center = (self.halo_diameter // 2, self.halo_diameter // 2)
+
+        for alpha in range(0, 256, 8):
+            surf = pygame.Surface(
+                (self.halo_diameter, self.halo_diameter), pygame.SRCALPHA
+            )
+            surf.fill((0, 0, 0, 0))
+            pygame.draw.circle(surf, (102, 204, 255, alpha), center, radius)
+            cache[alpha] = surf
+
+        return cache
+
+    def get_cached_halo(self, alpha_float):
+        """Get the closest pre-rendered halo surface for given alpha (0.0-1.0)."""
+        alpha_int = int(clamp(alpha_float, 0.0, 1.0) * 255)
+        cache_key = alpha_int // 8 * 8
+        return self.halo_cache[cache_key]
 
     def get_halo_mask(self, enabled: bool) -> float:
         return 1.0 if enabled else 0.0
@@ -314,27 +329,15 @@ class Renderer:
         self.screen.fill((0, 0, 0))
 
     def draw_halo(self, ball: Ball):
-        # Clear halo surface and draw a circle with computed alpha
-        hs = self.halo_system.halo_surface
-        hs.fill((0, 0, 0, 0))
-        alpha = clamp(self.halo_system.halo_color[3], 0.0, 1.0)
-        r = clamp_int(self.halo_system.halo_color[0], 0, 255)
-        g = clamp_int(self.halo_system.halo_color[1], 0, 255)
-        b = clamp_int(self.halo_system.halo_color[2], 0, 255)
-        a = int(alpha * 255)
-        radius = Constants.BALL_SIZE * 2
-        # draw one circle into the reusable halo surface
-        pygame.draw.circle(
-            hs,
-            (r, g, b, a),
-            (self.halo_system.halo_diameter // 2, self.halo_system.halo_diameter // 2),
-            radius,
-        )
-        # blit at ball center
+        # Get pre-rendered halo at current alpha level
+        alpha = self.halo_system.halo_color[3]
+        halo_surf = self.halo_system.get_cached_halo(alpha)
+
+        # Just blit it - no drawing needed!
         cx = ball.rect.centerx
         cy = ball.rect.centery
-        halo_rect = hs.get_rect(center=(cx, cy))
-        self.screen.blit(hs, halo_rect)
+        halo_rect = halo_surf.get_rect(center=(cx, cy))
+        self.screen.blit(halo_surf, halo_rect)
 
     def draw_paddles(self, left: Paddle, right: Paddle):
         pygame.draw.rect(self.screen, (255, 255, 255), left.rect)
@@ -379,7 +382,7 @@ class Renderer:
         if phase != GamePhase.WINNING or not surf:
             return
 
-        a = clamp_int(int(clamp(alpha, 0.0, 255.0)), 0, 255)
+        a = clamp(int(clamp(alpha, 0.0, 255.0)), 0, 255)
         tmp = surf.copy()  # only copy when actually drawing
         tmp.set_alpha(a)
         self.screen.blit(
@@ -636,7 +639,6 @@ class PongGame:
             dt_ms = self.clock.tick_busy_loop(0)
             dt = dt_ms / 1000.0
             now = pygame.time.get_ticks()
-            frame_start = time.perf_counter()
 
             running_events, halo_toggled = self.handle_events()
             if not running_events:
@@ -646,18 +648,11 @@ class PongGame:
             keys = pygame.key.get_pressed()
             self.handle_halo_toggle(halo_toggled)
 
-            # --- PROFILING START ---
-            t0 = time.perf_counter()
-
             # Update
             self.game.update(dt, keys, now, self.ai_delay_table, self.winning_score)
 
-            t1 = time.perf_counter()
-
             # Halo
             self.halo_system.update(self.game.ball, now, self.halo_enabled)
-
-            t2 = time.perf_counter()
 
             # Render
             self.renderer.draw_scene(
@@ -668,21 +663,6 @@ class PongGame:
                 self.game.phase,
                 self.game.winner,
                 self.game.winner_text_alpha,
-            )
-
-            t3 = time.perf_counter()
-            # --- PROFILING END ---
-
-            # section timing (always show during stutter)
-
-        frame_end = time.perf_counter()
-        frame_time = (frame_end - frame_start) * 1000
-        if frame_time > 20:
-            print(
-                f"update={(t1-t0)*1000:.2f}ms  "
-                f"halo={(t2-t1)*1000:.2f}ms  "
-                f"render={(t3-t2)*1000:.2f}ms  "
-                f"total={frame_time:.2f}ms"
             )
 
         pygame.quit()

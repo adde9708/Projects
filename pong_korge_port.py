@@ -334,9 +334,9 @@ class Renderer:
         halo_surf = self.halo_system.get_cached_halo(alpha)
 
         # Just blit it - no drawing needed!
-        cx = ball.rect.centerx
-        cy = ball.rect.centery
-        halo_rect = halo_surf.get_rect(center=(cx, cy))
+        center_x = ball.rect.centerx
+        center_y = ball.rect.centery
+        halo_rect = halo_surf.get_rect(center=(center_x, center_y))
         self.screen.blit(halo_surf, halo_rect)
 
     def draw_paddles(self, left: Paddle, right: Paddle):
@@ -382,9 +382,9 @@ class Renderer:
         if phase != GamePhase.WINNING or not surf:
             return
 
-        a = clamp(int(clamp(alpha, 0.0, 255.0)), 0, 255)
+        alpha = clamp(int(clamp(alpha, 0.0, 255.0)), 0, 255)
         tmp = surf.copy()  # only copy when actually drawing
-        tmp.set_alpha(a)
+        tmp.set_alpha(alpha)
         self.screen.blit(
             tmp,
             tmp.get_rect(

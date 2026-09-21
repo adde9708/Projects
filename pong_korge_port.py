@@ -1,9 +1,10 @@
-import pygame
 import random
-import math
-from enum import Enum
 from dataclasses import dataclass
-import time
+from enum import Enum
+from math import copysign, cos, exp, hypot, radians, sin
+from random import Random
+
+import pygame
 
 
 # ---------------------------
@@ -22,7 +23,7 @@ class Constants:
     HALO_PULSE_AMP = 0.4
     HALO_ADAPTIVE_AMP = 0.2
     WINNING_DISPLAY_TIME = 4.0
-    MAX_BOUNCE_ANGLE = math.radians(64.0)
+    MAX_BOUNCE_ANGLE = radians(64.0)
 
 
 # ---------------------------
@@ -53,16 +54,21 @@ def clamp(v, lo, hi) -> int:
 # ENTITIES
 # ---------------------------
 class Paddle:
-    __slots__ = ("x", "y", "width", "height", "rect", "screen_height", "control_mode")
+    __slots__ = ("control_mode", "height", "rect", "screen_height", "width", "x", "y")
 
     def __init__(
         self, x, y, width, height, screen_height, control_mode=PaddleControlMode.NONE
     ):
-        self.x = float(x)
-        self.y = float(y)
+        self.x: float = float(x)
+        self.y: float = float(y)
         self.width = width
         self.height = height
-        self.rect = pygame.Rect(int(round(self.x)), int(round(self.y)), width, height)
+        self.rect = pygame.Rect(
+            int(self.x),
+            int(self.y),
+            width,
+            height,
+        )
         self.screen_height = screen_height
         self.control_mode = control_mode
 
@@ -71,11 +77,11 @@ class Paddle:
         center_y = self.y + self.height * 0.5
         diff = target_y - center_y
         if abs(diff) > 1.0:
-            step = math.copysign(min(abs(diff), move_dist), diff)
+            step = copysign(min(abs(diff), move_dist), diff)
             self.y += step
         self.y = clamp(self.y, 0.0, float(self.screen_height - self.height))
         # update rect
-        self.rect.y = int(round(self.y))
+        self.rect.y = self.y
 
     def move(self, delta, speed, keys=None, target_y=None):
         if self.control_mode == PaddleControlMode.PLAYER and keys is not None:
@@ -87,99 +93,104 @@ class Paddle:
             elif down and not up:
                 self.y += move_dist
             self.y = clamp(self.y, 0.0, float(self.screen_height - self.height))
-            self.rect.y = int(round(self.y))
+            self.rect.y = self.y
         elif self.control_mode == PaddleControlMode.AI and target_y is not None:
             self.ai_step(delta, speed, target_y)
 
 
 class Ball:
     __slots__ = (
-        "x",
-        "y",
-        "w",
+        "base_speed",
         "h",
         "rect",
-        "base_speed",
-        "screen_width",
+        "rnd",
         "screen_height",
+        "screen_width",
         "vx",
         "vy",
-        "rnd",
+        "w",
+        "x",
+        "y",
     )
 
     def __init__(self, x, y, size, base_speed, screen_width, screen_height):
-        self.x = float(x)
-        self.y = float(y)
-        self.w = size
-        self.h = size
-        self.rect = pygame.Rect(int(round(self.x)), int(round(self.y)), size, size)
-        self.base_speed = base_speed
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.vx = 0.0
-        self.vy = 0.0
-        self.rnd = random.Random()
+        self.x: float = float(x)
+        self.y: float = float(y)
+        self.w: int = size
+        self.h: int = size
+        self.rect = pygame.Rect(int(self.x), int(self.y), size, size)
+        self.base_speed: float = base_speed
+        self.screen_width: int = screen_width
+        self.screen_height: int = screen_height
+        self.vx: float = 0.0
+        self.vy: float = 0.0
+        self.rnd = Random()
         self.randomize_speed()
 
     def randomize_speed(self):
         # write directly to vx, vy
         angle_deg = 20.0 + self.rnd.random() * 60.0
-        angle = math.radians(angle_deg)
+        angle = radians(angle_deg)
         dir_x = 1 if self.rnd.random() < 0.5 else -1
         dir_y = 1 if self.rnd.random() < 0.5 else -1
-        self.vx = math.cos(angle) * self.base_speed * dir_x
-        self.vy = math.sin(angle) * self.base_speed * dir_y
+        self.vx = cos(angle) * self.base_speed * dir_x
+        self.vy = sin(angle) * self.base_speed * dir_y
 
     def reset(self):
-        self.x = (self.screen_width - self.w) * 0.5
-        self.y = (self.screen_height - self.h) * 0.5
-        self.rect.x = int(round(self.x))
-        self.rect.y = int(round(self.y))
+        self.x = float((self.screen_width - self.w) * 0.5)
+        self.y = float((self.screen_height - self.h) * 0.5)
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
         self.randomize_speed()
 
     def move(self, delta):
         # update float position then rect
         self.x += self.vx * delta
         self.y += self.vy * delta
-        self.rect.x = int(round(self.x))
-        self.rect.y = int(round(self.y))
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
 
     def bounce_vertical(self):
         self.vy = -self.vy
 
     def magnitude(self):
-        mag = math.hypot(self.vx, self.vy)
+        mag = hypot(self.vx, self.vy)
         return mag if mag > 1e-6 else self.base_speed
 
     def nudge_out(self, paddle_rect, dir_x):
-        if dir_x > 0:
-            self.x = float(paddle_rect.right)
-        else:
-            self.x = float(paddle_rect.left - self.w)
-        self.rect.x = int(round(self.x))
+        right_x = float(paddle_rect.right)
+        left_x = float(paddle_rect.left - self.w)
+        self.x = right_x if dir_x > 0 else left_x
+        self.rect.x = int(self.x)
 
-    def bounce_horizontal(self, hit_fraction, paddle_rect):
+    def invert_dir(self) -> float:
+        normal_dir = -float(copysign(1.0, self.vx))
+        random_dir = -1.0 if self.rnd.random() < 0.5 else 1.0
+
+        return normal_dir if self.vx != 0.0 else random_dir
+
+    def remove_noise(self, new_dx: float, new_dy: float):
+        return (
+            0.0 if abs(new_dx) < 1e-12 else new_dx,
+            0.0 if abs(new_dy) < 1e-12 else new_dy,
+        )
+
+    def bounce_horizontal(self, hit_fraction: float, paddle_rect):
         # hit_fraction in [0..1], map to angle between -MAX_BOUNCE_ANGLE and +MAX_BOUNCE_ANGLE
         hit_norm = (hit_fraction - 0.5) * 2.0
-        angle = hit_norm * Constants.MAX_BOUNCE_ANGLE
+        MAX_BOUNCE_ANGLE = Constants.MAX_BOUNCE_ANGLE
+        angle = hit_norm * MAX_BOUNCE_ANGLE
         mag = self.magnitude()
         # Determine horizontal direction (invert current horizontal direction)
-        if self.vx != 0.0:
-            dir_x = -int(math.copysign(1.0, self.vx))
-        else:
-            dir_x = -1 if self.rnd.random() < 0.5 else 1
-
-        new_dx = math.cos(angle) * dir_x
-        new_dy = math.sin(angle)
-        norm = math.hypot(new_dx, new_dy)
+        dir_x = self.invert_dir()
+        new_dx = cos(angle) * dir_x
+        new_dy = sin(angle)
+        norm = hypot(new_dx, new_dy)
         new_dx = new_dx / norm * mag
         new_dy = new_dy / norm * mag
 
         # Remove floating point noise
-        if abs(new_dx) < 1e-12:
-            new_dx = 0.0
-        if abs(new_dy) < 1e-12:
-            new_dy = 0.0
+        new_dx, new_dy = self.remove_noise(new_dx, new_dy)
 
         self.vx = new_dx
         self.vy = new_dy
@@ -212,7 +223,7 @@ class ScoreBoard:
 # ---------------------------
 class PhysicsEngine:
     @staticmethod
-    def no_overlap(ball_rect, paddle_rect):
+    def no_overlap(ball_rect, paddle_rect) -> bool:
         overlap = min(paddle_rect.bottom, ball_rect.bottom) - max(
             paddle_rect.top, ball_rect.top
         )
@@ -223,8 +234,8 @@ class PhysicsEngine:
         # If no vertical overlap return center hit
         if PhysicsEngine.no_overlap(ball_rect, paddle_rect):
             return 0.5
-        ball_center = ball_rect.centery
-        frac = (ball_center - paddle_rect.top) / paddle_rect.height
+        ball_center: int = ball_rect.centery
+        frac: float = (int(ball_center - paddle_rect.top)) / paddle_rect.height
         return clamp(frac, 0.0, 1.0)
 
 
@@ -233,7 +244,8 @@ class PhysicsEngine:
 # ---------------------------
 class HaloSystem:
     def __init__(self):
-        self.halo_color = [102, 204, 255, Constants.HALO_ALPHA_BASE]
+        HALO_ALPHA_BASE = Constants.HALO_ALPHA_BASE
+        self.halo_color = [102, 204, 255, HALO_ALPHA_BASE]
         self.halo_diameter = max(1, Constants.BALL_SIZE * 4)
         # Add cache here instead of single surface
         self.halo_cache = self._create_halo_cache()
@@ -241,10 +253,11 @@ class HaloSystem:
     def _create_halo_cache(self):
         """Pre-render halo surfaces at various alpha levels."""
         cache = {}
-        radius = Constants.BALL_SIZE * 2
+        BALL_SIZE = Constants.BALL_SIZE
+        radius = BALL_SIZE * 2
         center = (self.halo_diameter // 2, self.halo_diameter // 2)
-
-        for alpha in range(0, 256, 8):
+        r = range(0, 256, 8)
+        for alpha in r:
             surf = pygame.Surface(
                 (self.halo_diameter, self.halo_diameter), pygame.SRCALPHA
             )
@@ -254,41 +267,37 @@ class HaloSystem:
 
         return cache
 
-    def get_cached_halo(self, alpha_float):
-        """Get the closest pre-rendered halo surface for given alpha (0.0-1.0)."""
-        alpha_int = int(clamp(alpha_float, 0.0, 1.0) * 255)
+    def get_cached_halo(self, alpha_float: float):
+
+        alpha_int = clamp(alpha_float, 0.0, 1.0) * 255
         cache_key = alpha_int // 8 * 8
         return self.halo_cache[cache_key]
 
-    def get_halo_mask(self, enabled: bool) -> float:
-        return 1.0 if enabled else 0.0
-
-    def blend_alpha(self, enabled: bool, alpha_on: float, alpha_off: float) -> float:
-        mask = self.get_halo_mask(enabled)
+    def blend_alpha(
+        self, halo_enabled: bool, alpha_on: float, alpha_off: float
+    ) -> float:
+        mask = 1.0 if halo_enabled else 0.0
         return mask * alpha_on + (1 - mask) * alpha_off
 
     def update(self, ball: Ball, now_ms: float, halo_enabled: bool):
-        mask = self.get_halo_mask(halo_enabled)
-        pulse = (
-            abs(math.sin(now_ms / Constants.HALO_PULSE_SPEED))
-            * Constants.HALO_PULSE_AMP
-            + 0.8
-        )
-        adaptive = 1.0 - (
-            Constants.HALO_ADAPTIVE_AMP
-            * math.sin(now_ms / Constants.HALO_ADAPTIVE_SPEED)
-        )
-        speed_factor = clamp(
-            math.hypot(ball.vx, ball.vy) / Constants.BALL_BASE_SPEED, 0.8, 1.2
-        )
-        decay = math.exp(-((now_ms % 2000.0) / 800.0))
+        mask = 1.0 if halo_enabled else 0.0
+        HALO_PULSE_SPEED = Constants.HALO_PULSE_SPEED
+        HALO_PULSE_AMP = Constants.HALO_PULSE_AMP
+        HALO_ADAPTIVE_AMP = Constants.HALO_ADAPTIVE_AMP
+        HALO_ADAPTIVE_SPEED = Constants.HALO_ADAPTIVE_SPEED
+        BALL_BASE_SPEED = Constants.BALL_BASE_SPEED
+        HALO_ALPHA_BASE = Constants.HALO_ALPHA_BASE
+        pulse = abs(sin(now_ms / HALO_PULSE_SPEED)) * HALO_PULSE_AMP + 0.8
+        adaptive = 1.0 - (HALO_ADAPTIVE_AMP * sin(now_ms / HALO_ADAPTIVE_SPEED))
+        speed_factor = clamp(hypot(ball.vx, ball.vy) / BALL_BASE_SPEED, 0.8, 1.2)
+        decay = exp(-((now_ms % 2000.0) / 800.0))
         total_alpha = clamp(
-            Constants.HALO_ALPHA_BASE * pulse * adaptive * speed_factor * mask * decay,
+            HALO_ALPHA_BASE * pulse * adaptive * speed_factor * mask * decay,
             0.0,
             1.0,
         )
 
-        dir_factor = (math.copysign(1.0, ball.vx) + 1.0) * 0.5
+        dir_factor = (copysign(1.0, ball.vx) + 1.0) * 0.5
         red = (1.0 - dir_factor) * 0.4 + dir_factor * 1.0
         green = 0.6
         blue = (1.0 - dir_factor) * 1.0 + dir_factor * 0.4
@@ -300,9 +309,8 @@ class HaloSystem:
         self.halo_color[3] = total_alpha
 
     def handle_toggle(self, halo_enabled: bool):
-        self.halo_color[3] = self.blend_alpha(
-            halo_enabled, Constants.HALO_ALPHA_BASE, 0.0
-        )
+        HALO_ALPHA_BASE = Constants.HALO_ALPHA_BASE
+        self.halo_color[3] = self.blend_alpha(halo_enabled, HALO_ALPHA_BASE, 0.0)
 
 
 # ---------------------------
@@ -312,6 +320,12 @@ class Renderer:
     def __init__(self, screen, halo_system: HaloSystem):
         self.screen = screen
         self.halo_system = halo_system
+        self._halo_rect = pygame.Rect(
+            0,
+            0,
+            halo_system.halo_diameter,
+            halo_system.halo_diameter,
+        )
         pygame.font.init()
         self.font_score = pygame.font.SysFont(None, 48)
         self.font_winner = pygame.font.SysFont(None, 64)
@@ -319,10 +333,14 @@ class Renderer:
         # score surface + last values to avoid re-rendering each frame
         self._cached_score_surf = None
         self._cached_score_value = (-1, -1)
-
         # winner surface + last winner string
         self._cached_winner_surf = None
         self._cached_winner_string = None
+
+        # alpha-modulated winner surface cache
+        self._cached_winner_surf_alpha = pygame.Surface((1, 1), pygame.SRCALPHA)
+        self._last_alpha = -1
+        self._winner_rect = pygame.Rect(0, 0, 1, 1)
 
     def draw_background(self):
         # single fill call
@@ -334,10 +352,9 @@ class Renderer:
         halo_surf = self.halo_system.get_cached_halo(alpha)
 
         # Just blit it - no drawing needed!
-        center_x = ball.rect.centerx
-        center_y = ball.rect.centery
-        halo_rect = halo_surf.get_rect(center=(center_x, center_y))
-        self.screen.blit(halo_surf, halo_rect)
+        self._halo_rect.center = ball.rect.center
+        self._halo_rect.center = ball.rect.center
+        self.screen.blit(halo_surf, self._halo_rect)
 
     def draw_paddles(self, left: Paddle, right: Paddle):
         pygame.draw.rect(self.screen, (255, 255, 255), left.rect)
@@ -348,7 +365,7 @@ class Renderer:
         pygame.draw.ellipse(self.screen, (255, 255, 255), ball.rect)
 
     def score_surface(self, scoreboard):
-        cur = (scoreboard.left_score, scoreboard.right_score)
+        cur: tuple[int, int] = (scoreboard.left_score, scoreboard.right_score)
         if cur != self._cached_score_value:
             text = f"{cur[0]} | {cur[1]}"
             self._cached_score_surf = self.font_score.render(
@@ -364,7 +381,7 @@ class Renderer:
                 surf, (self.screen.get_width() // 2 - surf.get_width() // 2, 20)
             )
 
-    def winner_surface(self, winner_string):
+    def winner_surface(self, winner_string: str):
         # return cached or refresh only when string changed
         if winner_string and (
             winner_string != self._cached_winner_string
@@ -375,22 +392,36 @@ class Renderer:
             )
             self._cached_winner_string = winner_string
 
+            # force alpha recache for new surface
+            self._last_alpha = -1
+
         return self._cached_winner_surf
 
-    def draw_winner_overlay(self, phase, winner_string, alpha):
-        surf = self.winner_surface(winner_string)
-        if phase != GamePhase.WINNING or not surf:
-            return
+    def set_alpha(self, alpha, surf):
+        if alpha != self._last_alpha:
+            self._cached_winner_surf_alpha = surf.copy()
+            self._cached_winner_surf_alpha.set_alpha(alpha)
+            self._last_alpha = alpha
 
-        alpha = clamp(int(clamp(alpha, 0.0, 255.0)), 0, 255)
-        tmp = surf.copy()  # only copy when actually drawing
-        tmp.set_alpha(alpha)
-        self.screen.blit(
-            tmp,
-            tmp.get_rect(
-                center=(self.screen.get_width() // 2, self.screen.get_height() // 2)
-            ),
-        )
+    def winner_overlay(self, winner_string, alpha):
+        if winner_string:
+            # Create winner surface
+            surf = self.winner_surface(winner_string)
+
+            alpha = int(clamp(alpha, 0.0, 255.0))
+
+            # Reuse cached alpha surface
+            self.set_alpha(alpha, surf)
+            self._winner_rect.size = self._cached_winner_surf_alpha.get_size()
+            self._winner_rect.center = (
+                self.screen.get_width() // 2,
+                self.screen.get_height() // 2,
+            )
+
+            self.screen.blit(self._cached_winner_surf_alpha, self._winner_rect)
+
+    def draw_winner_overlay(self, winner_string, alpha):
+        self.winner_overlay(winner_string, alpha)
 
     def draw_scene(
         self,
@@ -398,7 +429,6 @@ class Renderer:
         right_paddle: Paddle,
         ball: Ball,
         scoreboard: ScoreBoard,
-        phase: GamePhase,
         winner_string: str,
         winner_text_alpha: float,
     ):
@@ -408,7 +438,7 @@ class Renderer:
         self.draw_paddles(left_paddle, right_paddle)
         self.draw_ball(ball)
         self.draw_score(scoreboard)
-        self.draw_winner_overlay(phase, winner_string, winner_text_alpha)
+        self.draw_winner_overlay(winner_string, winner_text_alpha)
         pygame.display.flip()
 
 
@@ -417,60 +447,66 @@ class Renderer:
 # ---------------------------
 class GameController:
     def __init__(self, screen_width, screen_height):
-        self.width = screen_width
-        self.height = screen_height
-
+        self.width: int = screen_width
+        self.height: int = screen_height
+        PADDLE_HEIGHT = Constants.PADDLE_HEIGHT
+        PADDLE_WIDTH = Constants.PADDLE_WIDTH
+        BALL_SIZE = Constants.BALL_SIZE
+        BALL_BASE_SPEED = Constants.BALL_BASE_SPEED
+        HALO_ALPHA_BASE = Constants.HALO_ALPHA_BASE
+        READY = GamePhase.READY
+        PLAYER = PaddleControlMode.PLAYER
+        AI = PaddleControlMode.AI
         self.left_paddle = Paddle(
             30,
-            (screen_height - Constants.PADDLE_HEIGHT) / 2.0,
-            Constants.PADDLE_WIDTH,
-            Constants.PADDLE_HEIGHT,
+            (screen_height - PADDLE_HEIGHT) / 2.0,
+            PADDLE_WIDTH,
+            PADDLE_HEIGHT,
             screen_height,
-            PaddleControlMode.PLAYER,
+            PLAYER,
         )
         self.right_paddle = Paddle(
             screen_width - 40,
-            (screen_height - Constants.PADDLE_HEIGHT) / 2.0,
-            Constants.PADDLE_WIDTH,
-            Constants.PADDLE_HEIGHT,
+            (screen_height - PADDLE_HEIGHT) / 2.0,
+            PADDLE_WIDTH,
+            PADDLE_HEIGHT,
             screen_height,
-            PaddleControlMode.AI,
+            AI,
         )
         self.ball = Ball(
-            screen_width / 2.0 - Constants.BALL_SIZE / 2.0,
-            screen_height / 2.0 - Constants.BALL_SIZE / 2.0,
-            Constants.BALL_SIZE,
-            Constants.BALL_BASE_SPEED,
+            screen_width / 2.0 - BALL_SIZE / 2.0,
+            screen_height / 2.0 - BALL_SIZE / 2.0,
+            BALL_SIZE,
+            BALL_BASE_SPEED,
             screen_width,
             screen_height,
         )
         self.scoreboard = ScoreBoard()
-        self.phase = GamePhase.READY
+        self.phase = READY
         self.winner = ""
         self.winning_start_time = None
         self.winner_text_alpha = 0.0
         # keep halo color state mirrored
-        self.halo_color = [102, 204, 255, Constants.HALO_ALPHA_BASE]
+        self.halo_color = [102, 204, 255, HALO_ALPHA_BASE]
 
     def handle_escape(self, keys):
         if keys[pygame.K_ESCAPE]:
-            self.phase = GamePhase.PAUSED
+            PAUSED = GamePhase.PAUSED
+            self.phase = PAUSED
             return True
         return False
 
     def update_left_paddle(self, delta, keys):
-        self.left_paddle.move(delta, Constants.PADDLE_SPEED, keys)
+        PADDLE_SPEED = Constants.PADDLE_SPEED
+        self.left_paddle.move(delta, PADDLE_SPEED, keys)
 
     def update_ai_paddle(self, delta, ai_delay_table):
         total_score = min(
             self.scoreboard.left_score + self.scoreboard.right_score,
             len(ai_delay_table) - 1,
         )
-        ai_speed = (
-            Constants.PADDLE_SPEED
-            * ai_delay_table[total_score]
-            * (0.8 + random.random() * 0.2)
-        )
+        PADDLE_SPEED = Constants.PADDLE_SPEED
+        ai_speed = PADDLE_SPEED * ai_delay_table[total_score] * (0.8 + random.random())
         target_y = self.ball.y + self.ball.h * 0.5
         self.right_paddle.move(delta, ai_speed, None, target_y)
 
@@ -483,8 +519,8 @@ class GameController:
         mid_y = self.height / 2.0
         self.left_paddle.y = mid_y - self.left_paddle.height / 2.0
         self.right_paddle.y = mid_y - self.right_paddle.height / 2.0
-        self.left_paddle.rect.y = int(round(self.left_paddle.y))
-        self.right_paddle.rect.y = int(round(self.right_paddle.y))
+        self.left_paddle.rect.y = int(self.left_paddle.y)
+        self.right_paddle.rect.y = int(self.right_paddle.y)
 
     def reset_ball_and_paddles(self):
         self.ball.reset()
@@ -511,7 +547,8 @@ class GameController:
                 self.winner = "Right Player Wins!"
             else:
                 self.winner = "It's a tie!"
-            self.phase = GamePhase.WINNING
+            WINNING = GamePhase.WINNING
+            self.phase = WINNING
             self.winning_start_time = now
             return True
         return False
@@ -523,7 +560,7 @@ class GameController:
             self.ball.bounce_vertical()
         elif self.ball.y + self.ball.h >= self.height:
             self.ball.y = float(self.height - self.ball.h)
-            self.ball.rect.y = int(round(self.ball.y))
+            self.ball.rect.y = int(self.ball.y)
             self.ball.bounce_vertical()
 
     def check_paddle_collision(self):
@@ -547,38 +584,47 @@ class GameController:
 
     def update_ready(self, keys):
         if keys[pygame.K_SPACE]:
-            self.phase = GamePhase.RUNNING
+            RUNNING = GamePhase.RUNNING
+            self.phase = RUNNING
 
     def update_paused(self, keys):
         if keys[pygame.K_SPACE]:
-            self.phase = GamePhase.RUNNING
+            RUNNING = GamePhase.RUNNING
+            self.phase = RUNNING
+
+    def reset_game(self, READY):
+        self.scoreboard.reset()
+        self.ball.reset()
+        self.reset_paddles()
+        self.phase = READY
+        self.winning_start_time = None
+        self.winner_text_alpha = 0.0
 
     def update_winning(self, delta, now):
+        WINNING_DISPLAY_TIME = Constants.WINNING_DISPLAY_TIME
+        READY = GamePhase.READY
         self.winner_text_alpha = clamp(
             self.winner_text_alpha + 128.0 * delta, 0.0, 255.0
         )
         if (
             self.winning_start_time
-            and (now - self.winning_start_time) / 1000.0
-            >= Constants.WINNING_DISPLAY_TIME
+            and (now - self.winning_start_time) / 1000.0 >= WINNING_DISPLAY_TIME
         ):
-            self.scoreboard.reset()
-            self.ball.reset()
-            self.reset_paddles()
-            self.phase = GamePhase.READY
-            self.winning_start_time = None
-            self.winner_text_alpha = 0.0
+            self.reset_game(READY)
 
     def update(self, delta, keys, now, ai_delay_table, winning_score):
-
+        RUNNING = GamePhase.RUNNING
+        READY = GamePhase.READY
+        PAUSED = GamePhase.PAUSED
+        WINNING = GamePhase.WINNING
         phase = self.phase
-        if phase == GamePhase.RUNNING:
+        if phase is RUNNING:
             self.update_running(delta, keys, now, ai_delay_table, winning_score)
-        elif phase == GamePhase.READY:
+        elif phase is READY:
             self.update_ready(keys)
-        elif phase == GamePhase.PAUSED:
+        elif phase is PAUSED:
             self.update_paused(keys)
-        elif phase == GamePhase.WINNING:
+        elif phase is WINNING:
             self.update_winning(delta, now)
 
 
@@ -586,6 +632,27 @@ class GameController:
 # PONG GAME (runner)
 # ---------------------------
 class PongGame:
+    __slots__ = (
+        "_halo_toggled",
+        "ai_delay_table",
+        "ball",
+        "clock",
+        "game",
+        "halo_enabled",
+        "halo_system",
+        "height",
+        "keys",
+        "left_paddle",
+        "phase",
+        "renderer",
+        "right_paddle",
+        "running",
+        "score_board",
+        "screen",
+        "width",
+        "winning_score",
+    )
+
     def __init__(self):
         pygame.init()
         self.width, self.height = 640, 512
@@ -612,17 +679,17 @@ class PongGame:
     def create_ai_delay_table():
         base = 0.8
         factor = 0.04
-        return tuple(base / (1 + factor * i) for i in range(1025))
+        r = range(1025)
+        return tuple(base / (1 + factor * i) for i in r)
 
     def handle_events(self):
-        halo_toggled = False
-        running = True
+        halo_toggled: bool = False
+        running: bool = True
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 running = False
-            elif ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_h:
-                    halo_toggled = True
+            elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_h:
+                halo_toggled = True
         return running, halo_toggled
 
     def handle_halo_toggle(self, toggled):
@@ -636,9 +703,9 @@ class PongGame:
         self.renderer.draw_score(self.game.scoreboard)
 
         while self.running:
-            dt_ms = self.clock.tick_busy_loop(0)
-            dt = dt_ms / 1000.0
-            now = pygame.time.get_ticks()
+            dt_ms: int = self.clock.tick_busy_loop(0)
+            dt: float = dt_ms / 1000.0
+            now: int = pygame.time.get_ticks()
 
             running_events, halo_toggled = self.handle_events()
             if not running_events:
@@ -660,7 +727,6 @@ class PongGame:
                 self.game.right_paddle,
                 self.game.ball,
                 self.game.scoreboard,
-                self.game.phase,
                 self.game.winner,
                 self.game.winner_text_alpha,
             )
@@ -669,7 +735,8 @@ class PongGame:
 
 
 def main():
-    PongGame().run()
+    game = PongGame()
+    game.run()
 
 
 if __name__ == "__main__":

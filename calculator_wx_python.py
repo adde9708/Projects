@@ -2,12 +2,12 @@ import re
 from ast import literal_eval
 from functools import partial
 from secrets import choice
+from typing import Any
+
 import wx
-from secrets import choice
-from typing import Any, Dict, Tuple
 
 
-def get_shared_state() -> Dict[str, Any]:
+def get_shared_state() -> dict[str, Any]:
     """Encapsulates shared state and configuration."""
     return {
         "operators": {"/", "*", "+", "-"},
@@ -46,7 +46,7 @@ def create_solution_text(panel: wx.Panel) -> wx.TextCtrl:
     return solution
 
 
-def handle_button_press(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> None:
+def handle_button_press(event: wx.CommandEvent, shared_state: dict[str, Any]) -> None:
     button = event.GetEventObject()
     solution = button.GetParent().FindWindowByName("solution_text")
     label: str = button.GetLabel()
@@ -69,7 +69,7 @@ def show_error_message(message: str) -> Any:
     return wx.MessageBox(message, "Error", wx.OK | wx.ICON_ERROR)
 
 
-def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> None:
+def handle_solution(event: wx.CommandEvent, shared_state: dict[str, Any]) -> None:
     parent = event.GetEventObject().GetParent()
     solution = parent.FindWindowByName("solution_text")
     expression: str = solution.GetValue().strip()
@@ -85,7 +85,7 @@ def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> Non
         if expression_pattern.fullmatch(expression):
             try:
                 return solution.SetValue(str(eval(expression)))
-            except Exception as e:
+            except ArithmeticError as e:
                 return show_error_message(f"Error in expression: {e}")
         else:
             return show_error_message(
@@ -93,7 +93,7 @@ def handle_solution(event: wx.CommandEvent, shared_state: Dict[str, Any]) -> Non
             )
 
 
-def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> Any:
+def bind_events(shared_state: dict[str, Any], label: str, button: wx.Button) -> Any:
     if label == "=":
         return button.Bind(
             wx.EVT_LEFT_DOWN,
@@ -104,7 +104,7 @@ def bind_events(shared_state: Dict[str, Any], label: str, button: wx.Button) -> 
 
 
 def put_button_in_panel(
-    panel: wx.Panel, colors: Tuple[wx.Colour, ...], label: str
+    panel: wx.Panel, colors: tuple[wx.Colour, ...], label: str
 ) -> wx.Button:
     button = wx.Button(panel, label=label, size=(80, 60))
     button.SetBackgroundColour(choice(colors))
@@ -122,7 +122,7 @@ def add_hbox_sizer_to_vbox(sizer: wx.BoxSizer, hbox_sizer: wx.BoxSizer) -> wx.Si
 
 
 def create_buttons(
-    panel: wx.Panel, shared_state: Dict[str, Any], sizer: wx.BoxSizer
+    panel: wx.Panel, shared_state: dict[str, Any], sizer: wx.BoxSizer
 ) -> None:
     colors = shared_state["colors"]
     buttons = shared_state["buttons"]
@@ -136,7 +136,7 @@ def create_buttons(
         add_hbox_sizer_to_vbox(sizer, hbox_sizer)
 
 
-def create_panel(frame: wx.Frame, shared_state: Dict[str, Any]) -> None:
+def create_panel(frame: wx.Frame, shared_state: dict[str, Any]) -> None:
     panel = wx.Panel(frame)
     sizer = wx.BoxSizer(wx.VERTICAL)
     solution = create_solution_text(panel)

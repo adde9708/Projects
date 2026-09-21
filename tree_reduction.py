@@ -1,4 +1,4 @@
-from typing import List, Callable, Optional
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import partial
 
@@ -6,23 +6,23 @@ from functools import partial
 @dataclass(frozen=True)
 class Rule:
     lhs: str
-    rhs: List[str]
-    action: Callable[[List["Node"]], "Node"]
+    rhs: list[str]
+    action: Callable[[list["Node"]], "Node"]
 
 
 @dataclass(frozen=True)
 class Grammar:
-    rules: List[Rule]
+    rules: list[Rule]
 
 
 @dataclass
 class Node:
     op: str
-    children: List["Node"] = field(default_factory=list)
-    value: Optional[int] = None
+    children: list["Node"] = field(default_factory=list)
+    value: int | None = None
 
 
-def action_addition(children: List["Node"]) -> "Node":
+def action_addition(children: list["Node"]) -> "Node":
 
     if len(children) < 3:
         raise ValueError("Addition action requires exactly 3 children.")
@@ -35,7 +35,7 @@ def action_addition(children: List["Node"]) -> "Node":
     return node
 
 
-def action_multiplication(children: List["Node"]) -> "Node":
+def action_multiplication(children: list["Node"]) -> "Node":
 
     if len(children) < 3:
         raise ValueError("Multiplication action requires exactly 3 children.")
@@ -48,7 +48,7 @@ def action_multiplication(children: List["Node"]) -> "Node":
     return node
 
 
-def action_parenthesis(children: List["Node"]) -> "Node":
+def action_parenthesis(children: list["Node"]) -> "Node":
 
     if len(children) < 3:
         raise ValueError("Parenthesis action requires exactly 3 children.")
@@ -56,18 +56,18 @@ def action_parenthesis(children: List["Node"]) -> "Node":
     return children[1]  # Assuming it's ( E ) → return E
 
 
-def action_id(children: List["Node"]) -> "Node":
+def action_id(children: list["Node"]) -> "Node":
     node = Node("F", children)
     node.value = 1  # Assuming ID evaluates to 1
     return node
 
 
-def identity_action(children: List["Node"]) -> "Node":
+def identity_action(children: list["Node"]) -> "Node":
     return children[0]
 
 
-def shift_reduce_parser(tokens: List[str]) -> Node:
-    stack: List[Node] = []
+def shift_reduce_parser(tokens: list[str]) -> Node:
+    stack: list[Node] = []
     index = 0
 
     rules = Grammar(

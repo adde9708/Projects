@@ -1,22 +1,26 @@
 import contextlib
-import requests
+import os
+import pickle
 import re
-import pandas as pd
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 from dataclasses import dataclass
+from typing import ClassVar
+from urllib.parse import urljoin, urlparse
+
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
-import pickle
-import os
 from gspread import auth
 
 
 @dataclass
 class Constants:
     EMAIL_REGEX = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+    INVALID_EMAIL_REGEX = r"sentry|wixpress|ingest|report|error|test|example"
+
     PHONE_REGEX = r"(\+?\d[\d\s().-]{7,}\d)"
-    HEADERS = {
+    HEADERS: ClassVar[dict[str, str]] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
     }
 
@@ -62,16 +66,42 @@ def authenticate_google_sheets():
     return auth.authorize(creds)
 
 
+def normalize_url(url):
+
+    if not isinstance(url, str):
+        return ""
+
+    parsed = urlparse(url.strip().lower())
+
+    domain = parsed.netloc.replace("www.", "")
+
+    return domain.rstrip("/")
+
+
 def get_page(url):
     with contextlib.suppress(requests.RequestException):
         r = requests.get(url, headers=Constants.HEADERS, timeout=10)
         if r.status_code == 200:
             return r.text
+
     return ""
 
 
 def extract_emails(text):
-    return list(set(re.findall(Constants.EMAIL_REGEX, text)))
+
+    found_emails = re.findall(Constants.EMAIL_REGEX, text)
+    valid_emails = []
+
+    for email in found_emails:
+
+        email_lower = email.lower()
+
+        if re.search(Constants.INVALID_EMAIL_REGEX, email_lower):
+            continue
+
+        valid_emails.append(email)
+
+    return list(set(valid_emails))
 
 
 def extract_phones(text):
@@ -112,7 +142,7 @@ def scrape_company(name, website):
     if not emails and contact_page:
         contact_html = get_page(contact_page)
         emails = extract_emails(contact_html)
-        phones += extract_phones(contact_html)
+        phones = list(set(phones + extract_phones(contact_html)))
 
     contact_type = "Email" if emails else ("Form" if contact_page else "None")
 
@@ -130,20 +160,23 @@ def scrape_company(name, website):
 
 def main():
     companies = pd.read_csv("companies.csv")
+    companies["Normalized"] = companies["Website"].apply(normalize_url)
+    companies = companies.drop_duplicates(subset="Normalized")
+    companies = companies.drop(columns=["Normalized"])
     client = authenticate_google_sheets()
     worksheet = client.open(Constants.SPREADSHEET_NAME).sheet1
     existing_rows = worksheet.get_all_values()
+    existing_websites = {
+        normalize_url(row[1]) for row in existing_rows[1:] if len(row) > 1
+    }
+
     if not existing_rows or existing_rows[0] != Constants.SHEET_HEADERS:
         worksheet.clear()
         worksheet.append_row(Constants.SHEET_HEADERS)
         existing_rows = []
 
-    existing_websites = {
-        row[1].strip().lower().rstrip("/") for row in existing_rows[1:] if len(row) > 1
-    }
-
     for _, row in companies.iterrows():
-        website = row["Website"].strip().lower().rstrip("/")
+        website = normalize_url(row["Website"])
 
         if website in existing_websites:
             continue

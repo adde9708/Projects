@@ -243,6 +243,8 @@ class PhysicsEngine:
 # HALO SYSTEM
 # ---------------------------
 class HaloSystem:
+    __slots__ = ("halo_cache", "halo_color", "halo_diameter")
+
     def __init__(self):
         HALO_ALPHA_BASE = Constants.HALO_ALPHA_BASE
         self.halo_color = [102, 204, 255, HALO_ALPHA_BASE]
@@ -317,6 +319,21 @@ class HaloSystem:
 # RENDERER
 # ---------------------------
 class Renderer:
+    __slots__ = (
+        "_cached_score_surf",
+        "_cached_score_value",
+        "_cached_winner_string",
+        "_cached_winner_surf",
+        "_cached_winner_surf_alpha",
+        "_halo_rect",
+        "_last_alpha",
+        "_winner_rect",
+        "font_score",
+        "font_winner",
+        "halo_system",
+        "screen",
+    )
+
     def __init__(self, screen, halo_system: HaloSystem):
         self.screen = screen
         self.halo_system = halo_system
@@ -446,6 +463,20 @@ class Renderer:
 # GAME CONTROLLER
 # ---------------------------
 class GameController:
+    __slots__ = (
+        "ball",
+        "halo_color",
+        "height",
+        "left_paddle",
+        "phase",
+        "right_paddle",
+        "scoreboard",
+        "width",
+        "winner",
+        "winner_text_alpha",
+        "winning_start_time",
+    )
+
     def __init__(self, screen_width, screen_height):
         self.width: int = screen_width
         self.height: int = screen_height

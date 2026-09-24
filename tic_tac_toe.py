@@ -1,9 +1,9 @@
-from typing import Tuple, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T", int, int)
 
 
-def get_cell_position(cell_str: str) -> Tuple[T, T]:
+def get_cell_position(cell_str: str) -> tuple[T, T]:
     # Convert the letter part of the cell string to a column index
     column_index = ord(cell_str[0]) - ord("A")
 
@@ -14,7 +14,7 @@ def get_cell_position(cell_str: str) -> Tuple[T, T]:
     return row_index, column_index
 
 
-def tic_tac_toe() -> Tuple[T, T]:
+def tic_tac_toe() -> tuple[T, T]:
     board = [
         (" ", " ", "O"),
         ("X", " ", " "),

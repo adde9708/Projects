@@ -1,13 +1,10 @@
-from typing import List, Tuple, Union
-
-
 def dma_list(
     dst: int, ea_low: int, nbytes: int
-) -> Union[None, Tuple[int, List[Tuple[int, int, int, int, int, int]]]]:
+) -> None | tuple[int, list[tuple[int, int, int, int, int, int]]]:
 
-    result: List[Tuple[int, int, int, int, int, int]] = []
+    result: list[tuple[int, int, int, int, int, int]] = []
     tag_id: int = 0
-    dma_list_elem: List[int] = [0, 31, 1, ea_low]
+    dma_list_elem: list[int] = [0, 31, 1, ea_low]
     size: int = dma_list_elem.__sizeof__()
     all_32: int = dma_list_elem[0]
     stall: int = dma_list_elem[2]

@@ -58,7 +58,6 @@ def handle_button_press(event: wx.CommandEvent, shared_state: dict[str, Any]) ->
 
     if label == "C":
         solution.Clear()
-        del solution
         return
 
     elif not redundant_operator:

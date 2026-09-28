@@ -41,7 +41,21 @@ interpreter is an ad-hoc global Python 3.14 with only some of these installed:
 
 | Installed | NOT installed |
 | --- | --- |
-| `pygame-ce` (provides the `pygame` module), `numpy`, `pandas`, `scipy`, `requests`, `bs4`/`beautifulsoup4` | `wx`, `kivy`, `torch`, `torchvision`, `matplotlib`, `psycopg2`, `gspread`, `google-auth*`, `pyinputplus`, `names`, `gtts`, `tqdm` |
+| `pygame-ce` (provides the `pygame` module), `numpy`, `pandas`, `scipy`, `requests`, `bs4`/`beautifulsoup4`, `wx`, `gspread`, `google-auth*` | `kivy`, `torch`, `torchvision`, `matplotlib`, `psycopg2`, `pyinputplus`, `names`, `gtts`, `tqdm` |
+
+As of 2026-09-28 `wx`, `gspread`, and `google-auth*` were added, so `calculator_wx_python.py` and
+both scrapers can now actually run. Still missing: everything for `login/login/`, the kivy app,
+and the quantization tutorial.
+
+### `kivy` is blocked on the Python version, not just uninstalled
+
+Kivy 2.3.1 (Dec 2024) officially supports **Python 3.8–3.13**, and PyPI ships wheels only up to
+`cp313`. The local interpreter is 3.14, so `pip install kivy` would fall back to building from
+source. Upstream tracks this as [kivy#9225](https://github.com/kivy/kivy/issues/9225).
+
+To run the kivy app you'd need a **separate 3.13 (or older) interpreter** rather than downgrading
+the global one — most of the installed packages above are already 3.14-compatible and shouldn't be
+disturbed. A venv on 3.13 is the clean route.
 
 Do not assume an import resolves. If a script needs a missing package, say so rather than
 "fixing" the import.
@@ -88,7 +102,8 @@ Three subprojects need cwd to be **their own directory**, not the repo root:
   `SystemName01.mp3` and `PercentageT2S-01.mp3` are *generated* by `gTTS` at runtime (lines 336, 865),
   not read — their committed copies are just seeds.
 - `mobile_app/main.py` — hardcodes `"Textures\\...jpg"` with a **backslash**, Windows-only, cwd-relative.
-  Run from `mobile_app/`. Needs `kivy` (not installed, and it is *not* in `requirements.txt`).
+  Run from `mobile_app/`. Needs `kivy`, which is **not installable on the local Python 3.14** (see below),
+  and it is *not* in `requirements.txt`.
 - `quantization_tutorial/quantization_with_resnet18.py` — reads `quantization_tutorial/data/hymenoptera_data`
   (committed, 398 images: 124/121 train ants/bees, 70/83 val), but run it from the **repo root**.
   Needs `torch`/`torchvision`/`matplotlib` (not installed) and downloads ResNet18 weights on first run.
@@ -108,12 +123,13 @@ builds are ad-hoc one-liners and cannot be reproduced from the repo.
 
 ## Compiled binaries are committed
 
-`pong.exe` (8.9 MB), `pong_korge_port.exe` (10 MB), `custom_square_root.exe` (26 MB),
-`DMA_cell.exe` (26 MB), `mtrr.exe`, plus `DMA_cell.pdb` and `mtrr.pdb`. Git history shows a
-recurring "recompile <name>" commit pattern.
+`pong.exe` (8.5 MB), `pong_korge_port.exe` (9.5 MB), `custom_square_root.exe` (24.8 MB),
+`DMA_cell.exe` (24.8 MB), `mtrr.exe` (7 MB), plus `dis_module_test.exe`, `ifstatement.exe`,
+`potatos.exe`. Git history shows a recurring "recompile <name>" commit pattern.
 
 - Don't delete or `git rm` these — they are intentional deliverables.
 - Don't add new ones unless asked. Binary churn is what the last several commits are mostly made of.
+- No `.pdb` files are committed any more; `DMA_cell.pdb` and `mtrr.pdb` were removed in `67bf7dd`.
 - A stray `python37.dll` was committed at the root in 2021 ("files that got incorrectly ignored").
   It was unreferenced by any source and has been removed. If it reappears, it's the same mistake.
 
@@ -145,9 +161,9 @@ toolkit. It was deleted 2025-01-25 in `84702ee` and recovered from `84702ee^`; t
 has not been edited since 2024-05-13.
 
 There are two calculators, not one. `calculator_wx_python.py` was **added 2024-11-29** (`71e1aba`,
-"add another calculator but use wxpython instead"), so for two months the repo had both. Neither
-toolkit is installed locally — `wx` and `kivy` are both missing. Don't use the README to decide
-what exists; use the file tree.
+"add another calculator but use wxpython instead"), so for two months the repo had both. Only `wx`
+is installed now, so that one runs and the kivy one does not. Don't use the README to decide what
+exists; use the file tree.
 
 Corollary: the repo *did* have CI (Travis, scoped to `login/login/`) until that Jan 2025 cleanup;
 `login/login/.travis.yml` is now restored too. "No CI" describes the current tree, not the history.

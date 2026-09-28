@@ -1,4 +1,5 @@
 import random
+import sys
 
 
 # -------------------------
@@ -89,7 +90,7 @@ def prompt_guess(state):
     while True:
         guess = input("Guess a letter or write 'q' to quit: ").lower()
         if guess == "q":
-            exit()
+            sys.exit()
         valid, msg = is_guess_valid(guess, state["guessed_letters"])
         if valid:
             return guess

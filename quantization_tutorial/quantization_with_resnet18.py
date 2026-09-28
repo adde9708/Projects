@@ -108,7 +108,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="c
     best_acc = 0.0
 
     for epoch in range(num_epochs):
-        print("Epoch {}|{}".format(epoch, num_epochs - 1))
+        print(f"Epoch {epoch}|{num_epochs - 1}")
         print("-" * 10)
 
         for phase in ["train", "val"]:
@@ -140,7 +140,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="c
                 epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
                 print(
-                    "{} Loss: {:.4f} Acc: {:.4f}".format(phase, epoch_loss, epoch_acc)
+                    f"{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}"
                 )
 
                 if phase == "val" and epoch_acc > best_acc:
@@ -152,12 +152,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, device="c
                 time_elapsed = time.time() - since
 
                 print(
-                    "Training complete in {:.0f}m {:.0f}s".format(
-                        time_elapsed // 60, time_elapsed % 60
-                    )
+                    f"Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s"
                 )
 
-                print("Best val Acc: {:4f}".format(best_acc))
+                print(f"Best val Acc: {best_acc:4f}")
 
     if best_model_wts is not None:
         model.load_state_dict(best_model_wts)
@@ -206,7 +204,7 @@ def visualize_model(model, dataloaders, class_names, rows=3, cols=3):
             for jdx in range(imgs.size(0)):
                 imshow(
                     imgs.data[jdx],
-                    title="predicted: {}".format(class_names[preds[jdx]]),
+                    title=f"predicted: {class_names[preds[jdx]]}",
                     ax=ax[current_row, current_col],
                 )
 

@@ -24,7 +24,7 @@ class HangManGame:
         self.display_current_state()
 
     def display_all_guesses(self):
-        print("You have guessed these letters:", *sorted(list(self.guessed_letters)))
+        print("You have guessed these letters:", *sorted(self.guessed_letters))
 
     def guesses_left(self):
         print(

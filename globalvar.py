@@ -1,5 +1,4 @@
 def foo():
-    global b
     global a
     a = "hello"
 

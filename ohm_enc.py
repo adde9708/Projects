@@ -2,6 +2,7 @@ import itertools
 from dataclasses import dataclass
 from hashlib import shake_256
 from hmac import compare_digest
+from math import isqrt
 from secrets import SystemRandom
 
 
@@ -71,7 +72,8 @@ def physics_lattice(i, E):
     x0 = abs(int(p / (i * i + 1)))
     x1 = abs(int((E * E) / (p + 1)))
     x2 = abs(int(E / (i + 1)))
-    x3 = abs(int((i**0.5) * E))
+    # isqrt keeps this integer, so the whole set stays float-free
+    x3 = abs(isqrt(i) * E)
 
     return [x0, x1, x2, x3]
 

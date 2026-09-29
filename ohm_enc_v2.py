@@ -18,39 +18,36 @@ class Constants:
 
 
 def u32(x: int) -> int:
-    m = Constants.MASK
-    return x & m
-
-
-def rotl(x: int, r: int) -> int:
-    return u32((x << r) | (x >> (32 - r)))
-
-
-def rotr(x: int, r: int) -> int:
-    return u32((x >> r) | (x << (32 - r)))
+    return x & Constants.MASK
 
 
 def qr(a: int, b: int, c: int, d: int) -> tuple[int, int, int, int]:
-    a = u32(a + b)
-    d = rotl(d ^ a, 16)
-    c = u32(c + d)
-    b = rotl(b ^ c, 12)
-    a = u32(a + b)
-    d = rotl(d ^ a, 8)
-    c = u32(c + d)
-    b = rotl(b ^ c, 7)
+    m = Constants.MASK
+    a = (a + b) & m
+    t = d ^ a
+    d = ((t << 16) | (t >> 16)) & m
+    c = (c + d) & m
+    t = b ^ c
+    b = ((t << 12) | (t >> 20)) & m
+    a = (a + b) & m
+    t = d ^ a
+    d = ((t << 8) | (t >> 24)) & m
+    c = (c + d) & m
+    t = b ^ c
+    b = ((t << 7) | (t >> 25)) & m
     return a, b, c, d
 
 
 def qr_inv(a: int, b: int, c: int, d: int) -> tuple[int, int, int, int]:
-    b = rotr(b, 7) ^ c
-    c = u32(c - d)
-    d = rotr(d, 8) ^ a
-    a = u32(a - b)
-    b = rotr(b, 12) ^ c
-    c = u32(c - d)
-    d = rotr(d, 16) ^ a
-    a = u32(a - b)
+    m = Constants.MASK
+    b = (((b >> 7) | (b << 25)) & m) ^ c
+    c = (c - d) & m
+    d = (((d >> 8) | (d << 24)) & m) ^ a
+    a = (a - b) & m
+    b = (((b >> 12) | (b << 20)) & m) ^ c
+    c = (c - d) & m
+    d = (((d >> 16) | (d << 16)) & m) ^ a
+    a = (a - b) & m
     return a, b, c, d
 
 

@@ -292,8 +292,8 @@ def engine_inv(state: list[int]) -> list[int]:
 
 
 def keystream(key: bytes, nonce: bytes, counter: int) -> bytes:
-    state = engine(init_state(key, nonce, counter))
     block_bytes = Constants.BLOCK_BYTES
+    state = engine(init_state(key, nonce, counter))
     return shake_256(pack_words(state)).digest(block_bytes)
 
 

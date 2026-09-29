@@ -1,23 +1,25 @@
-import itertools
-import struct
+from dataclasses import dataclass
 from hashlib import shake_256
 from hmac import compare_digest
 from math import isqrt
 from secrets import token_bytes
+from struct import pack, unpack
 
-MASK = 0xFFFFFFFF
 
-W = 8
-H = 8
-CELLS = W * H
-
-ROUNDS = 10
-BLOCK_BYTES = 64
-TAG_BYTES = 32
+@dataclass(frozen=True)
+class Constants:
+    MASK = 0xFFFFFFFF
+    W = 8
+    H = 8
+    CELLS = W * H
+    ROUNDS = 10
+    BLOCK_BYTES = 64
+    TAG_BYTES = 32
 
 
 def u32(x: int) -> int:
-    return x & MASK
+    m = Constants.MASK
+    return x & m
 
 
 def rotl(x: int, r: int) -> int:
@@ -69,94 +71,219 @@ def ohm_words(i: int, e: int) -> list[int]:
     i &= 0xFFFF
     e &= 0xFFFF
     p = i * e
+    m = Constants.MASK
     return [
-        (p // (i * i + 1)) & MASK,
-        (e * e // (p + 1)) & MASK,
-        (e // (i + 1)) & MASK,
-        (isqrt(i) * e) & MASK,
+        (p // (i * i + 1)) & m,
+        (e * e // (p + 1)) & m,
+        (e // (i + 1)) & m,
+        (isqrt(i) * e) & m,
     ]
 
 
-def pack(words: list[int]) -> bytes:
-    return struct.pack(f"<{len(words)}I", *words)
+def pack_words(words: list[int]) -> bytes:
+    return pack(f"<{len(words)}I", *words)
 
 
 def init_state(key: bytes, nonce: bytes, counter: int) -> list[int]:
-    kw = list(struct.unpack("<8I", key))
-    nw = list(struct.unpack("<4I", nonce))
-
+    kw = list(unpack("<8I", key))
+    nw = list(unpack("<4I", nonce))
+    c = Constants.CELLS
     seed = shake_256(
-        pack(kw) + pack(nw) + struct.pack("<I", u32(counter))
-    ).digest(CELLS * 4)
+        pack_words(kw) + pack_words(nw) + pack("<I", u32(counter))
+    ).digest(c * 4)
 
-    state = list(struct.unpack(f"<{CELLS}I", seed))
+    state = list(unpack(f"<{c}I", seed))
 
     x = ohm_words(kw[0], kw[1])
     for k in range(4):
-        state[(k * 8 + 4) % CELLS] = u32(state[(k * 8 + 4) % CELLS] ^ x[k])
+        pos = (k * 8 + 4) % c
+        state[pos] = u32(state[pos] ^ x[k])
 
     return state
 
 
 def columns(state: list[int]) -> list[int]:
     out = state[:]
-    for x in range(W):
-        col = [state[y * W + x] for y in range(H)]
+    w = Constants.W
+    h = Constants.H
+    for x in range(w):
+        col = [state[y * w + x] for y in range(h)]
         col = mix8(col)
-        for y in range(H):
-            out[y * W + x] = col[y]
+        for y in range(h):
+            out[y * w + x] = col[y]
     return out
 
 
 def columns_inv(state: list[int]) -> list[int]:
     out = state[:]
-    for x in range(W):
-        col = [state[y * W + x] for y in range(H)]
+    w = Constants.W
+    h = Constants.H
+    for x in range(w):
+        col = [state[y * w + x] for y in range(h)]
         col = mix8_inv(col)
-        for y in range(H):
-            out[y * W + x] = col[y]
+        for y in range(h):
+            out[y * w + x] = col[y]
     return out
 
 
 def rows(state: list[int]) -> list[int]:
     out = state[:]
-    for y in range(H):
-        out[y * W : (y + 1) * W] = mix8(state[y * W : (y + 1) * W])
+    w = Constants.W
+    h = Constants.H
+    for y in range(h):
+        lo = y * w
+        out[lo : lo + w] = mix8(state[lo : lo + w])
     return out
 
 
 def rows_inv(state: list[int]) -> list[int]:
     out = state[:]
-    for y in range(H):
-        out[y * W : (y + 1) * W] = mix8_inv(state[y * W : (y + 1) * W])
+    w = Constants.W
+    h = Constants.H
+    for y in range(h):
+        lo = y * w
+        out[lo : lo + w] = mix8_inv(state[lo : lo + w])
     return out
 
 
 def shear(state: list[int], k: int) -> list[int]:
-    out = [0] * CELLS
-    for y, x in itertools.product(range(H), range(W)):
-        out[y * W + (x + y * k) % W] = state[y * W + x]
+    out = [0] * Constants.CELLS
+    w = Constants.W
+    h = Constants.H
+    for y in range(h):
+        lo = y * w
+        row = state[lo : lo + w]
+        s = (y * k) % w
+        if s:
+            row = row[w - s :] + row[: w - s]
+        out[lo : lo + w] = row
     return out
 
 
 def shear_inv(state: list[int], k: int) -> list[int]:
-    out = [0] * CELLS
-    for y, x in itertools.product(range(H), range(W)):
-        out[y * W + x] = state[y * W + (x + y * k) % W]
+    out = [0] * Constants.CELLS
+    w = Constants.W
+    h = Constants.H
+    for y in range(h):
+        lo = y * w
+        row = state[lo : lo + w]
+        s = (y * k) % w
+        if s:
+            row = row[s:] + row[:s]
+        out[lo : lo + w] = row
+    return out
+
+
+def round_step(state: list[int], k: int) -> list[int]:
+    m = Constants.MASK
+    buf = state[:]
+    for x in range(8):
+        c0 = state[x]
+        c1 = state[8 + x]
+        c2 = state[16 + x]
+        c3 = state[24 + x]
+        c4 = state[32 + x]
+        c5 = state[40 + x]
+        c6 = state[48 + x]
+        c7 = state[56 + x]
+
+        a0 = (c0 + c1) & m
+        t = c3 ^ a0
+        a3 = ((t << 16) | (t >> 16)) & m
+        a2 = (c2 + a3) & m
+        t = c1 ^ a2
+        a1 = ((t << 12) | (t >> 20)) & m
+        a0 = (a0 + a1) & m
+        t = a3 ^ a0
+        a3 = ((t << 8) | (t >> 24)) & m
+        a2 = (a2 + a3) & m
+        t = a1 ^ a2
+        a1 = ((t << 7) | (t >> 25)) & m
+
+        b0 = (c4 + c5) & m
+        t = c7 ^ b0
+        b3 = ((t << 16) | (t >> 16)) & m
+        b2 = (c6 + b3) & m
+        t = c5 ^ b2
+        b1 = ((t << 12) | (t >> 20)) & m
+        b0 = (b0 + b1) & m
+        t = b3 ^ b0
+        b3 = ((t << 8) | (t >> 24)) & m
+        b2 = (b2 + b3) & m
+        t = b1 ^ b2
+        b1 = ((t << 7) | (t >> 25)) & m
+
+        buf[x] = a0
+        buf[8 + x] = b0
+        buf[16 + x] = a1
+        buf[24 + x] = b1
+        buf[32 + x] = a2
+        buf[40 + x] = b2
+        buf[48 + x] = a3
+        buf[56 + x] = b3
+
+    out = [0] * Constants.CELLS
+    for y in range(8):
+        o = y * 8
+        s = (-y * k) % 8
+        c0 = buf[o + (0 + s) % 8]
+        c1 = buf[o + (1 + s) % 8]
+        c2 = buf[o + (2 + s) % 8]
+        c3 = buf[o + (3 + s) % 8]
+        c4 = buf[o + (4 + s) % 8]
+        c5 = buf[o + (5 + s) % 8]
+        c6 = buf[o + (6 + s) % 8]
+        c7 = buf[o + (7 + s) % 8]
+
+        a0 = (c0 + c1) & m
+        t = c3 ^ a0
+        a3 = ((t << 16) | (t >> 16)) & m
+        a2 = (c2 + a3) & m
+        t = c1 ^ a2
+        a1 = ((t << 12) | (t >> 20)) & m
+        a0 = (a0 + a1) & m
+        t = a3 ^ a0
+        a3 = ((t << 8) | (t >> 24)) & m
+        a2 = (a2 + a3) & m
+        t = a1 ^ a2
+        a1 = ((t << 7) | (t >> 25)) & m
+
+        b0 = (c4 + c5) & m
+        t = c7 ^ b0
+        b3 = ((t << 16) | (t >> 16)) & m
+        b2 = (c6 + b3) & m
+        t = c5 ^ b2
+        b1 = ((t << 12) | (t >> 20)) & m
+        b0 = (b0 + b1) & m
+        t = b3 ^ b0
+        b3 = ((t << 8) | (t >> 24)) & m
+        b2 = (b2 + b3) & m
+        t = b1 ^ b2
+        b1 = ((t << 7) | (t >> 25)) & m
+
+        out[o + 0] = a0
+        out[o + 1] = b0
+        out[o + 2] = a1
+        out[o + 3] = b1
+        out[o + 4] = a2
+        out[o + 5] = b2
+        out[o + 6] = a3
+        out[o + 7] = b3
     return out
 
 
 def engine(state: list[int]) -> list[int]:
-    for r in range(ROUNDS):
-        state = columns(state)
+    rounds = Constants.ROUNDS
+
+    for r in range(rounds):
         k = 1 if r % 2 == 0 else -1
-        state = shear(state, k)
-        state = rows(state)
+        state = round_step(state, k)
     return state
 
 
 def engine_inv(state: list[int]) -> list[int]:
-    for r in reversed(range(ROUNDS)):
+    rounds = Constants.ROUNDS
+    for r in reversed(range(rounds)):
         k = 1 if r % 2 == 0 else -1
         state = rows_inv(state)
         state = shear_inv(state, k)
@@ -165,14 +292,17 @@ def engine_inv(state: list[int]) -> list[int]:
 
 
 def keystream(key: bytes, nonce: bytes, counter: int) -> bytes:
-    return shake_256(pack(engine(init_state(key, nonce, counter)))).digest(BLOCK_BYTES)
+    state = engine(init_state(key, nonce, counter))
+    block_bytes = Constants.BLOCK_BYTES
+    return shake_256(pack_words(state)).digest(block_bytes)
 
 
 def xor_keystream(key: bytes, nonce: bytes, data: bytes) -> bytes:
     out = bytearray()
-    for n, off in enumerate(range(0, len(data), BLOCK_BYTES)):
+    block_bytes = Constants.BLOCK_BYTES
+    for n, off in enumerate(range(0, len(data), block_bytes)):
         ks = keystream(key, nonce, n)
-        chunk = data[off : off + BLOCK_BYTES]
+        chunk = data[off : off + block_bytes]
         out += bytes(a ^ b for a, b in zip(chunk, ks))
     return bytes(out)
 
@@ -196,9 +326,11 @@ def split_keys(master: bytes) -> tuple[bytes, bytes]:
 
 
 def compute_mac(mac_key: bytes, nonce: bytes, ct: bytes) -> bytes:
+
+    tag_bytes = Constants.TAG_BYTES
     return shake_256(
-        b"ohm-v2 mac" + mac_key + nonce + struct.pack("<I", len(ct)) + ct
-    ).digest(TAG_BYTES)
+        b"ohm-v2 mac" + mac_key + nonce + pack("<I", len(ct)) + ct
+    ).digest(tag_bytes)
 
 
 class AuthenticationError(Exception):

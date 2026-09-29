@@ -320,6 +320,10 @@ def new_nonce() -> bytes:
 # ----------------------------
 
 
+class AuthenticationError(Exception):
+    pass
+
+
 def split_keys(master: bytes) -> tuple[bytes, bytes]:
     blocks = shake_256(b"ohm-v2 keysplit" + master).digest(64)
     return blocks[:32], blocks[32:]
@@ -331,10 +335,6 @@ def compute_mac(mac_key: bytes, nonce: bytes, ct: bytes) -> bytes:
     return shake_256(
         b"ohm-v2 mac" + mac_key + nonce + pack("<I", len(ct)) + ct
     ).digest(tag_bytes)
-
-
-class AuthenticationError(Exception):
-    pass
 
 
 def encrypt(msg: str | bytes) -> tuple[bytes, bytes, bytes, bytes]:

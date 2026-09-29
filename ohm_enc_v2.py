@@ -85,9 +85,9 @@ def pack_words(words: list[int]) -> bytes:
 
 
 def init_state(key: bytes, nonce: bytes, counter: int) -> list[int]:
+    c = Constants.CELLS
     kw = list(unpack("<8I", key))
     nw = list(unpack("<4I", nonce))
-    c = Constants.CELLS
     seed = shake_256(
         pack_words(kw) + pack_words(nw) + pack("<I", u32(counter))
     ).digest(c * 4)
@@ -103,9 +103,10 @@ def init_state(key: bytes, nonce: bytes, counter: int) -> list[int]:
 
 
 def columns(state: list[int]) -> list[int]:
-    out = state[:]
     w = Constants.W
     h = Constants.H
+    out = state[:]
+
     for x in range(w):
         col = [state[y * w + x] for y in range(h)]
         col = mix8(col)
@@ -115,9 +116,10 @@ def columns(state: list[int]) -> list[int]:
 
 
 def columns_inv(state: list[int]) -> list[int]:
-    out = state[:]
     w = Constants.W
     h = Constants.H
+    out = state[:]
+
     for x in range(w):
         col = [state[y * w + x] for y in range(h)]
         col = mix8_inv(col)
@@ -127,9 +129,10 @@ def columns_inv(state: list[int]) -> list[int]:
 
 
 def rows(state: list[int]) -> list[int]:
-    out = state[:]
     w = Constants.W
     h = Constants.H
+    out = state[:]
+
     for y in range(h):
         lo = y * w
         out[lo : lo + w] = mix8(state[lo : lo + w])
@@ -137,9 +140,10 @@ def rows(state: list[int]) -> list[int]:
 
 
 def rows_inv(state: list[int]) -> list[int]:
-    out = state[:]
     w = Constants.W
     h = Constants.H
+    out = state[:]
+
     for y in range(h):
         lo = y * w
         out[lo : lo + w] = mix8_inv(state[lo : lo + w])
@@ -147,9 +151,10 @@ def rows_inv(state: list[int]) -> list[int]:
 
 
 def shear(state: list[int], k: int) -> list[int]:
-    out = [0] * Constants.CELLS
     w = Constants.W
     h = Constants.H
+    out = [0] * Constants.CELLS
+
     for y in range(h):
         lo = y * w
         row = state[lo : lo + w]
@@ -161,9 +166,10 @@ def shear(state: list[int], k: int) -> list[int]:
 
 
 def shear_inv(state: list[int], k: int) -> list[int]:
-    out = [0] * Constants.CELLS
     w = Constants.W
     h = Constants.H
+    out = [0] * Constants.CELLS
+
     for y in range(h):
         lo = y * w
         row = state[lo : lo + w]
@@ -176,7 +182,9 @@ def shear_inv(state: list[int], k: int) -> list[int]:
 
 def round_step(state: list[int], k: int) -> list[int]:
     m = Constants.MASK
+    c = Constants.CELLS
     buf = state[:]
+    out = [0] * c
     for x in range(8):
         c0 = state[x]
         c1 = state[8 + x]
@@ -222,7 +230,6 @@ def round_step(state: list[int], k: int) -> list[int]:
         buf[48 + x] = a3
         buf[56 + x] = b3
 
-    out = [0] * Constants.CELLS
     for y in range(8):
         o = y * 8
         s = (-y * k) % 8

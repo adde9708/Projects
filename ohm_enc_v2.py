@@ -148,6 +148,18 @@ def rows_inv(state: list[int]) -> list[int]:
 
 
 def shear(state: list[int], k: int) -> list[int]:
+    """Rotate each row y left by y*k.
+
+    Not called on the forward path. round_step folds this into the row
+    gather at (-y*k) % W offsets instead of permuting the list, which is
+    where the speed came from. Kept as the readable reference for that
+    index arithmetic, and as the oracle for checking it:
+
+        round_step(s, k) == rows(shear(columns(s), k))
+
+    Do not delete without replacing the check above, or the fold in
+    round_step becomes unverifiable.
+    """
     w = Constants.W
     h = Constants.H
     out = [0] * Constants.CELLS

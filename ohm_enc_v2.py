@@ -298,8 +298,8 @@ def keystream(key: bytes, nonce: bytes, counter: int) -> bytes:
 
 
 def xor_keystream(key: bytes, nonce: bytes, data: bytes) -> bytes:
-    out = bytearray()
     block_bytes = Constants.BLOCK_BYTES
+    out = bytearray()
     for n, off in enumerate(range(0, len(data), block_bytes)):
         ks = keystream(key, nonce, n)
         chunk = data[off : off + block_bytes]

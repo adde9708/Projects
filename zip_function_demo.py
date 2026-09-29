@@ -2,8 +2,9 @@ a = ["Michael, William, Harper"]
 b = ["John, Evelyn, Ryan"]
 
 
-def trying_zip():
+def trying_zip() -> None:
     print(list(zip(a, b)))
 
 
-trying_zip()
+if __name__ == "__main__":
+    trying_zip()

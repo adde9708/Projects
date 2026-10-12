@@ -1,199 +1,161 @@
-from dataclasses import dataclass
+from array import array
 from hashlib import shake_256
 from hmac import compare_digest
 from math import isqrt
 from secrets import token_bytes
 from struct import pack, unpack
 
-
-@dataclass(frozen=True)
-class Constants:
-    MASK = 0xFFFFFFFF
-    W = 8
-    H = 8
-    CELLS = W * H
-    ROUNDS = 10
-    BLOCK_BYTES = 64
-    TAG_BYTES = 32
-
-
-def u32(x: int) -> int:
-    return x & Constants.MASK
+# ----------------------------
+# Module-Level Constants
+# ----------------------------
+MASK = 0xFFFFFFFF
+W = 8
+H = 8
+CELLS = W * H
+ROUNDS = 10
+BLOCK_BYTES = 64
+TAG_BYTES = 32
 
 
 def qr(a: int, b: int, c: int, d: int) -> tuple[int, int, int, int]:
-    m = Constants.MASK
-    a = (a + b) & m
+    a = (a + b) & MASK
     t = d ^ a
-    d = ((t << 16) | (t >> 16)) & m
-    c = (c + d) & m
+    d = ((t << 16) | (t >> 16)) & MASK
+    c = (c + d) & MASK
     t = b ^ c
-    b = ((t << 12) | (t >> 20)) & m
-    a = (a + b) & m
+    b = ((t << 12) | (t >> 20)) & MASK
+    a = (a + b) & MASK
     t = d ^ a
-    d = ((t << 8) | (t >> 24)) & m
-    c = (c + d) & m
+    d = ((t << 8) | (t >> 24)) & MASK
+    c = (c + d) & MASK
     t = b ^ c
-    b = ((t << 7) | (t >> 25)) & m
+    b = ((t << 7) | (t >> 25)) & MASK
     return a, b, c, d
 
 
 def qr_inv(a: int, b: int, c: int, d: int) -> tuple[int, int, int, int]:
-    m = Constants.MASK
-    b = (((b >> 7) | (b << 25)) & m) ^ c
-    c = (c - d) & m
-    d = (((d >> 8) | (d << 24)) & m) ^ a
-    a = (a - b) & m
-    b = (((b >> 12) | (b << 20)) & m) ^ c
-    c = (c - d) & m
-    d = (((d >> 16) | (d << 16)) & m) ^ a
-    a = (a - b) & m
+    b = (((b >> 7) | (b << 25)) & MASK) ^ c
+    c = (c - d) & MASK
+    d = (((d >> 8) | (d << 24)) & MASK) ^ a
+    a = (a - b) & MASK
+    b = (((b >> 12) | (b << 20)) & MASK) ^ c
+    c = (c - d) & MASK
+    d = (((d >> 16) | (d << 16)) & MASK) ^ a
+    a = (a - b) & MASK
     return a, b, c, d
 
 
-def mix8(v: list[int]) -> list[int]:
+def mix8(v: array) -> array:
     a0, a1, a2, a3 = qr(v[0], v[1], v[2], v[3])
     b0, b1, b2, b3 = qr(v[4], v[5], v[6], v[7])
-    return [a0, b0, a1, b1, a2, b2, a3, b3]
+    return array("I", [a0, b0, a1, b1, a2, b2, a3, b3])
 
 
-def mix8_inv(v: list[int]) -> list[int]:
+def mix8_inv(v: array) -> array:
     a0, b0, a1, b1, a2, b2, a3, b3 = v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]
     v0, v1, v2, v3 = qr_inv(a0, a1, a2, a3)
     v4, v5, v6, v7 = qr_inv(b0, b1, b2, b3)
-    return [v0, v1, v2, v3, v4, v5, v6, v7]
+    return array("I", [v0, v1, v2, v3, v4, v5, v6, v7])
 
 
-def ohm_words(i: int, e: int) -> list[int]:
+def ohm_words(i: int, e: int) -> array:
     i &= 0xFFFF
     e &= 0xFFFF
     p = i * e
-    m = Constants.MASK
-    return [
-        (p // (i * i + 1)) & m,
-        (e * e // (p + 1)) & m,
-        (e // (i + 1)) & m,
-        (isqrt(i) * e) & m,
-    ]
+    return array(
+        "I",
+        [
+            p // (i**2 + 1) & MASK,
+            e**2 // (p + 1) & MASK,
+            (e // (i + 1)) & MASK,
+            (isqrt(i) * e) & MASK,
+        ],
+    )
 
 
-def pack_words(words: list[int]) -> bytes:
-    return pack(f"<{len(words)}I", *words)
-
-
-def init_state(key: bytes, nonce: bytes, counter: int) -> list[int]:
-    c = Constants.CELLS
+def init_state(key: bytes, nonce: bytes, counter: int) -> array:
     kw = list(unpack("<8I", key))
     nw = list(unpack("<4I", nonce))
-    seed = shake_256(
-        pack_words(kw) + pack_words(nw) + pack("<I", u32(counter))
-    ).digest(c * 4)
 
-    state = list(unpack(f"<{c}I", seed))
+    seed = shake_256(
+        pack("<8I", *kw) + pack("<4I", *nw) + pack("<I", counter & MASK)
+    ).digest(CELLS * 4)
+
+    state = array("I")
+    state.frombytes(seed)
 
     x = ohm_words(kw[0], kw[1])
     for k in range(4):
-        pos = (k * 8 + 4) % c
-        state[pos] = u32(state[pos] ^ x[k])
+        pos = (k * 8 + 4) % CELLS
+        state[pos] = (state[pos] ^ x[k]) & MASK
 
     return state
 
 
-def columns(state: list[int]) -> list[int]:
-    w = Constants.W
-    h = Constants.H
-    out = state[:]
-
-    for x in range(w):
-        col = [state[y * w + x] for y in range(h)]
+def columns(state: array) -> array:
+    out = array("I", state)
+    for x in range(W):
+        col = array("I", [state[y * W + x] for y in range(H)])
         col = mix8(col)
-        for y in range(h):
-            out[y * w + x] = col[y]
+        for y in range(H):
+            out[y * W + x] = col[y]
     return out
 
 
-def columns_inv(state: list[int]) -> list[int]:
-    w = Constants.W
-    h = Constants.H
-    out = state[:]
-
-    for x in range(w):
-        col = [state[y * w + x] for y in range(h)]
+def columns_inv(state: array) -> array:
+    out = array("I", state)
+    for x in range(W):
+        col = array("I", [state[y * W + x] for y in range(H)])
         col = mix8_inv(col)
-        for y in range(h):
-            out[y * w + x] = col[y]
+        for y in range(H):
+            out[y * W + x] = col[y]
     return out
 
 
-def rows(state: list[int]) -> list[int]:
-    w = Constants.W
-    h = Constants.H
-    out = state[:]
-
-    for y in range(h):
-        lo = y * w
-        out[lo : lo + w] = mix8(state[lo : lo + w])
+def rows(state: array) -> array:
+    out = array("I", state)
+    for y in range(H):
+        lo = y * W
+        out[lo : lo + W] = mix8(state[lo : lo + W])
     return out
 
 
-def rows_inv(state: list[int]) -> list[int]:
-    w = Constants.W
-    h = Constants.H
-    out = state[:]
-
-    for y in range(h):
-        lo = y * w
-        out[lo : lo + w] = mix8_inv(state[lo : lo + w])
+def rows_inv(state: array) -> array:
+    out = array("I", state)
+    for y in range(H):
+        lo = y * W
+        out[lo : lo + W] = mix8_inv(state[lo : lo + W])
     return out
 
 
-def shear(state: list[int], k: int) -> list[int]:
-    """Rotate each row y left by y*k.
-
-    Not called on the forward path. round_step folds this into the row
-    gather at (-y*k) % W offsets instead of permuting the list, which is
-    where the speed came from. Kept as the readable reference for that
-    index arithmetic, and as the oracle for checking it:
-
-        round_step(s, k) == rows(shear(columns(s), k))
-
-    Do not delete without replacing the check above, or the fold in
-    round_step becomes unverifiable.
-    """
-    w = Constants.W
-    h = Constants.H
-    out = [0] * Constants.CELLS
-
-    for y in range(h):
-        lo = y * w
-        row = state[lo : lo + w]
-        s = (y * k) % w
+def shear(state: array, k: int) -> array:
+    out = array("I", [0] * CELLS)
+    for y in range(H):
+        lo = y * W
+        row = state[lo : lo + W]
+        s = (y * k) % W
         if s:
-            row = row[w - s :] + row[: w - s]
-        out[lo : lo + w] = row
+            row = row[W - s :] + row[: W - s]
+        out[lo : lo + W] = row
     return out
 
 
-def shear_inv(state: list[int], k: int) -> list[int]:
-    w = Constants.W
-    h = Constants.H
-    out = [0] * Constants.CELLS
-
-    for y in range(h):
-        lo = y * w
-        row = state[lo : lo + w]
-        s = (y * k) % w
+def shear_inv(state: array, k: int) -> array:
+    out = array("I", [0] * CELLS)
+    for y in range(H):
+        lo = y * W
+        row = state[lo : lo + W]
+        s = (y * k) % W
         if s:
             row = row[s:] + row[:s]
-        out[lo : lo + w] = row
+        out[lo : lo + W] = row
     return out
 
 
-def round_step(state: list[int], k: int) -> list[int]:
-    m = Constants.MASK
-    c = Constants.CELLS
-    buf = state[:]
-    out = [0] * c
+def round_step(state: array, k: int) -> array:
+    buf = array("I", state)
+    out = array("I", [0] * CELLS)
+
     for x in range(8):
         c0 = state[x]
         c1 = state[8 + x]
@@ -204,31 +166,31 @@ def round_step(state: list[int], k: int) -> list[int]:
         c6 = state[48 + x]
         c7 = state[56 + x]
 
-        a0 = (c0 + c1) & m
+        a0 = (c0 + c1) & MASK
         t = c3 ^ a0
-        a3 = ((t << 16) | (t >> 16)) & m
-        a2 = (c2 + a3) & m
+        a3 = ((t << 16) | (t >> 16)) & MASK
+        a2 = (c2 + a3) & MASK
         t = c1 ^ a2
-        a1 = ((t << 12) | (t >> 20)) & m
-        a0 = (a0 + a1) & m
+        a1 = ((t << 12) | (t >> 20)) & MASK
+        a0 = (a0 + a1) & MASK
         t = a3 ^ a0
-        a3 = ((t << 8) | (t >> 24)) & m
-        a2 = (a2 + a3) & m
+        a3 = ((t << 8) | (t >> 24)) & MASK
+        a2 = (a2 + a3) & MASK
         t = a1 ^ a2
-        a1 = ((t << 7) | (t >> 25)) & m
+        a1 = ((t << 7) | (t >> 25)) & MASK
 
-        b0 = (c4 + c5) & m
+        b0 = (c4 + c5) & MASK
         t = c7 ^ b0
-        b3 = ((t << 16) | (t >> 16)) & m
-        b2 = (c6 + b3) & m
+        b3 = ((t << 16) | (t >> 16)) & MASK
+        b2 = (c6 + b3) & MASK
         t = c5 ^ b2
-        b1 = ((t << 12) | (t >> 20)) & m
-        b0 = (b0 + b1) & m
+        b1 = ((t << 12) | (t >> 20)) & MASK
+        b0 = (b0 + b1) & MASK
         t = b3 ^ b0
-        b3 = ((t << 8) | (t >> 24)) & m
-        b2 = (b2 + b3) & m
+        b3 = ((t << 8) | (t >> 24)) & MASK
+        b2 = (b2 + b3) & MASK
         t = b1 ^ b2
-        b1 = ((t << 7) | (t >> 25)) & m
+        b1 = ((t << 7) | (t >> 25)) & MASK
 
         buf[x] = a0
         buf[8 + x] = b0
@@ -251,31 +213,31 @@ def round_step(state: list[int], k: int) -> list[int]:
         c6 = buf[o + (6 + s) % 8]
         c7 = buf[o + (7 + s) % 8]
 
-        a0 = (c0 + c1) & m
+        a0 = (c0 + c1) & MASK
         t = c3 ^ a0
-        a3 = ((t << 16) | (t >> 16)) & m
-        a2 = (c2 + a3) & m
+        a3 = ((t << 16) | (t >> 16)) & MASK
+        a2 = (c2 + a3) & MASK
         t = c1 ^ a2
-        a1 = ((t << 12) | (t >> 20)) & m
-        a0 = (a0 + a1) & m
+        a1 = ((t << 12) | (t >> 20)) & MASK
+        a0 = (a0 + a1) & MASK
         t = a3 ^ a0
-        a3 = ((t << 8) | (t >> 24)) & m
-        a2 = (a2 + a3) & m
+        a3 = ((t << 8) | (t >> 24)) & MASK
+        a2 = (a2 + a3) & MASK
         t = a1 ^ a2
-        a1 = ((t << 7) | (t >> 25)) & m
+        a1 = ((t << 7) | (t >> 25)) & MASK
 
-        b0 = (c4 + c5) & m
+        b0 = (c4 + c5) & MASK
         t = c7 ^ b0
-        b3 = ((t << 16) | (t >> 16)) & m
-        b2 = (c6 + b3) & m
+        b3 = ((t << 16) | (t >> 16)) & MASK
+        b2 = (c6 + b3) & MASK
         t = c5 ^ b2
-        b1 = ((t << 12) | (t >> 20)) & m
-        b0 = (b0 + b1) & m
+        b1 = ((t << 12) | (t >> 20)) & MASK
+        b0 = (b0 + b1) & MASK
         t = b3 ^ b0
-        b3 = ((t << 8) | (t >> 24)) & m
-        b2 = (b2 + b3) & m
+        b3 = ((t << 8) | (t >> 24)) & MASK
+        b2 = (b2 + b3) & MASK
         t = b1 ^ b2
-        b1 = ((t << 7) | (t >> 25)) & m
+        b1 = ((t << 7) | (t >> 25)) & MASK
 
         out[o + 0] = a0
         out[o + 1] = b0
@@ -285,21 +247,19 @@ def round_step(state: list[int], k: int) -> list[int]:
         out[o + 5] = b2
         out[o + 6] = a3
         out[o + 7] = b3
+
     return out
 
 
-def engine(state: list[int]) -> list[int]:
-    rounds = Constants.ROUNDS
-
-    for r in range(rounds):
+def engine(state: array) -> array:
+    for r in range(ROUNDS):
         k = 1 if r % 2 == 0 else -1
         state = round_step(state, k)
     return state
 
 
-def engine_inv(state: list[int]) -> list[int]:
-    rounds = Constants.ROUNDS
-    for r in reversed(range(rounds)):
+def engine_inv(state: array) -> array:
+    for r in reversed(range(ROUNDS)):
         k = 1 if r % 2 == 0 else -1
         state = rows_inv(state)
         state = shear_inv(state, k)
@@ -308,17 +268,15 @@ def engine_inv(state: list[int]) -> list[int]:
 
 
 def keystream(key: bytes, nonce: bytes, counter: int) -> bytes:
-    block_bytes = Constants.BLOCK_BYTES
     state = engine(init_state(key, nonce, counter))
-    return shake_256(pack_words(state)).digest(block_bytes)
+    return shake_256(state.tobytes()).digest(BLOCK_BYTES)
 
 
 def xor_keystream(key: bytes, nonce: bytes, data: bytes) -> bytes:
-    block_bytes = Constants.BLOCK_BYTES
     out = bytearray()
-    for n, off in enumerate(range(0, len(data), block_bytes)):
+    for n, off in enumerate(range(0, len(data), BLOCK_BYTES)):
         ks = keystream(key, nonce, n)
-        chunk = data[off : off + block_bytes]
+        chunk = data[off : off + BLOCK_BYTES]
         out += bytes(a ^ b for a, b in zip(chunk, ks))
     return bytes(out)
 
@@ -346,11 +304,9 @@ def split_keys(master: bytes) -> tuple[bytes, bytes]:
 
 
 def compute_mac(mac_key: bytes, nonce: bytes, ct: bytes) -> bytes:
-
-    tag_bytes = Constants.TAG_BYTES
-    return shake_256(
-        b"ohm-v2 mac" + mac_key + nonce + pack("<I", len(ct)) + ct
-    ).digest(tag_bytes)
+    return shake_256(b"ohm-v2 mac" + mac_key + nonce + pack("<I", len(ct)) + ct).digest(
+        TAG_BYTES
+    )
 
 
 def encrypt(msg: str | bytes) -> tuple[bytes, bytes, bytes, bytes]:
@@ -375,8 +331,8 @@ def main() -> None:
     master, nonce, tag, ct = encrypt(msg)
     pt = decrypt(master, nonce, tag, ct)
 
-    print("cipher:  ", ct.hex())
-    print("tag:     ", tag.hex())
+    print("cipher:   ", ct.hex())
+    print("tag:      ", tag.hex())
     print("decrypted:", pt.decode())
     print("roundtrip:", "OK" if pt.decode() == msg else "FAIL")
 

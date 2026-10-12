@@ -66,9 +66,12 @@ class MainApp(App):
 
         if button_text == "C":
             self.solution.text = ""
-        elif current and (self.last_was_operator and button_text in self.operators):
-            return
-        elif current == "" and button_text in self.operators:
+        elif (
+            current
+            and (self.last_was_operator and button_text in self.operators)
+            or current == ""
+            and button_text in self.operators
+        ):
             return
         else:
             new_text = current + button_text

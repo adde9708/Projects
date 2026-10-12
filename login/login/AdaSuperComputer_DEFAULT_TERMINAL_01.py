@@ -14,7 +14,7 @@ from gtts import gTTS
 from tqdm import tqdm
 
 # AsciiArt for The Terminal
-adaSCnm = """
+adaSCnm = r"""
 
 
  _______  ______   _______ 
@@ -189,7 +189,7 @@ Introduction(intro)
 # Prompting the user to create a new user
 # From here ->
 def CreateNewUser():
-    print("")
+    print()
 
     print("Please create your user!")
 
@@ -454,10 +454,7 @@ LogInCredentials()
 
 # Function for type writer string Animation
 def SystemTypeWriteInfo1(infoStr2):
-    while True:
-        if stopThdB1:
-            break
-
+    while not stopThdB1:
         for char in infoStr2:
             sys.stdout.write(char)
             sys.stdout.flush()
@@ -1141,12 +1138,12 @@ def Report():
 # Last print
 def ReportSub():
     sleep(1)
-    print("")
+    print()
     print("Report sent!")
     sleep(3)
-    print("")
+    print()
     print("The End!")
-    print("")
+    print()
     print(
         "The user survived from ADA's direct orders and succeeded to protect ADA from any attacks!"
     )
